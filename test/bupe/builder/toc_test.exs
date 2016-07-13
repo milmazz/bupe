@@ -28,7 +28,7 @@ defmodule BUPE.Builder.TOCTest do
   end
 
   test "save toc template" do
-    config = toc_config()
+    config = toc_config(%{})
     output = "#{tmp_dir()}/toc.html"
 
     BUPE.Builder.TOC.save(config, output)
