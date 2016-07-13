@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%= config.lang %>" lang="<%= config.lang %>"
+      xmlns:epub="http://www.idpf.org/2007/ops">
+  <head>
+    <meta charset="utf-8" />
+    <title><%= config.title %></title>
+    <meta name="generator" content="BUPE" />
+    <link type="text/css" rel="stylesheet" href="css/stylesheet.css" />
+  </head>
+  <body>
+    <h1><%= config.title %></h1>
+    <%= if config.logo do %>
+      <%= if Path.extname(config.logo) == ".png" do %>
+        <div><img src="assets/logo.png" alt="Logo"/></div>
+      <% end %>
+      <%= if Path.extname(config.logo) == ".jpg" do %>
+        <div><img src="assets/logo.jpg" alt="Logo"/></div>
+      <% end %>
+    <% end %>
+  </body>
+</html>
