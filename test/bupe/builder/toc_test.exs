@@ -24,7 +24,7 @@ defmodule BUPE.Builder.TOCTest do
   end
 
   defp toc_config(config) do
-    Map.merge(nav_config(%{}), config)
+    Map.merge(toc_config(), config)
   end
 
   test "save toc template" do
