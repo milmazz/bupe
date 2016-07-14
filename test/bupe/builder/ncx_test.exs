@@ -31,7 +31,7 @@ defmodule BUPE.Builder.NCXTest do
     config = toc_config(%{})
     output = "#{tmp_dir()}/toc.html"
 
-    BUPE.Builder.TOC.save(config, output)
+    BUPE.Builder.NCX.save(config, output)
 
     content = File.read!("#{output}")
 
