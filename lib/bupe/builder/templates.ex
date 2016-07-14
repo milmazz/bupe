@@ -7,7 +7,7 @@ defmodule BUPE.Builder.Templates do
 
   templates = [
     content_template: [:config],
-    toc_template: [:config],
+    ncx_template: [:config],
     nav_template: [:config],
     title_template: [:config]
   ]

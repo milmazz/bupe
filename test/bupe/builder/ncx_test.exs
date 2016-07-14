@@ -1,4 +1,4 @@
-defmodule BUPE.Builder.TOCTest do
+defmodule BUPE.Builder.NCXTest do
   use ExUnit.Case
 
   setup do
