@@ -32,7 +32,7 @@ defmodule BUPE.Builder do
     end
 
     # FIXME: Create a temp subdirectory
-    tmp_dir = Path.join(config[:tmp_dir] || System.tmp_dir(), ".pube")
+    tmp_dir = Path.join(config[:tmp_dir] || System.tmp_dir(), ".bupe")
 
     if File.exists?(tmp_dir) do
       File.rm_rf!(tmp_dir)
@@ -70,15 +70,15 @@ defmodule BUPE.Builder do
   end
 
   defp generate_nav(config, output) do
-    config |> Builder.Nav.save("#{output}/OEBPS/nav.html")
+    config |> Builder.Nav.save("#{output}/OEBPS/nav.xhtml")
   end
 
   defp generate_title(config, output) do
-    config |> Builder.Title.save("#{output}/OEBPS/title.html")
+    config |> Builder.Title.save("#{output}/OEBPS/title.xhtml")
   end
 
   defp generate_content(config, output) do
-      output = Path.join(output, "content")
+      output = Path.join(output, "OEBPS/content")
       File.mkdir! output
       copy_files(output, config.files)
   end
@@ -88,7 +88,7 @@ defmodule BUPE.Builder do
 
     {:ok, zip_path} = :zip.create(target_path,
                                   files_to_add(input),
-                                  compress: ['.css', '.html', '.ncx', '.opf',
+                                  compress: ['.css', '.html', '.xhtml', '.ncx', '.opf',
                                              '.jpg', '.png', '.xml'])
     {:ok, zip_path}
   end
