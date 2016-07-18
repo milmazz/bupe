@@ -15,9 +15,9 @@ defmodule BUPE do
     * `publisher` -
     * `date` - See:
     * `identifier` -
-    * `scheme` -  default: `:url`
+    * `scheme` -  default: `URL`
     * `uid` -
-    * `lang` - default: `:en` See: http://tools.ietf.org/html/rfc5646
+    * `lang` - default: `"en"` See: http://tools.ietf.org/html/rfc5646
 
     ## Support configuration
 
@@ -31,9 +31,9 @@ defmodule BUPE do
               publisher: nil,
               date: nil,
               identifier: nil,
-              scheme: :url,
+              scheme: "URL",
               uid: nil,
-              lang: :en,
+              lang: "en",
               unique_identifier: nil,
               files: nil,
               nav: nil
