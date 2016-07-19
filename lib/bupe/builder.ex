@@ -31,7 +31,7 @@ defmodule BUPE.Builder do
       File.rm!(output)
     end
 
-    # FIXME: Create a temp subdirectory
+    # FIXME: Create a temp subdirectory. Try to avoid  a race condition.
     tmp_dir = Path.join(config[:tmp_dir] || System.tmp_dir(), ".bupe")
 
     if File.exists?(tmp_dir) do
