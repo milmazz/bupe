@@ -5,6 +5,19 @@ defmodule BUPE.Builder.Templates do
 
   require EEx
 
+  Application.app_dir(:bupe)
+  |> Path.join("priv/bupe/builder/templates/media-types.txt")
+  |> File.stream!()
+  |> Enum.each(fn(line) ->
+    [extension, media] = line |> String.trim() |> String.split(",")
+
+    def media_type("." <> unquote(extension)) do
+      unquote(media)
+    end
+  end)
+
+  def media_type(_), do: nil
+
   templates = [
     content_template: [:config],
     ncx_template: [:config],
