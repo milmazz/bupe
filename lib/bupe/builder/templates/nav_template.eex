@@ -12,7 +12,7 @@
     <nav epub:type="toc">
       <ol>
         <%= for node <- config.nav do %>
-        <li><a href="<%= node.content %>"><%= node.label %></a></li>
+        <li><a href="content/<%= node.content %>"><%= node.label %></a></li>
         <% end %>
       </ol>
     </nav>

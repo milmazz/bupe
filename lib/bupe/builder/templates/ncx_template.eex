@@ -17,14 +17,14 @@
       <navLabel>
         <text>Book cover</text>
       </navLabel>
-      <content src="title.html" />
+      <content src="title.xhtml" />
     </navPoint>
     <%= for {node, index} <- Enum.with_index(config.nav) do %>
     <navPoint id="<%= node.id %>" playOrder="<%= index + 2 %>">
       <navLabel>
         <text><%= node.label %></text>
       </navLabel>
-      <content src="<%= node.content %>" />
+      <content src="content/<%= node.content %>" />
     </navPoint>
     <% end %>
   </navMap>

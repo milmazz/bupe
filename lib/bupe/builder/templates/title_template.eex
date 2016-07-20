@@ -10,12 +10,7 @@
   <body>
     <h1><%= config.title %></h1>
     <%= if config[:logo] do %>
-      <%= if Path.extname(config.logo) == ".png" do %>
-        <div><img src="assets/logo.png" alt="Logo"/></div>
-      <% end %>
-      <%= if Path.extname(config.logo) == ".jpg" do %>
-        <div><img src="assets/logo.jpg" alt="Logo"/></div>
-      <% end %>
+      <div><img src="assets/<%= config.logo %>" alt="Logo"/></div>
     <% end %>
   </body>
 </html>

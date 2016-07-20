@@ -3,7 +3,7 @@ defmodule BUPE.Builder.TitleTest do
 
   test "save title template" do
     config = config(%{})
-    output = "#{tmp_dir()}/title.html"
+    output = "#{tmp_dir()}/title.xhtml"
 
     BUPE.Builder.Title.save(config, output)
 

@@ -16,19 +16,14 @@
   </metadata>
   <manifest>
     <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />
-    <item id="nav" href="nav.html" media-type="application/xhtml+xml" properties="nav" />
-    <item id="cover" href="title.html" media-type="application/xhtml+xml" />
+    <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav" />
+    <item id="cover" href="title.xhtml" media-type="application/xhtml+xml" />
     <%= for node <- config.nav do %>
-      <item id="<%= node.id %>" href="<%= node.content %>" media-type="application/xhtml+xml" />
+      <item id="<%= node.id %>" href="content/<%= node.content %>" media-type="<%= media_type(Path.extname(node.content)) %>" />
     <% end %>
     <item id="css" href="css/stylesheet.css" media-type="text/css"/>
     <%= if config[:logo] do %>
-      <%= if Path.extname(config.logo) == ".png" do %>
-        <item id="cover-image" href="assets/logo.png" media-type="image/png" />
-      <% end %>
-      <%= if Path.extname(config.logo) == ".jpg" do %>
-        <item id="cover-image" href="assets/logo.jpg" media-type="image/jpeg" />
-      <% end %>
+      <item id="cover-image" href="assets/<%= config.logo %>" media-type="<% media_type(Path.extname(config.logo)) %>" />
     <% end %>
   </manifest>
   <spine toc="ncx">

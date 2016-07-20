@@ -30,11 +30,11 @@ defmodule BUPETest.Case do
       unique_identifier: "http://example.com/book/jdoe/1",
       scheme: "URL",
       uid: "http://example.com/book/jdoe/1",
-      files: Path.wildcard(fixtures_dir() <> "/*.html"),
+      files: Path.wildcard(fixtures_dir() <> "/*.xhtml"),
       nav: [
-        %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.html"},
-        %{id: "ode-to-ham", label: "2. Ode to Ham", content: "ham.html"},
-        %{id: "ode-to-egg", label: "3. Ode to Egg", content: "egg.html"}
+        %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.xhtml"},
+        %{id: "ode-to-ham", label: "2. Ode to Ham", content: "ham.xhtml"},
+        %{id: "ode-to-egg", label: "3. Ode to Egg", content: "egg.xhtml"}
       ],
       tmp_dir: tmp_dir()
     }

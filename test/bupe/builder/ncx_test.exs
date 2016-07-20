@@ -3,7 +3,7 @@ defmodule BUPE.Builder.NCXTest do
 
   test "save toc template" do
     config = config(%{})
-    output = "#{tmp_dir()}/toc.html"
+    output = "#{tmp_dir()}/toc.xhtml"
 
     BUPE.Builder.NCX.save(config, output)
 
@@ -13,7 +13,7 @@ defmodule BUPE.Builder.NCXTest do
     assert content =~ ~r{<navPoint id="ode-to-ham" playOrder="3">}
     assert content =~ ~r{<navPoint id="ode-to-egg" playOrder="4">}
 
-    assert content =~ ~r{<content src="bacon.html" />}
-    assert content =~ ~r{<content src="ham.html" />}
+    assert content =~ ~r{<content src="bacon.xhtml" />}
+    assert content =~ ~r{<content src="ham.xhtml" />}
   end
 end
