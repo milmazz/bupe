@@ -13,6 +13,7 @@ defmodule BUPE.Builder.NCX do
 
   alias BUPE.Builder.Templates
 
+  @spec save(%BUPE.Config{}, Path.t) :: :ok | no_return
   def save(config, output) do
     content = Templates.ncx_template(config)
     File.write!(output, content)
