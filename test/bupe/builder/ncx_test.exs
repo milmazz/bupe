@@ -13,7 +13,7 @@ defmodule BUPE.Builder.NCXTest do
     assert content =~ ~r{<navPoint id="ode-to-ham" playOrder="3">}
     assert content =~ ~r{<navPoint id="ode-to-egg" playOrder="4">}
 
-    assert content =~ ~r{<content src="bacon.xhtml" />}
-    assert content =~ ~r{<content src="ham.xhtml" />}
+    assert content =~ ~r{<content src="content/bacon.xhtml" />}
+    assert content =~ ~r{<content src="content/ham.xhtml" />}
   end
 end
