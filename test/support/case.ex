@@ -25,7 +25,7 @@ defmodule BUPETest.Case do
       title: "Sample",
       lang: "en",
       creator: "John Doe",
-      published: "Sample",
+      publisher: "Sample",
       date: "2016-06-23",
       unique_identifier: "http://example.com/book/jdoe/1",
       scheme: "URL",
@@ -36,7 +36,9 @@ defmodule BUPETest.Case do
         %{id: "ode-to-ham", label: "2. Ode to Ham", content: "ham.xhtml"},
         %{id: "ode-to-egg", label: "3. Ode to Egg", content: "egg.xhtml"}
       ],
-      tmp_dir: tmp_dir()
+      extras: %{
+        tmp_dir: tmp_dir()
+      }
     }
   end
 
