@@ -8,14 +8,14 @@ defmodule BUPE.Builder do
     creator: "John Doe",
     publisher: "Sample",
     date: "2016-06-23",
-    identifier: "http://example.com/book/jdoe/1",
+    unique_identifier: "http://example.com/book/jdoe/1",
     scheme: "URL",
     uid: "http://example.com/book/jdoe/1",
-    files: ["bacon.html", "egg.html", "ham.html"],
+    files: ["bacon.xhtml", "egg.xhtml", "ham.xhtml"],
     nav: [
-      %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.html"},
-      %{id: "ode-to-ham", label: "2. Ode to Ham", content: "ham.html"},
-      %{id: "ode-to-egg", label: "1. Ode to Egg", content: "egg.html"}
+      %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.xhtml"},
+      %{id: "ode-to-ham", label: "2. Ode to Ham", content: "ham.xhtml"},
+      %{id: "ode-to-egg", label: "1. Ode to Egg", content: "egg.xhtml"}
     ]
   })
 
@@ -23,7 +23,9 @@ defmodule BUPE.Builder do
   """
   alias BUPE.Builder
 
-  def save(config, output) do
+  @spec save(%BUPE.Config{}, Path.t, Keyword.t) :: String.t
+  def save(config, output, opts \\ []) do
+    start_time = System.monotonic_time()
     output = Path.expand(output)
 
     # TODO: Ask the user if they want to replace the existing file.
@@ -31,12 +33,7 @@ defmodule BUPE.Builder do
       File.rm!(output)
     end
 
-    # FIXME: Create a temp subdirectory. Try to avoid  a race condition.
-    tmp_dir = Path.join(config[:tmp_dir] || System.tmp_dir(), ".bupe")
-
-    if File.exists?(tmp_dir) do
-      File.rm_rf!(tmp_dir)
-    end
+    tmp_dir = generate_tmp_dir(config)
 
     File.mkdir_p!(Path.join(tmp_dir, "OEBPS"))
 
@@ -53,7 +50,23 @@ defmodule BUPE.Builder do
 
     File.rm_rf!(tmp_dir)
 
+    if opts[:verbose] do
+      end_time = System.monotonic_time()
+      diff = System.convert_time_unit(end_time - start_time, :native, :milliseconds)
+      IO.puts "EPUB file #{output} created in #{diff} milliseconds"
+    end
+
     epub_file
+  end
+
+  defp generate_tmp_dir(config) do
+    tmp_dir = Path.join(config[:extras][:tmp_dir] || System.tmp_dir(), ".bupe/#{uuid4()}")
+
+    if File.exists?(tmp_dir) do
+      File.rm_rf!(tmp_dir)
+    end
+
+    tmp_dir
   end
 
   defp generate_mimetype(output) do
@@ -80,7 +93,7 @@ defmodule BUPE.Builder do
   defp generate_content(config, output) do
       output = Path.join(output, "OEBPS/content")
       File.mkdir! output
-      copy_files(output, config.files)
+      copy_files(config.files, output)
   end
 
   defp generate_epub(input, output) do
@@ -128,14 +141,25 @@ defmodule BUPE.Builder do
       output = "#{output}/#{dir}"
       File.mkdir output
 
-      copy_files(output, Path.wildcard(pattern))
+      copy_files(Path.wildcard(pattern), output)
     end
   end
 
-  defp copy_files(output, files) do
+  defp copy_files(files, output) do
     Enum.map files, fn(file) ->
       base = Path.basename(file)
       File.copy file, "#{output}/#{base}"
     end
+  end
+
+  # Helper to generate an UUID, in particular version 4 as specified in
+  # [RFC 4122](https://tools.ietf.org/html/rfc4122.html)
+  defp uuid4 do
+    <<u0::48, _::4, u1::12, _::2, u2::62>> = :crypto.strong_rand_bytes(16)
+    bin = <<u0::48, 4::4, u1::12, 2::2, u2::62>>
+    <<u0::32, u1::16, u2::16, u3::16, u4::48>> = bin
+
+    Enum.map_join([<<u0::32>>, <<u1::16>>, <<u2::16>>, <<u3::16>>, <<u4::48>>], <<45>>,
+                  &(Base.encode16(&1, case: :lower)))
   end
 end
