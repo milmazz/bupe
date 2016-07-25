@@ -13,11 +13,19 @@ defmodule BUPETest.Case do
   end
 
   def tmp_dir do
-    Path.expand("../tmp/", __DIR__)
+    Path.expand("../tmp", __DIR__)
+  end
+
+  def tmp_dir(path) do
+    Path.join(tmp_dir(), path)
   end
 
   def fixtures_dir do
     Path.expand("../fixtures", __DIR__)
+  end
+
+  def fixtures_dir(path) do
+    Path.join(fixtures_dir(), path)
   end
 
   def config do
