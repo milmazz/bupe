@@ -1,0 +1,2 @@
+%{"earmark": {:hex, :earmark, "1.0.1"},
+  "ex_doc": {:hex, :ex_doc, "0.13.0"}}
