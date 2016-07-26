@@ -37,6 +37,32 @@ defmodule BUPE do
               unique_identifier: nil,
               files: nil,
               nav: nil
+
+    defmodule InvalidDate do
+      defexception message: "date is invalid"
+
+      @moduledoc """
+      Error raised when date is invalid:
+
+        * The modification date must be expressed in Coordinated Universal Time
+          (UTC) and must be terminated by the Z time zone indicator.
+        * For compliance with EPUB 2 Reading Systems, the date string should conform to
+          [Date and Time Formats](
+
+      [1]: http://www.w3.org/TR/NOTE-datetime
+      """
+    end
+
+    defmodule InvalidLanguage do
+      defexception message: "Language is invalid"
+
+      @moduledoc """
+      Error raised when the language is invalid, must be one of the tags for
+      identifying languages, please see [RFC5646][] for more details.
+
+      [RFC5646]: http://www.w3.org/TR/NOTE-datetime
+      """
+    end
   end
 
   @bupe_version Mix.Project.config[:version]
