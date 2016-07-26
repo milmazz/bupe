@@ -1,5 +1,32 @@
 defmodule BUPE.Parser do
+  @moduledoc ~S"""
+  An [EPUB 3][EPUB] conforming parser. This implementation should support also
+  EPUB 2.
 
+  ## Example
+
+  ```iex
+  BUPE.Parser.parse("sample.epub")
+  #=> %BUPE.Config{
+        title: "Sample",
+        creator: "John Doe",
+        unique_identifier: "EXAMPLE",
+        files: ["bacon.xhtml", "ham.xhtml", "egg.xhtml"],
+        nav: [
+          %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.xhtml"},
+          %{id: "ode-to-ham", label: "2. Ode to Ham", content: "ham.xhtml"},
+          %{id: "ode-to-egg", label: "3. Ode to Egg", content: "egg.xhtml"}
+        ]
+      }
+  ```
+
+  [EPUB]: http://www.idpf.org/epub3/latest/overview
+  
+  """
+
+  @doc """
+  EPUB v3 parser
+  """
   @spec parse(Path.t) :: String.t | no_return
   def parse(epub_file) when is_binary(epub_file) do
     epub_file = Path.expand(epub_file)

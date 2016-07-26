@@ -1,26 +1,50 @@
-# BUPE: An Elixir EPUB generator and parser
+# BUPE
+
+BUPE is a Elixir ePub generator and parser, it supports EPUB v2 and v3.
+
+## Installation
+
+First, add `bupe` to your list of dependencies in `mix.exs`:
+
+```elixir
+def deps do
+  [{:bupe, "~> 0.1.0"}]
+end
+```
+
+Then, update your dependencies:
+
+```sh-session
+$ mix deps.get
+```
+
+## Usage
+
+### Builder
 
 If you want to create an EPUB file you can do the following:
 
 ```elixir
-config = %BUPE.Config{
-  title: "Sample",
-  creator: "John Doe",
-  unique_identifier: "EXAMPLE",
-  files: ["bacon.xhtml", "ham.xhtml", "egg.xhtml"],
-  nav: [
-    %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.xhtml"},
-    %{id: "ode-to-ham", label: "2. Ode to Ham", content: "ham.xhtml"},
-    %{id: "ode-to-egg", label: "3. Ode to Egg", content: "egg.xhtml"}
-  ]
-}
-BUPE.Builder.save(config, "food.epub")
+iex> config = %BUPE.Config{
+...>   title: "Sample",
+...>   creator: "John Doe",
+...>   unique_identifier: "EXAMPLE",
+...>   files: ["bacon.xhtml", "ham.xhtml", "egg.xhtml"],
+...>   nav: [
+...>     %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.xhtml"},
+...>     %{id: "ode-to-ham", label: "2. Ode to Ham", content: "ham.xhtml"},
+...>     %{id: "ode-to-egg", label: "3. Ode to Egg", content: "egg.xhtml"}
+...>   ]
+...> }
+iex> BUPE.Builder.save(config, "food.epub")
 ```
+
+### Parser
 
 If you want to parse an EPUB file you can do the following:
 
 ```elixir
-BUPE.Parser.parse("sample.epub")
+iex> BUPE.Parser.parse("sample.epub")
 %BUPE.Config{
   title: "Sample",
   creator: "John Doe",
@@ -34,23 +58,8 @@ BUPE.Parser.parse("sample.epub")
 }
 ```
 
-## Installation
+## License
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+BUPE source code is released under Apache 2 License.
 
-  1. Add `bupe` to your list of dependencies in `mix.exs`:
-
-    ```elixir
-    def deps do
-      [{:bupe, "~> 0.1.0"}]
-    end
-    ```
-
-  2. Ensure `bupe` is started before your application:
-
-    ```elixir
-    def application do
-      [applications: [:bupe]]
-    end
-    ```
-
+Check the [LICENSE](LICENSE) for more information.

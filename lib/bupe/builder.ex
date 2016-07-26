@@ -1,8 +1,11 @@
 defmodule BUPE.Builder do
-  @moduledoc """
+  @moduledoc ~S"""
   Elixir EPUB generator
 
-  epub = BUPE.Builder.new(%BUPE.Config{
+  ## Example
+
+  ```elixir
+  config = %BUPE.Config{
     title: "Sample",
     lang: "en",
     creator: "John Doe",
@@ -20,9 +23,14 @@ defmodule BUPE.Builder do
   })
 
   BUPE.Builder.save(epub, "example.epub")
+  ```
+
   """
   alias BUPE.Builder
 
+  @doc """
+  Generates an EPUB v3 document
+  """
   @spec save(%BUPE.Config{}, Path.t, Keyword.t) :: String.t
   def save(config, output, opts \\ []) do
     start_time = System.monotonic_time()

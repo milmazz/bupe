@@ -1,7 +1,5 @@
 defmodule BUPE.Builder.Templates do
-  @moduledoc """
-  Handle all template interfaces for the EPUB Builder
-  """
+  @moduledoc false
 
   require EEx
 
