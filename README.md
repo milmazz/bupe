@@ -36,15 +36,17 @@ iex> config = %BUPE.Config{
 ...>     %{id: "ode-to-egg", label: "3. Ode to Egg", content: "egg.xhtml"}
 ...>   ]
 ...> }
-iex> BUPE.Builder.save(config, "food.epub")
+iex> BUPE.build(config, "food.epub")
 ```
+
+See `BUPE.Builder` for more details.
 
 ### Parser
 
 If you want to parse an EPUB file you can do the following:
 
 ```elixir
-iex> BUPE.Parser.parse("sample.epub")
+iex> BUPE.parse("sample.epub")
 %BUPE.Config{
   title: "Sample",
   creator: "John Doe",
@@ -57,6 +59,8 @@ iex> BUPE.Parser.parse("sample.epub")
   ]
 }
 ```
+
+See `BUPE.Parser` for more details.
 
 ## License
 

@@ -12,7 +12,7 @@ defmodule BUPE.Builder.Package do
   ## Required configuration values
 
   * `version` - Specifies the EPUB specification version to which the
-    Publication conforms. Default: 3.0 (required)
+    Publication conforms. Default: "3.0"
   * `unique_identifier` - Specifies a primary identifier that is unique to
     one and only one particular EPUB Publication
   * `identifier` - Contains a single identifier associated with the EPUB
@@ -29,7 +29,7 @@ defmodule BUPE.Builder.Package do
   * `contributor` - Represents the name of a person, organization, etc. that
     played a secondary role in the creation of the content.
   * `date` - Define the publication date. The publication date is not the
-    same as the last modification date. See: http://www.w3.org/TR/NOTE-datetime
+    same as the last modification date. See: [Date and Time Formats][datetime]
   * `source` - Identifies the source publication from which this EPUB
     Publication is derived.
   * `type` - Indicates that the given Publication is of a specialized type
@@ -40,6 +40,7 @@ defmodule BUPE.Builder.Package do
   [Package Metadata][meta] section of the EPUB specification.
 
   [meta]: http://www.idpf.org/epub/30/spec/epub30-publications.html#sec-package-metadata
+  [datetime]: http://www.w3.org/TR/NOTE-datetime
 
   """
 
