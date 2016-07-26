@@ -1,5 +1,7 @@
 # BUPE
 
+[![Build Status](https://travis-ci.org/milmazz/bupe.svg?branch=master)](https://travis-ci.org/milmazz/bupe)
+
 BUPE is a Elixir ePub generator and parser, it supports EPUB v2 and v3.
 
 ## Installation
