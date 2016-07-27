@@ -76,8 +76,21 @@ defmodule BUPE.Parser do
     root_file = root_file |> String.to_char_list()
     [{^root_file, content}] = extract_content(epub_file, [root_file])
 
-    # TODO: Format content
-    content
+    {xml, _rest} = :xmerl_scan.string(String.to_char_list(content))
+
+    modified = xpath_string("/package/metadata/meta[contains(@property, 'dcterms:modified')]/text()", xml) |> parse_xml_text()
+    version = xpath_string("/package/@version", xml) |> parse_xml_attribute()
+    language = find_metadata(xml, "language") || xpath_string("/package/@xml:lang", xml) |> parse_xml_attribute()
+
+    %BUPE.Config{
+      title: find_metadata(xml, "title"),
+      language: language,
+      version: version,
+      identifier: find_metadata(xml, "identifier"),
+      creator: find_metadata(xml, "creator"),
+      contributor: find_metadata(xml, "contributor"),
+      modified: modified
+    }
   end
 
   defp extract_content(epub_file, files) when is_list(files) do
@@ -91,4 +104,20 @@ defmodule BUPE.Parser do
         raise reason
     end
   end
+
+  defp find_metadata(xml, meta) do
+    xpath = "/package/metadata/dc:#{meta}/text()"
+
+    xpath_string(xpath, xml) |> parse_xml_text()
+  end
+
+  defp xpath_string(xpath, xml) do
+    :xmerl_xpath.string(xpath |> String.to_char_list(), xml)
+  end
+
+  defp parse_xml_text([{:xmlText, _parents, _pos, _language, value, :text}]), do: to_string(value)
+  defp parse_xml_text([]), do: nil
+
+  defp parse_xml_attribute([{:xmlAttribute, _name, _expanded_name, _nsinfo, _namespace, _parents, _pos, _language, value, _normalized}]), do: to_string(value)
+  defp parse_xml_attribute([]), do: nil
 end
