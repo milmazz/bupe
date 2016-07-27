@@ -30,7 +30,15 @@ defmodule BUPE.Parser.ParserTest do
     end
   end
 
-  @tag :skip
   test "epub document version 3" do
+    config = config(%{})
+
+    output = Path.join(tmp_dir(), "sample.epub")
+    BUPE.Builder.save(config, output)
+
+    epub_info = BUPE.Parser.parse(output)
+
+    assert epub_info.title == config.title
+    assert epub_info.creator == config.creator
   end
 end

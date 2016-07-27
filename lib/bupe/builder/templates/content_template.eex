@@ -4,7 +4,7 @@
          version="3.0" xml:lang="<%= config.lang %>">
   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
     <dc:identifier id="<%= config.unique_identifier %>"><%= config.uid %></dc:identifier>
-    <dc:title><%= config.title %> </dc:title>
+    <dc:title><%= config.title %></dc:title>
     <dc:language><%= config.lang %></dc:language>
     <%= if config[:creator] do %>
     <dc:creator id="creator"><%= config.creator %></dc:creator>
