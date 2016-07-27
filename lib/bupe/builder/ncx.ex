@@ -2,7 +2,7 @@ defmodule BUPE.Builder.NCX do
   @moduledoc ~S"""
   Navigation Center eXtended definition
 
-  Please keep in mind that the EPUB Navigation Document defined in
+  Keep in mind that the EPUB Navigation Document defined in
   `BUPE.Builder.Nav` supersedes this definition. According to the EPUB
   specification:
 
