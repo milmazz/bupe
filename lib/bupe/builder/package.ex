@@ -2,7 +2,7 @@ defmodule BUPE.Builder.Package do
   @moduledoc ~S"""
   Package definition builder.
 
-  According to the EPUB specification the *Package Document* carries
+  According to the EPUB specification, the *Package Document* carries
   bibliographic and structural metadata about an EPUB Publication, and is thus
   the primary source of information about how to process and display it.
 

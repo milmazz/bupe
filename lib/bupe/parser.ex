@@ -21,7 +21,7 @@ defmodule BUPE.Parser do
   ```
 
   [EPUB]: http://www.idpf.org/epub3/latest/overview
-  
+
   """
 
   @doc """

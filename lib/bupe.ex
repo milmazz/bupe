@@ -20,9 +20,9 @@ defmodule BUPE do
     Publication, such as a UUID, DOI, ISBN or ISSN. Default: UUID
     * `language` - Specifies the language used in the contents. Default: `"en"`
     * `version` - Specifies the EPUB specification version to which the
-    Publication conforms. Default: "3.0" 
+    Publication conforms. Default: "3.0"
     * `unique_identifier` - Specifies a primary identifier that is unique to
-    one and only one particular EPUB Publication 
+    one and only one particular EPUB Publication
     * `source` - Identifies the source publication from which this EPUB
     Publication is derived.
     * `type` - Indicates that the given Publication is of a specialized type
@@ -36,8 +36,8 @@ defmodule BUPE do
     ## Support configuration
 
     * `files` - List of XHTML files which will be included in the EPUB document
-    * `nav` - List of maps which required to create the EPUB Navigation document.
-      See: `BUPE.Package.Nav`
+    * `nav` - List of maps which is required to create the EPUB Navigation
+      document. See `BUPE.Package.Nav` for more information.
 
     [meta]: http://www.idpf.org/epub/30/spec/epub30-publications.html#sec-package-metadata
     [datetime]: http://www.w3.org/TR/NOTE-datetime
@@ -86,7 +86,7 @@ defmodule BUPE do
       identifying languages, please see [RFC5646][] for more details.
 
       [RFC5646]: http://www.w3.org/TR/NOTE-datetime
-      
+
       """
     end
   end
