@@ -7,13 +7,12 @@ defmodule BUPE.Builder do
   ```elixir
   config = %BUPE.Config{
     title: "Sample",
-    lang: "en",
+    language: "en",
     creator: "John Doe",
     publisher: "Sample",
-    date: "2016-06-23",
-    unique_identifier: "http://example.com/book/jdoe/1",
-    scheme: "URL",
-    uid: "http://example.com/book/jdoe/1",
+    date: "2016-06-23T06:00:00Z",
+    unique_identifier: "EXAMPLE",
+    identifier: "http://example.com/book/jdoe/1",
     files: ["bacon.xhtml", "egg.xhtml", "ham.xhtml"],
     nav: [
       %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.xhtml"},
@@ -26,14 +25,13 @@ defmodule BUPE.Builder do
   ```
 
   """
-  alias BUPE.Builder
+  alias BUPE.Builder.Templates
 
   @doc """
   Generates an EPUB v3 document
   """
-  @spec save(%BUPE.Config{}, Path.t, Keyword.t) :: String.t
-  def save(config, output, opts \\ []) do
-    start_time = System.monotonic_time()
+  @spec save(%BUPE.Config{}, Path.t) :: String.t
+  def save(config, output) do
     output = Path.expand(output)
 
     # TODO: Ask the user if they want to replace the existing file.
@@ -58,17 +56,11 @@ defmodule BUPE.Builder do
 
     File.rm_rf!(tmp_dir)
 
-    if opts[:verbose] do
-      end_time = System.monotonic_time()
-      diff = System.convert_time_unit(end_time - start_time, :native, :milliseconds)
-      IO.puts "EPUB file #{output} created in #{diff} milliseconds"
-    end
-
     epub_file
   end
 
   defp generate_tmp_dir(config) do
-    tmp_dir = Path.join(config[:extras][:tmp_dir] || System.tmp_dir(), ".bupe/#{uuid4()}")
+    tmp_dir = Path.join(config.extras.tmp_dir || System.tmp_dir(), ".bupe/#{uuid4()}")
 
     if File.exists?(tmp_dir) do
       File.rm_rf!(tmp_dir)
@@ -82,20 +74,50 @@ defmodule BUPE.Builder do
     File.write("#{output}/mimetype", content)
   end
 
+  # Package definition builder.
+  #
+  # According to the EPUB specification, the *Package Document* carries
+  # bibliographic and structural metadata about an EPUB Publication, and is thus
+  # the primary source of information about how to process and display it.
+  #
+  # The `package` element is the root container of the Package Document and
+  # encapsulates Publication metadata and resource information.
   defp generate_package(config, output) do
-    config |> Builder.Package.save("#{output}/OEBPS/content.opf")
+    content = Templates.content_template(config)
+    File.write!("#{output}/OEBPS/content.opf", content)
   end
 
+  # Navigation Center eXtended definition
+  #
+  # Keep in mind that the EPUB Navigation Document defined in
+  # `BUPE.Builder.Nav` supersedes this definition. According to the EPUB
+  # specification:
+  #
+  # > EPUB 3 Publications may include an NCX (as defined in OPF 2.0.1) for EPUB
+  # > 2 Reading System forwards compatibility purposes, but EPUB 3 Reading
+  # > Systems must ignore the NCX.
   defp generate_ncx(config, output) do
-    config |> Builder.NCX.save("#{output}/OEBPS/toc.ncx")
+    content = Templates.ncx_template(config)
+    File.write!("#{output}/OEBPS/toc.ncx", content)
   end
 
+  # Navigation Document Definition
+  #
+  # The TOC nav element defines the primary navigation hierarchy of the document.
+  # It conceptually corresponds to a table of contents in a printed work.
+  #
+  # See [EPUB Navigation Document Definition][nav] for more information.
+  #
+  # [nav]: http://www.idpf.org/epub/301/spec/epub-contentdocs.html#sec-xhtml-nav-def
   defp generate_nav(config, output) do
-    config |> Builder.Nav.save("#{output}/OEBPS/nav.xhtml")
+    content = Templates.nav_template(config)
+    File.write!("#{output}/OEBPS/nav.xhtml", content)
   end
 
+  # Cover page definition for the EPUB document
   defp generate_title(config, output) do
-    config |> Builder.Title.save("#{output}/OEBPS/title.xhtml")
+    content = Templates.title_template(config)
+    File.write!("#{output}/OEBPS/title.xhtml", content)
   end
 
   defp generate_content(config, output) do

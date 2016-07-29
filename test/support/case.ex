@@ -29,15 +29,14 @@ defmodule BUPETest.Case do
   end
 
   def config do
-    %{
+    %BUPE.Config{
       title: "Sample",
-      lang: "en",
+      language: "en",
       creator: "John Doe",
       publisher: "Sample",
       date: "2016-06-23T06:00:00Z",
       unique_identifier: "EXAMPLE",
-      scheme: "URL",
-      uid: "http://example.com/book/jdoe/1",
+      identifier: "http://example.com/book/jdoe/1",
       files: Path.wildcard(fixtures_dir() <> "/*.xhtml"),
       nav: [
         %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.xhtml"},

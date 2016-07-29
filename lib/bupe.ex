@@ -7,6 +7,11 @@ defmodule BUPE do
     @moduledoc ~S"""
     Configuration structure that holds all the available options for EPUB.
 
+    Most of this fields are used in the Package Definition document, this
+    document carries bibliographic and structural metadata about an EPUB
+    Publication, and is thus the primary source of information about how to
+    process and display it.
+
     ## EPUB specification fields
 
     * `title` - Represents an instance of a name given to the EPUB Publication.
@@ -16,6 +21,8 @@ defmodule BUPE do
     played a secondary role in the creation of the content.
     * `date` - Define the publication date. The publication date is not the
     same as the last modification date. See: [Date and Time Formats][datetime]
+    * `modified` - The modification date must be expressed in Coordinated
+    Universal Time (UTC) and must be terminated by the Z time zone indicator.
     * `identifier` - Contains a single identifier associated with the EPUB
     Publication, such as a UUID, DOI, ISBN or ISSN. Default: UUID
     * `language` - Specifies the language used in the contents. Default: `"en"`
@@ -30,14 +37,16 @@ defmodule BUPE do
 
     For more information about other fields as `description`, `format`,
     `coverage`, `publisher`, `relation`, `rights`, `subject`, etc. please see
-    `BUPE.Builder.Package` or the [Package Metadata][meta] section of the EPUB
-    specification.
+    the [Package Metadata][meta] section of the EPUB specification.
 
     ## Support configuration
 
     * `files` - List of XHTML files which will be included in the EPUB document
     * `nav` - List of maps which is required to create the EPUB Navigation
       document. See `BUPE.Package.Nav` for more information.
+    * `css` - List of CSS files which will be included in the EPUB document
+    * `scripts` - List off JS files which will be included in the EPUB document
+    * `logo` - Image for the cover page
 
     [meta]: http://www.idpf.org/epub/30/spec/epub30-publications.html#sec-package-metadata
     [datetime]: http://www.w3.org/TR/NOTE-datetime
@@ -61,7 +70,11 @@ defmodule BUPE do
               rights: nil,
               subject: nil,
               files: nil,
-              nav: nil
+              nav: nil,
+              logo: nil,
+              extras: %{
+                tmp_dir: nil
+              }
 
     defmodule InvalidDate do
       defexception message: "date is invalid"
@@ -102,8 +115,8 @@ defmodule BUPE do
   @doc """
   Generates an EPUB v3 document
   """
-  @spec build(%Config{}, Path.t, Keyword.t) :: String.t
-  def build(config, output, opts \\ []), do: BUPE.Builder.save(config, output, opts)
+  @spec build(%Config{}, Path.t) :: String.t
+  def build(config, output), do: BUPE.Builder.save(config, output)
 
   @doc """
   Parse and EPUB v3 document

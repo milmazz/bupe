@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%= config.lang %>" lang="<%= config.lang %>"
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%= config.language %>" lang="<%= config.language %>"
       xmlns:epub="http://www.idpf.org/2007/ops">
   <head>
     <meta charset="utf-8" />
@@ -9,7 +9,7 @@
   </head>
   <body>
     <h1><%= config.title %></h1>
-    <%= if config[:logo] do %>
+    <%= if config.logo do %>
       <div><img src="assets/<%= config.logo %>" alt="Logo"/></div>
     <% end %>
   </body>

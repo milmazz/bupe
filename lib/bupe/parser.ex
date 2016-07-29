@@ -78,7 +78,9 @@ defmodule BUPE.Parser do
 
     {xml, _rest} = :xmerl_scan.string(String.to_char_list(content))
 
-    modified = xpath_string("/package/metadata/meta[contains(@property, 'dcterms:modified')]/text()", xml) |> parse_xml_text()
+    modified =
+      xpath_string("/package/metadata/meta[contains(@property, 'dcterms:modified')]/text()", xml)
+      |> parse_xml_text()
     version = xpath_string("/package/@version", xml) |> parse_xml_attribute()
     language = find_metadata(xml, "language") || xpath_string("/package/@xml:lang", xml) |> parse_xml_attribute()
 
@@ -89,7 +91,20 @@ defmodule BUPE.Parser do
       identifier: find_metadata(xml, "identifier"),
       creator: find_metadata(xml, "creator"),
       contributor: find_metadata(xml, "contributor"),
-      modified: modified
+      modified: modified,
+      date: nil,
+      unique_identifier: nil,
+      source: nil,
+      type: nil,
+      description: nil,
+      format: nil,
+      coverage: nil,
+      publisher: nil,
+      relation: nil,
+      rights: nil,
+      subject: nil,
+      files: nil,
+      nav: nil
     }
   end
 
