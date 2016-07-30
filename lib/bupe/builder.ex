@@ -30,7 +30,7 @@ defmodule BUPE.Builder do
   @doc """
   Generates an EPUB v3 document
   """
-  @spec save(%BUPE.Config{}, Path.t) :: String.t
+  @spec save(BUPE.Config.t, Path.t) :: String.t
   def save(config, output) do
     output = Path.expand(output)
 
@@ -60,7 +60,9 @@ defmodule BUPE.Builder do
   end
 
   defp generate_tmp_dir(config) do
-    tmp_dir = Path.join(config.extras.tmp_dir || System.tmp_dir(), ".bupe/#{uuid4()}")
+    tmp_dir =
+      (Keyword.get(config.extras, :tmp_dir) || System.tmp_dir())
+      |> Path.join(".bupe/#{uuid4()}")
 
     if File.exists?(tmp_dir) do
       File.rm_rf!(tmp_dir)
@@ -131,8 +133,8 @@ defmodule BUPE.Builder do
 
     {:ok, zip_path} = :zip.create(target_path,
                                   files_to_add(input),
-                                  compress: ['.css', '.html', '.xhtml', '.ncx', '.opf',
-                                             '.jpg', '.png', '.xml'])
+                                  compress: ['.css', '.html', '.xhtml', '.ncx',
+                                             '.opf', '.jpg', '.png', '.xml'])
     {:ok, zip_path}
   end
 

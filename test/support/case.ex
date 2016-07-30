@@ -43,13 +43,9 @@ defmodule BUPETest.Case do
         %{id: "ode-to-ham", label: "2. Ode to Ham", content: "ham.xhtml"},
         %{id: "ode-to-egg", label: "3. Ode to Egg", content: "egg.xhtml"}
       ],
-      extras: %{
+      extras: [
         tmp_dir: tmp_dir()
-      }
+      ]
     }
-  end
-
-  def config(config) do
-    Map.merge(config(), config)
   end
 end

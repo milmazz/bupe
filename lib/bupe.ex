@@ -51,6 +51,7 @@ defmodule BUPE do
     [meta]: http://www.idpf.org/epub/30/spec/epub30-publications.html#sec-package-metadata
     [datetime]: http://www.w3.org/TR/NOTE-datetime
     """
+    @enforce_keys [:title, :files, :nav]
     defstruct title: nil,
               creator: nil,
               contributor: nil,
@@ -69,12 +70,50 @@ defmodule BUPE do
               relation: nil,
               rights: nil,
               subject: nil,
-              files: nil,
-              nav: nil,
+              files: [],
+              nav: [],
               logo: nil,
-              extras: %{
-                tmp_dir: nil
-              }
+              extras: []
+
+    @type t :: %__MODULE__{
+      title: String.t,
+      creator: String.t,
+      contributor: String.t,
+      date: String.t,
+      identifier: String.t,
+      language: String.t,
+      version: String.t,
+      unique_identifier: String.t,
+      source: String.t,
+      type: String.t,
+      modified: String.t,
+      description: String.t,
+      format: String.t,
+      coverage: String.t,
+      publisher: String.t,
+      relation: String.t,
+      rights: String.t,
+      subject: String.t,
+      files: [Path.t] | [{Path.t, Path.t}], # TODO: Verify this
+      nav: list(), # TODO: Verify this
+      logo: String.t,
+      extras: Keyword.t
+    }
+
+    # defmodule Nav do
+    #   @moduledoc false
+
+    #   @enforce_keys [:id, :label, :content]
+    #   defstruct id: nil,
+    #             label: nil,
+    #             content: nil
+
+    #   @type t :: %__MODULE__{
+    #     id: String.t,
+    #     label: String.t,
+    #     content: String.t
+    #   }
+    # end
 
     defmodule InvalidDate do
       defexception message: "date is invalid"
@@ -115,7 +154,7 @@ defmodule BUPE do
   @doc """
   Generates an EPUB v3 document
   """
-  @spec build(%Config{}, Path.t) :: String.t
+  @spec build(Config.t, Path.t) :: String.t
   def build(config, output), do: BUPE.Builder.save(config, output)
 
   @doc """
@@ -128,7 +167,7 @@ defmodule BUPE do
     # FIXME: This function should provides default values for %Config{}
   end
 
-  @spec modified_date(%Config{}) :: %Config{}
+  @spec modified_date(Config.t) :: Config.t
   def modified_date(config) do
     # TODO: If the user provides a value, we need to check if compatible with ISO8601
     unless config[:modified] do

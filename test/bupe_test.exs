@@ -30,7 +30,7 @@ defmodule BUPETest do
   end
 
   test "build epub document version 3" do
-    config = config(%{})
+    config = config()
 
     output = Path.join(tmp_dir(), "sample.epub")
     BUPE.build(config, output)

@@ -4,7 +4,7 @@ defmodule BUPE.Builder.TemplatesTest do
   alias BUPE.Builder.Templates
 
   test "nav template" do
-    config = config(%{})
+    config = config()
 
     content = Templates.nav_template(config)
 
@@ -14,7 +14,7 @@ defmodule BUPE.Builder.TemplatesTest do
   end
 
   test "toc template" do
-    config = config(%{})
+    config = config()
 
     content = Templates.ncx_template(config)
 
@@ -27,7 +27,7 @@ defmodule BUPE.Builder.TemplatesTest do
   end
 
   test "cover template" do
-    config = config(%{})
+    config = config()
 
     content = Templates.title_template(config)
 
@@ -36,7 +36,7 @@ defmodule BUPE.Builder.TemplatesTest do
   end
 
   test "package template" do
-    config = config(%{})
+    config = config()
 
     content = Templates.content_template(config)
 
