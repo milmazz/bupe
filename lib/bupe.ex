@@ -33,7 +33,8 @@ defmodule BUPE do
     * `source` - Identifies the source publication from which this EPUB
     Publication is derived.
     * `type` - Indicates that the given Publication is of a specialized type
-    (e.g., annotations packaged in EPUB format or a dictionary).
+    (e.g., annotations packaged in EPUB format or a dictionary). See the
+    [EPUB Publication Types Registry][types] document for more information.
 
     For more information about other fields as `description`, `format`,
     `coverage`, `publisher`, `relation`, `rights`, `subject`, etc. please see
@@ -43,13 +44,14 @@ defmodule BUPE do
 
     * `files` - List of XHTML files which will be included in the EPUB document
     * `nav` - List of maps which is required to create the EPUB Navigation
-      document. See `BUPE.Package.Nav` for more information.
+      document.
     * `css` - List of CSS files which will be included in the EPUB document
-    * `scripts` - List off JS files which will be included in the EPUB document
+    * `scripts` - List of JS files which will be included in the EPUB document
     * `logo` - Image for the cover page
 
     [meta]: http://www.idpf.org/epub/30/spec/epub30-publications.html#sec-package-metadata
     [datetime]: http://www.w3.org/TR/NOTE-datetime
+    [types]: http://idpf.github.io/epub-registries/types/
     """
     @enforce_keys [:title, :files, :nav]
     defstruct title: nil,
@@ -163,10 +165,12 @@ defmodule BUPE do
   @spec parse(Path.t) :: String.t | no_return
   def parse(epub_file), do: BUPE.Parser.parse(epub_file)
 
+  @doc false
   def build_config do
     # FIXME: This function should provides default values for %Config{}
   end
 
+  @doc false
   @spec modified_date(Config.t) :: Config.t
   def modified_date(config) do
     # TODO: If the user provides a value, we need to check if compatible with ISO8601
