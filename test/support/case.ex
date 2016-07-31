@@ -34,7 +34,7 @@ defmodule BUPETest.Case do
       language: "en",
       creator: "John Doe",
       publisher: "Sample",
-      date: "2016-06-23T06:00:00Z",
+      modified: "2016-06-23T06:00:00Z",
       unique_identifier: "EXAMPLE",
       identifier: "http://example.com/book/jdoe/1",
       files: Path.wildcard(fixtures_dir() <> "/*.xhtml"),

@@ -12,7 +12,37 @@
     <%= if config.contributor do %>
     <dc:contributor id="contributor"><%= config.contributor %></dc:contributor>
     <% end %>
-    <meta property="dcterms:modified"><%= config.date %></meta>
+    <%= if config.coverage do %>
+    <dc:coverage id="coverage"><%= config.coverage %></dc:coverage>
+    <% end %>
+    <%= if config.date do %>
+    <dc:date id="date"><%= config.date %></dc:date>
+    <% end %>
+    <%= if config.description do %>
+    <dc:description id="description"><%= config.description %></dc:description>
+    <% end %>
+    <%= if config.format do %>
+    <dc:format id="format"><%= config.format %></dc:format>
+    <% end %>
+    <%= if config.publisher do %>
+    <dc:publisher id="publisher"><%= config.publisher %></dc:publisher>
+    <% end %>
+    <%= if config.relation do %>
+    <dc:relation id="relation"><%= config.relation %></dc:relation>
+    <% end %>
+    <%= if config.rights do %>
+    <dc:rights id="rights"><%= config.rights %></dc:rights>
+    <% end %>
+    <%= if config.source do %>
+    <dc:source id="source"><%= config.source %></dc:source>
+    <% end %>
+    <%= if config.type do %>
+    <dc:type id="type"><%= config.type %></dc:type>
+    <% end %>
+    <%= if config.subject do %>
+    <dc:subject id="subject"><%= config.subject %></dc:subject>
+    <% end %>
+    <meta property="dcterms:modified"><%= config.modified %></meta>
   </metadata>
   <manifest>
     <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />
