@@ -66,6 +66,7 @@ defmodule BUPE.Builder do
     |> modified_date()
     |> check_identifier()
     |> check_files_extension()
+    |> check_unique_identifier()
   end
 
   defp generate_tmp_dir(config) do
@@ -182,6 +183,14 @@ defmodule BUPE.Builder do
     end
 
     config
+  end
+
+  defp check_unique_identifier(config) do
+    if config.unique_identifier do
+      config
+    else
+      Map.put(config, :unique_identifier, "BUPE")
+    end
   end
 
   defp invalid_files?(files, extensions) do

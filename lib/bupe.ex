@@ -102,21 +102,6 @@ defmodule BUPE do
       extras: Keyword.t
     }
 
-    # defmodule Nav do
-    #   @moduledoc false
-
-    #   @enforce_keys [:id, :label, :content]
-    #   defstruct id: nil,
-    #             label: nil,
-    #             content: nil
-
-    #   @type t :: %__MODULE__{
-    #     id: String.t,
-    #     label: String.t,
-    #     content: String.t
-    #   }
-    # end
-
     defmodule InvalidDate do
       defexception message: "date is invalid"
 
