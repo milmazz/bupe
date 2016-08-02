@@ -164,19 +164,4 @@ defmodule BUPE do
   """
   @spec parse(Path.t) :: String.t | no_return
   def parse(epub_file), do: BUPE.Parser.parse(epub_file)
-
-  @doc false
-  def build_config do
-    # FIXME: This function should provides default values for %Config{}
-  end
-
-  @doc false
-  @spec modified_date(Config.t) :: Config.t
-  def modified_date(config) do
-    # TODO: If the user provides a value, we need to check if compatible with ISO8601
-    unless config[:modified] do
-      dt = DateTime.utc_now() |> DateTime.to_iso8601()
-      Map.put(config, :date, dt)
-    end
-  end
 end

@@ -1,8 +1,14 @@
+<% if config.version == "3.0" do %>
 <!DOCTYPE html>
+<% else %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<% end %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%= config.language %>" lang="<%= config.language %>"
       xmlns:epub="http://www.idpf.org/2007/ops">
   <head>
+    <% if config.version == "3.0" do %>
     <meta charset="utf-8" />
+    <% end %>
     <title><%= config.title %></title>
     <meta name="generator" content="BUPE" />
     <link type="text/css" rel="stylesheet" href="css/stylesheet.css" />

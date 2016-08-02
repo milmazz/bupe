@@ -12,7 +12,7 @@ defmodule BUPETest do
   end
 
   test "invalid extension" do
-    file_path = fixtures_dir("bacon.xhtml")
+    file_path = fixtures_dir("30/bacon.xhtml")
     msg = "file #{file_path} does not have an '.epub' extension"
 
     assert_raise ArgumentError, msg, fn ->

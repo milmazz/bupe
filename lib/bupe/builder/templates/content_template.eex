@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://www.idpf.org/2007/opf"
          unique-identifier="<%= config.unique_identifier %>"
-         version="3.0" xml:lang="<%= config.language %>">
+         version="<%= config.version %>"
+         <%= if config.version == "3.0" do %>
+         xml:lang="<%= config.language %>"
+         <% end %>
+         >
   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
     <dc:identifier id="<%= config.unique_identifier %>"><%= config.identifier %></dc:identifier>
     <dc:title><%= config.title %></dc:title>
@@ -42,11 +46,15 @@
     <%= if config.subject do %>
     <dc:subject id="subject"><%= config.subject %></dc:subject>
     <% end %>
+    <%= if config.version == "3.0" do %>
     <meta property="dcterms:modified"><%= config.modified %></meta>
+    <% end %>
   </metadata>
   <manifest>
     <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />
+    <%= if config.version == "3.0" do %>
     <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav" />
+    <% end %>
     <item id="cover" href="title.xhtml" media-type="application/xhtml+xml" />
     <%= for node <- config.nav do %>
       <item id="<%= node.id %>" href="content/<%= node.content %>" media-type="<%= media_type(Path.extname(node.content)) %>" />
@@ -58,7 +66,9 @@
   </manifest>
   <spine toc="ncx">
     <itemref idref="cover" linear="no" />
+    <%= if config.version == "3.0" do %>
     <itemref idref="nav" />
+    <% end %>
     <%= for node <- config.nav do %>
       <itemref idref="<%= node.id %>" />
     <% end %>

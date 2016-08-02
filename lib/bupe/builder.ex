@@ -39,6 +39,7 @@ defmodule BUPE.Builder do
       File.rm!(output)
     end
 
+    config = normalize_config(config)
     tmp_dir = generate_tmp_dir(config)
 
     File.mkdir_p!(Path.join(tmp_dir, "OEBPS"))
@@ -48,7 +49,8 @@ defmodule BUPE.Builder do
     generate_mimetype(tmp_dir)
     generate_package(config, tmp_dir)
     generate_ncx(config, tmp_dir)
-    generate_nav(config, tmp_dir)
+    # nav file is not supported for EPUB v2
+    if config.version == "3.0", do: generate_nav(config, tmp_dir)
     generate_title(config, tmp_dir)
     generate_content(config, tmp_dir)
 
@@ -57,6 +59,13 @@ defmodule BUPE.Builder do
     File.rm_rf!(tmp_dir)
 
     epub_file
+  end
+
+  defp normalize_config(config) do
+    config
+    |> modified_date()
+    |> check_identifier()
+    |> check_files_extension()
   end
 
   defp generate_tmp_dir(config) do
@@ -139,6 +148,46 @@ defmodule BUPE.Builder do
   end
 
   ## Helpers
+  defp modified_date(config) do
+    if config.modified do
+      # TODO: Check if format is compatible with ISO8601
+      config
+    else
+      dt = DateTime.utc_now() |> Map.put(:microsecond, {0, 0}) |> DateTime.to_iso8601()
+      Map.put(config, :modified, dt)
+    end
+  end
+
+  defp check_identifier(config) do
+    if config.identifier do
+      config
+    else
+      identifier = "urn:uuid:#{uuid4()}"
+      Map.put(config, :identifier, identifier)
+    end
+  end
+
+  defp check_files_extension(config) do
+    case config.version do
+      "3.0" ->
+        if invalid_files?(config.files, [".xhtml"]) do
+          raise "XHTML Content Document file names should have the extension '.xhtml'."
+        end
+      "2.0" ->
+        if invalid_files?(config.files, [".html", ".htm", ".xhtml"]) do
+          raise "invalid file extension for HTML file, expected '.html', '.htm' or '.xhtml'"
+        end
+      _ ->
+        raise "invalid EPUB version, expected '2.0' or '3.0'"
+    end
+
+    config
+  end
+
+  defp invalid_files?(files, extensions) do
+    Enum.filter(files, &((Path.extname(&1) |> String.downcase()) in extensions)) != files
+  end
+
   defp files_to_add(path) do
     File.cd! path, fn ->
       meta = Path.wildcard("META-INF/*")
