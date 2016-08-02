@@ -141,12 +141,12 @@ defmodule BUPE do
   @doc """
   Generates an EPUB v3 document
   """
-  @spec build(Config.t, Path.t) :: String.t
+  @spec build(Config.t, Path.t) :: String.t | no_return
   def build(config, output), do: BUPE.Builder.save(config, output)
 
   @doc """
   Parse and EPUB v3 document
   """
-  @spec parse(Path.t) :: String.t | no_return
+  @spec parse(Path.t) :: Config.t | no_return
   def parse(epub_file), do: BUPE.Parser.parse(epub_file)
 end

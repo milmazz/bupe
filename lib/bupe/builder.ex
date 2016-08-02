@@ -30,7 +30,7 @@ defmodule BUPE.Builder do
   @doc """
   Generates an EPUB v3 document
   """
-  @spec save(BUPE.Config.t, Path.t) :: String.t
+  @spec save(BUPE.Config.t, Path.t) :: String.t | no_return
   def save(config, output) do
     output = Path.expand(output)
 

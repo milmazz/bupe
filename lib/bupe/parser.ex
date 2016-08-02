@@ -27,7 +27,7 @@ defmodule BUPE.Parser do
   @doc """
   EPUB v3 parser
   """
-  @spec parse(Path.t) :: String.t | no_return
+  @spec parse(Path.t) :: BUPE.Config.t | no_return
   def parse(epub_file) when is_binary(epub_file) do
     epub_file = Path.expand(epub_file)
 
