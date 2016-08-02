@@ -179,7 +179,7 @@ defmodule BUPE.Builder do
           raise "invalid file extension for HTML file, expected '.html', '.htm' or '.xhtml'"
         end
       _ ->
-        raise "invalid EPUB version, expected '2.0' or '3.0'"
+        raise BUPE.Config.InvalidVersion
     end
 
     config

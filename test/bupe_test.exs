@@ -42,4 +42,14 @@ defmodule BUPETest do
     assert epub_info.creator == config.creator
     assert epub_info.version == config.version
   end
+
+  test "invalid version" do
+    config = config()
+    config = Map.put(config, :version, "4.0")
+    msg = "invalid EPUB version, expected '2.0' or '3.0'"
+
+    assert_raise BUPE.Config.InvalidVersion, msg, fn ->
+      BUPE.Builder.save(config, "sample.epub")
+    end
+  end
 end

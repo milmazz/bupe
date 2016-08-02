@@ -128,6 +128,15 @@ defmodule BUPE do
 
       """
     end
+
+    defmodule InvalidVersion do
+      defexception message: "invalid EPUB version, expected '2.0' or '3.0'"
+
+      @moduledoc ~S"""
+      Error raised when the given EPUB version is invalid, must be "2.0" or "3.0"
+
+      """
+    end
   end
 
   @bupe_version Mix.Project.config[:version]
