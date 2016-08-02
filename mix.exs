@@ -46,8 +46,8 @@ defmodule BUPE.Mixfile do
       links: %{
         "GitHub" => "https://github.com/milmazz/bupe"
       },
-      maintainers: ["milmazz@gmail.com"],
-      licenses: []
+      maintainers: ["Milton Mazzarri"],
+      licenses: ["Apache 2.0"]
     ]
   end
 

@@ -8,7 +8,7 @@ First, add `bupe` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:bupe, github: "milmazz/bupe"}]
+  [{:bupe, "~> 0.1.0"}]
 end
 ```
 
