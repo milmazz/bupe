@@ -25,12 +25,13 @@ defmodule BUPE.Builder do
   ```
 
   """
+  alias BUPE.Config
   alias BUPE.Builder.Templates
 
   @doc """
   Generates an EPUB v3 document
   """
-  @spec save(BUPE.Config.t, Path.t) :: String.t | no_return
+  @spec save(Config.t, Path.t) :: String.t | no_return
   def save(config, output) do
     output = Path.expand(output)
 
@@ -149,49 +150,43 @@ defmodule BUPE.Builder do
   end
 
   ## Helpers
-  defp modified_date(config) do
-    if config.modified do
-      # TODO: Check if format is compatible with ISO8601
-      config
-    else
-      dt = DateTime.utc_now() |> Map.put(:microsecond, {0, 0}) |> DateTime.to_iso8601()
-      Map.put(config, :modified, dt)
-    end
+  defp modified_date(%{modified: nil} = config) do
+    dt = DateTime.utc_now() |> Map.put(:microsecond, {0, 0}) |> DateTime.to_iso8601()
+    Map.put(config, :modified, dt)
   end
 
-  defp check_identifier(config) do
-    if config.identifier do
-      config
-    else
-      identifier = "urn:uuid:#{uuid4()}"
-      Map.put(config, :identifier, identifier)
-    end
+  # TODO: Check if format is compatible with ISO8601
+  defp modified_date(config), do: config
+
+  defp check_identifier(%{identifier: nil} = config) do
+    identifier = "urn:uuid:#{uuid4()}"
+    Map.put(config, :identifier, identifier)
   end
+
+  defp check_identifier(config), do: config
 
   defp check_files_extension(config) do
-    case config.version do
-      "3.0" ->
-        if invalid_files?(config.files, [".xhtml"]) do
-          raise "XHTML Content Document file names should have the extension '.xhtml'."
-        end
-      "2.0" ->
-        if invalid_files?(config.files, [".html", ".htm", ".xhtml"]) do
-          raise "invalid file extension for HTML file, expected '.html', '.htm' or '.xhtml'"
-        end
-      _ ->
-        raise BUPE.Config.InvalidVersion
-    end
+    check_extension_name(config)
 
     config
   end
 
-  defp check_unique_identifier(config) do
-    if config.unique_identifier do
-      config
-    else
-      Map.put(config, :unique_identifier, "BUPE")
+  defp check_extension_name(%{version: "3.0"} = config) do
+    if invalid_files?(config.files, [".xhtml"]) do
+      raise Config.InvalidExtensionName, "XHTML Content Document file names should have the extension '.xhtml'."
     end
   end
+
+  defp check_extension_name(%{version: "2.0"} = config) do
+    if invalid_files?(config.files, [".html", ".htm", ".xhtml"]) do
+      raise Config.InvalidExtensionName, "invalid file extension for HTML file, expected '.html', '.htm' or '.xhtml'"
+    end
+  end
+
+  defp check_extension_name(_config), do: raise Config.InvalidVersion
+
+  defp check_unique_identifier(%{unique_identifier: nil} = config), do: Map.put(config, :unique_identifier, "BUPE")
+  defp check_unique_identifier(config), do: config
 
   defp invalid_files?(files, extensions) do
     Enum.filter(files, &((Path.extname(&1) |> String.downcase()) in extensions)) != files
