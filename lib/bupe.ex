@@ -53,6 +53,35 @@ defmodule BUPE do
     [datetime]: http://www.w3.org/TR/NOTE-datetime
     [types]: http://idpf.github.io/epub-registries/types/
     """
+
+    @type title       :: String.t
+    @type creator     :: String.t
+    @type contributor :: String.t
+
+    @type t :: %__MODULE__{
+                title: title,
+                creator: creator,
+                contributor: contributor,
+                date: String.t,
+                identifier: String.t,
+                language: String.t,
+                version: String.t,
+                unique_identifier: String.t,
+                source: String.t,
+                type: String.t,
+                modified: String.t,
+                description: String.t,
+                format: String.t,
+                coverage: String.t,
+                publisher: String.t,
+                relation: String.t,
+                rights: String.t,
+                subject: String.t,
+                files: [Path.t] | [{Path.t, Path.t}],
+                nav: list(),
+                logo: String.t,
+                extras: Keyword.t}
+
     @enforce_keys [:title, :files, :nav]
     defstruct title: nil,
               creator: nil,
@@ -77,30 +106,6 @@ defmodule BUPE do
               logo: nil,
               extras: []
 
-    @type t :: %__MODULE__{
-      title: String.t,
-      creator: String.t,
-      contributor: String.t,
-      date: String.t,
-      identifier: String.t,
-      language: String.t,
-      version: String.t,
-      unique_identifier: String.t,
-      source: String.t,
-      type: String.t,
-      modified: String.t,
-      description: String.t,
-      format: String.t,
-      coverage: String.t,
-      publisher: String.t,
-      relation: String.t,
-      rights: String.t,
-      subject: String.t,
-      files: [Path.t] | [{Path.t, Path.t}], # TODO: Verify this
-      nav: list(), # TODO: Verify this
-      logo: String.t,
-      extras: Keyword.t
-    }
 
     defmodule InvalidDate do
       defexception message: "date is invalid"
@@ -134,6 +139,20 @@ defmodule BUPE do
 
       @moduledoc ~S"""
       Error raised when the given EPUB version is invalid, must be "2.0" or "3.0"
+
+      """
+    end
+
+    defmodule InvalidExtensionName do
+      defexception message: "invalid file extension name"
+
+      @moduledoc ~S"""
+      Error raised when a file extension name is invalid:
+
+      * For EPUB 3 XHTML content document file names should have the extension
+        `.xhtml`.
+      * For EPUB 2, HTML file name should have the extension `.html`, `.htm` or
+        `.xhtml`
 
       """
     end
