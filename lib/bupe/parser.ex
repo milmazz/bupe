@@ -78,31 +78,25 @@ defmodule BUPE.Parser do
 
     {xml, _rest} = :xmerl_scan.string(String.to_char_list(content))
 
-    modified =
-      xpath_string("/package/metadata/meta[contains(@property, 'dcterms:modified')]/text()", xml)
-      |> parse_xml_text()
-    version = xpath_string("/package/@version", xml) |> parse_xml_attribute()
-    language = find_metadata(xml, "language") || xpath_string("/package/@xml:lang", xml) |> parse_xml_attribute()
-
     %BUPE.Config{
       title: find_metadata(xml, "title"),
-      language: language,
-      version: version,
+      language: find_language(xml),
+      version: find_version(xml),
       identifier: find_metadata(xml, "identifier"),
       creator: find_metadata(xml, "creator"),
       contributor: find_metadata(xml, "contributor"),
-      modified: modified,
-      date: nil,
-      unique_identifier: nil,
-      source: nil,
-      type: nil,
-      description: nil,
-      format: nil,
-      coverage: nil,
-      publisher: nil,
-      relation: nil,
-      rights: nil,
-      subject: nil,
+      modified: find_modified(xml),
+      date: find_metadata(xml, "date"),
+      unique_identifier: find_unique_identifier(xml),
+      source: find_metadata(xml, "source"),
+      type: find_metadata(xml, "type"),
+      description: find_metadata(xml, "description"),
+      format: find_metadata(xml, "format"),
+      coverage: find_metadata(xml, "coverage"),
+      publisher: find_metadata(xml, "publisher"),
+      relation: find_metadata(xml, "relation"),
+      rights: find_metadata(xml, "rights"),
+      subject: find_metadata(xml, "subject"),
       files: nil,
       nav: nil
     }
@@ -128,6 +122,23 @@ defmodule BUPE.Parser do
 
   defp xpath_string(xpath, xml) do
     :xmerl_xpath.string(xpath |> String.to_char_list(), xml)
+  end
+
+  defp find_modified(xml) do
+    xpath_string("/package/metadata/meta[contains(@property, 'dcterms:modified')]/text()", xml)
+    |> parse_xml_text()
+  end
+
+  defp find_version(xml) do
+    xpath_string("/package/@version", xml) |> parse_xml_attribute()
+  end
+
+  defp find_language(xml) do
+    find_metadata(xml, "language") || xpath_string("/package/@xml:lang", xml) |> parse_xml_attribute()
+  end
+
+  defp find_unique_identifier(xml) do
+    xpath_string("/package/@unique-identifier", xml) |> parse_xml_attribute()
   end
 
   defp parse_xml_text([{:xmlText, _parents, _pos, _language, value, :text}]), do: to_string(value)
