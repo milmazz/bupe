@@ -47,6 +47,7 @@ defmodule BUPE do
       document.
     * `styles` - List of CSS files which will be included in the EPUB document
     * `scripts` - List of JS files which will be included in the EPUB document
+    * `images` - List of images which will be included in the EPUB document
     * `logo` - Image for the cover page
 
     [meta]: http://www.idpf.org/epub/30/spec/epub30-publications.html#sec-package-metadata
@@ -81,6 +82,7 @@ defmodule BUPE do
                 nav: list(),
                 styles: [Path.t],
                 scripts: [Path.t],
+                images: [Path.t],
                 logo: String.t,
                 extras: Keyword.t}
 
@@ -107,6 +109,7 @@ defmodule BUPE do
               nav: [],
               styles: [],
               scripts: [],
+              images: [],
               logo: nil,
               extras: []
 

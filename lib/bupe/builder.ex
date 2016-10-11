@@ -135,9 +135,9 @@ defmodule BUPE.Builder do
   end
 
   defp copy_custom_assets(config, output) do
-    assets_dir = "#{output}/OEBPS/assets/"
+    assets_dir = "#{output}/OEBPS/content/assets/"
     File.mkdir_p(assets_dir)
-    copy_files(config.styles ++ config.scripts, assets_dir)
+    copy_files(config.styles ++ config.scripts ++ config.images, assets_dir)
   end
 
   defp generate_content(config, output) do

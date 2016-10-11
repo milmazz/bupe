@@ -7,7 +7,7 @@
     <meta name="generator" content="BUPE" />
     <link type="text/css" rel="stylesheet" href="css/stylesheet.css" />
     <%= for style <- config.styles do %>
-      <link type="text/css" rel="stylesheet" href="assets/<%= Path.basename(style) %>" />
+      <link type="text/css" rel="stylesheet" href="content/assets/<%= Path.basename(style) %>" />
     <% end %>
   </head>
   <body>

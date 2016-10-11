@@ -61,13 +61,13 @@
     <% end %>
     <item id="css" href="css/stylesheet.css" media-type="text/css"/>
     <%= for {style, idx} <- Enum.with_index(config.styles) do %>
-      <item id="styles<%= idx %>" href="assets/<%= Path.basename(style) %>" media-type="text/css"/>
+      <item id="styles<%= idx %>" href="content/assets/<%= Path.basename(style) %>" media-type="text/css"/>
     <% end %>
     <%= for {script, idx} <- Enum.with_index(config.scripts) do %>
-      <item id="scripts<%= idx %>" href="assets/<%= Path.basename(script) %>" media-type="text/javascript"/>
+      <item id="scripts<%= idx %>" href="content/assets/<%= Path.basename(script) %>" media-type="text/javascript"/>
     <% end %>
     <%= if config.logo do %>
-      <item id="cover-image" href="assets/<%= config.logo %>" media-type="<% media_type(Path.extname(config.logo)) %>" />
+      <item id="cover-image" href="content/assets/<%= config.logo %>" media-type="<% media_type(Path.extname(config.logo)) %>" />
     <% end %>
   </manifest>
   <spine toc="ncx">
