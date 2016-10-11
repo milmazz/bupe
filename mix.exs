@@ -3,7 +3,7 @@ defmodule BUPE.Mixfile do
 
   def project do
     [app: :bupe,
-     version: "0.1.0",
+     version: "0.2.0-dev",
      name: "BUPE",
      source_url: "https://github.com/milmazz/bupe",
      homepage_url: "https://github.com/milmazz/bupe",
@@ -38,7 +38,7 @@ defmodule BUPE.Mixfile do
   end
 
   defp docs do
-    [extras: ["README.md"], main: "README"]
+    [extras: ["README.md"], main: "readme"]
   end
 
   defp package do
