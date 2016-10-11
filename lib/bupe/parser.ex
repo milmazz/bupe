@@ -11,7 +11,7 @@ defmodule BUPE.Parser do
         title: "Sample",
         creator: "John Doe",
         unique_identifier: "EXAMPLE",
-        files: ["bacon.xhtml", "ham.xhtml", "egg.xhtml"],
+        pages: ["bacon.xhtml", "ham.xhtml", "egg.xhtml"],
         nav: [
           %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.xhtml"},
           %{id: "ode-to-ham", label: "2. Ode to Ham", content: "ham.xhtml"},
@@ -95,7 +95,7 @@ defmodule BUPE.Parser do
       relation: find_metadata(xml, "relation"),
       rights: find_metadata(xml, "rights"),
       subject: find_metadata(xml, "subject"),
-      files: nil,
+      pages: nil,
       nav: nil
     }
   end

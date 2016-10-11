@@ -24,8 +24,7 @@ defmodule BUPETest do
     msg = "invalid mimetype, must be 'application/epub+zip'"
 
     assert_raise RuntimeError, msg, fn ->
-      fixtures_dir("invalid_mimetype.epub")
-      |> BUPE.parse()
+      fixtures_dir("invalid_mimetype.epub") |> BUPE.parse()
     end
   end
 

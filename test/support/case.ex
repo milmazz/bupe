@@ -37,7 +37,7 @@ defmodule BUPETest.Case do
       modified: "2016-06-23T06:00:00Z",
       unique_identifier: "EXAMPLE",
       identifier: "http://example.com/book/jdoe/1",
-      files: Path.wildcard(fixtures_dir() <> "/30/*.xhtml"),
+      pages: Path.wildcard(fixtures_dir() <> "/30/*.xhtml"),
       nav: [
         %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.xhtml"},
         %{id: "ode-to-ham", label: "2. Ode to Ham", content: "ham.xhtml"},

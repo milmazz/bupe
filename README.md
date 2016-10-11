@@ -29,7 +29,7 @@ iex> config = %BUPE.Config{
 ...>   title: "Sample",
 ...>   creator: "John Doe",
 ...>   unique_identifier: "EXAMPLE",
-...>   files: ["bacon.xhtml", "ham.xhtml", "egg.xhtml"],
+...>   pages: ["bacon.xhtml", "ham.xhtml", "egg.xhtml"],
 ...>   nav: [
 ...>     %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.xhtml"},
 ...>     %{id: "ode-to-ham", label: "2. Ode to Ham", content: "ham.xhtml"},
@@ -51,7 +51,7 @@ iex> BUPE.parse("sample.epub")
   title: "Sample",
   creator: "John Doe",
   unique_identifier: "EXAMPLE",
-  files: ["bacon.xhtml", "ham.xhtml", "egg.xhtml"],
+  pages: ["bacon.xhtml", "ham.xhtml", "egg.xhtml"],
   nav: [
     %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.xhtml"},
     %{id: "ode-to-ham", label: "2. Ode to Ham", content: "ham.xhtml"},

@@ -13,7 +13,7 @@ defmodule BUPE.Builder do
     date: "2016-06-23T06:00:00Z",
     unique_identifier: "EXAMPLE",
     identifier: "http://example.com/book/jdoe/1",
-    files: ["bacon.xhtml", "egg.xhtml", "ham.xhtml"],
+    pages: ["bacon.xhtml", "egg.xhtml", "ham.xhtml"],
     nav: [
       %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.xhtml"},
       %{id: "ode-to-ham", label: "2. Ode to Ham", content: "ham.xhtml"},
@@ -143,7 +143,7 @@ defmodule BUPE.Builder do
   defp generate_content(config, output) do
       output = Path.join(output, "OEBPS/content")
       File.mkdir! output
-      copy_files(config.files, output)
+      copy_files(config.pages, output)
   end
 
   defp generate_epub(input, output) do
@@ -179,13 +179,13 @@ defmodule BUPE.Builder do
   end
 
   defp check_extension_name(%{version: "3.0"} = config) do
-    if invalid_files?(config.files, [".xhtml"]) do
+    if invalid_files?(config.pages, [".xhtml"]) do
       raise Config.InvalidExtensionName, "XHTML Content Document file names should have the extension '.xhtml'."
     end
   end
 
   defp check_extension_name(%{version: "2.0"} = config) do
-    if invalid_files?(config.files, [".html", ".htm", ".xhtml"]) do
+    if invalid_files?(config.pages, [".html", ".htm", ".xhtml"]) do
       raise Config.InvalidExtensionName, "invalid file extension for HTML file, expected '.html', '.htm' or '.xhtml'"
     end
   end

@@ -42,7 +42,7 @@ defmodule BUPE do
 
     ## Support configuration
 
-    * `files` - List of XHTML files which will be included in the EPUB document
+    * `pages` - List of XHTML files which will be included in the EPUB document
     * `nav` - List of maps which is required to create the EPUB Navigation
       document.
     * `styles` - List of CSS files which will be included in the EPUB document
@@ -77,14 +77,14 @@ defmodule BUPE do
                 relation: String.t,
                 rights: String.t,
                 subject: String.t,
-                files: [Path.t] | [{Path.t, Path.t}],
+                pages: [Path.t] | [{Path.t, Path.t}],
                 nav: list(),
                 styles: [Path.t],
                 scripts: [Path.t],
                 logo: String.t,
                 extras: Keyword.t}
 
-    @enforce_keys [:title, :files, :nav]
+    @enforce_keys [:title, :pages, :nav]
     defstruct title: nil,
               creator: nil,
               contributor: nil,
@@ -103,7 +103,7 @@ defmodule BUPE do
               relation: nil,
               rights: nil,
               subject: nil,
-              files: [],
+              pages: [],
               nav: [],
               styles: [],
               scripts: [],
