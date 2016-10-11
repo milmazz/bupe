@@ -57,9 +57,15 @@
     <% end %>
     <item id="cover" href="title.xhtml" media-type="application/xhtml+xml" />
     <%= for node <- config.nav do %>
-      <item id="<%= node.id %>" href="content/<%= node.content %>" media-type="<%= media_type(Path.extname(node.content)) %>" />
+      <item id="<%= node.id %>" href="content/<%= node.content %>" media-type="<%= media_type(Path.extname(node.content)) %>" properties="scripted" />
     <% end %>
     <item id="css" href="css/stylesheet.css" media-type="text/css"/>
+    <%= for {style, idx} <- Enum.with_index(config.styles) do %>
+      <item id="styles<%= idx %>" href="assets/<%= Path.basename(style) %>" media-type="text/css"/>
+    <% end %>
+    <%= for {script, idx} <- Enum.with_index(config.scripts) do %>
+      <item id="scripts<%= idx %>" href="assets/<%= Path.basename(script) %>" media-type="text/javascript"/>
+    <% end %>
     <%= if config.logo do %>
       <item id="cover-image" href="assets/<%= config.logo %>" media-type="<% media_type(Path.extname(config.logo)) %>" />
     <% end %>

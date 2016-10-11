@@ -45,7 +45,7 @@ defmodule BUPE do
     * `files` - List of XHTML files which will be included in the EPUB document
     * `nav` - List of maps which is required to create the EPUB Navigation
       document.
-    * `css` - List of CSS files which will be included in the EPUB document
+    * `styles` - List of CSS files which will be included in the EPUB document
     * `scripts` - List of JS files which will be included in the EPUB document
     * `logo` - Image for the cover page
 
@@ -79,6 +79,8 @@ defmodule BUPE do
                 subject: String.t,
                 files: [Path.t] | [{Path.t, Path.t}],
                 nav: list(),
+                styles: [Path.t],
+                scripts: [Path.t],
                 logo: String.t,
                 extras: Keyword.t}
 
@@ -103,9 +105,10 @@ defmodule BUPE do
               subject: nil,
               files: [],
               nav: [],
+              styles: [],
+              scripts: [],
               logo: nil,
               extras: []
-
 
     defmodule InvalidDate do
       defexception message: "date is invalid"

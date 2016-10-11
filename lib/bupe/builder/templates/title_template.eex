@@ -12,6 +12,9 @@
     <title><%= config.title %></title>
     <meta name="generator" content="BUPE" />
     <link type="text/css" rel="stylesheet" href="css/stylesheet.css" />
+    <%= for style <- config.styles do %>
+      <link type="text/css" rel="stylesheet" href="assets/<%= Path.basename(style) %>" />
+    <% end %>
   </head>
   <body>
     <h1><%= config.title %></h1>

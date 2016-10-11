@@ -54,6 +54,7 @@ defmodule BUPE.Builder do
     if config.version == "3.0", do: generate_nav(config, tmp_dir)
     generate_title(config, tmp_dir)
     generate_content(config, tmp_dir)
+    copy_custom_assets(config, tmp_dir)
 
     {:ok, epub_file} = generate_epub(tmp_dir, output)
 
@@ -133,6 +134,12 @@ defmodule BUPE.Builder do
     File.write!("#{output}/OEBPS/title.xhtml", content)
   end
 
+  defp copy_custom_assets(config, output) do
+    assets_dir = "#{output}/OEBPS/assets/"
+    File.mkdir_p(assets_dir)
+    copy_files(config.styles ++ config.scripts, assets_dir)
+  end
+
   defp generate_content(config, output) do
       output = Path.join(output, "OEBPS/content")
       File.mkdir! output
@@ -144,7 +151,7 @@ defmodule BUPE.Builder do
 
     {:ok, zip_path} = :zip.create(target_path,
                                   files_to_add(input),
-                                  compress: ['.css', '.html', '.xhtml', '.ncx',
+                                  compress: ['.css', '.js', '.html', '.xhtml', '.ncx',
                                              '.opf', '.jpg', '.png', '.xml'])
     {:ok, zip_path}
   end
