@@ -147,7 +147,7 @@ defmodule BUPE.Builder do
   end
 
   defp generate_epub(input, output) do
-    target_path = Path.expand(output) |> String.to_char_list()
+    target_path = output |> Path.expand() |> String.to_char_list()
 
     {:ok, zip_path} = :zip.create(target_path,
                                   files_to_add(input),
@@ -231,7 +231,7 @@ defmodule BUPE.Builder do
   defp generate_assets(source, output) do
     Enum.each source, fn({pattern, dir}) ->
       output = "#{output}/#{dir}"
-      File.mkdir output
+      File.mkdir(output)
 
       copy_files(Path.wildcard(pattern), output)
     end

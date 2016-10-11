@@ -38,19 +38,19 @@ defmodule BUPE.Parser do
   end
 
   defp check_file(epub_file) do
-    unless File.exists? epub_file do
+    unless File.exists?(epub_file) do
       raise ArgumentError, "file #{epub_file} does not exists"
     end
   end
 
   defp check_extension(epub_file) do
-    unless Path.extname(epub_file) |> String.downcase() == ".epub" do
+    unless epub_file |> Path.extname() |> String.downcase() == ".epub" do
       raise ArgumentError, "file #{epub_file} does not have an '.epub' extension"
     end
   end
 
   defp check_mimetype(epub_file) do
-    unless extract_content(epub_file, ["mimetype"]) |> mimetype_valid? do
+    unless epub_file |> extract_content(["mimetype"]) |> mimetype_valid?() do
       raise "invalid mimetype, must be 'application/epub+zip'"
     end
   end
@@ -61,9 +61,7 @@ defmodule BUPE.Parser do
   defp find_rootfile(epub_file) do
     container = 'META-INF/container.xml'
     [{^container, content}] = extract_content(epub_file, [container])
-    captures =
-      ~r/<rootfile\s.*full-path="(?<full_path>[^"]+)"\s/
-      |> Regex.named_captures(content)
+    captures = Regex.named_captures(~r/<rootfile\s.*full-path="(?<full_path>[^"]+)"\s/, content)
 
     unless captures do
       raise "could not find rootfile in META-INF/container.xml"
@@ -73,7 +71,7 @@ defmodule BUPE.Parser do
   end
 
   defp extract_info(root_file, epub_file) do
-    root_file = root_file |> String.to_char_list()
+    root_file = String.to_char_list(root_file)
     [{^root_file, content}] = extract_content(epub_file, [root_file])
 
     {xml, _rest} = :xmerl_scan.string(String.to_char_list(content))
@@ -103,7 +101,7 @@ defmodule BUPE.Parser do
   end
 
   defp extract_content(epub_file, files) when is_list(files) do
-    archive = epub_file |> String.to_char_list()
+    archive = String.to_char_list(epub_file)
     file_list = Enum.into files, [], &(if is_list(&1), do: &1, else: String.to_char_list(&1))
 
     case :zip.extract(archive, [{:file_list, file_list}, :memory]) do
@@ -115,22 +113,27 @@ defmodule BUPE.Parser do
   end
 
   defp find_metadata(xml, meta) do
-    xpath = "/package/metadata/dc:#{meta}/text()"
-
-    xpath_string(xpath, xml) |> parse_xml_text()
+    "/package/metadata/dc:#{meta}/text()"
+    |> xpath_string(xml)
+    |> parse_xml_text()
   end
 
   defp xpath_string(xpath, xml) do
-    :xmerl_xpath.string(xpath |> String.to_char_list(), xml)
+    xpath
+    |> String.to_char_list()
+    |> :xmerl_xpath.string(xml)
   end
 
   defp find_modified(xml) do
-    xpath_string("/package/metadata/meta[contains(@property, 'dcterms:modified')]/text()", xml)
+    "/package/metadata/meta[contains(@property, 'dcterms:modified')]/text()"
+    |> xpath_string(xml)
     |> parse_xml_text()
   end
 
   defp find_version(xml) do
-    xpath_string("/package/@version", xml) |> parse_xml_attribute()
+    "/package/@version"
+    |> xpath_string(xml)
+    |> parse_xml_attribute()
   end
 
   defp find_language(xml) do
@@ -138,7 +141,9 @@ defmodule BUPE.Parser do
   end
 
   defp find_unique_identifier(xml) do
-    xpath_string("/package/@unique-identifier", xml) |> parse_xml_attribute()
+    "/package/@unique-identifier"
+    |> xpath_string(xml)
+    |> parse_xml_attribute()
   end
 
   defp parse_xml_text([{:xmlText, _parents, _pos, _language, value, :text}]), do: to_string(value)
