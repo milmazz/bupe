@@ -3,7 +3,7 @@ defmodule BUPE.Mixfile do
 
   def project do
     [app: :bupe,
-     version: "0.2.0-dev",
+     version: "0.2.0",
      name: "BUPE",
      source_url: "https://github.com/milmazz/bupe",
      homepage_url: "https://github.com/milmazz/bupe",
