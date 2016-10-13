@@ -3,9 +3,10 @@ defmodule BUPE.Builder.Templates do
 
   require EEx
 
-  Mix.Project.config[:app]
-  |> Application.app_dir("priv/bupe/builder/templates/media-types.txt")
-  |> File.stream!()
+  @media_types File.read!(Path.expand("templates/media-types.txt", __DIR__))
+
+  @media_types
+  |> String.split("\n", trim: true)
   |> Enum.each(fn(line) ->
        [extension, media] = line |> String.trim() |> String.split(",")
 

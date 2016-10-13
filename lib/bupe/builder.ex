@@ -28,6 +28,10 @@ defmodule BUPE.Builder do
   alias BUPE.Config
   alias BUPE.Builder.Templates
 
+  @container_template File.read!(Path.expand("builder/templates/assets/container.xml", __DIR__))
+  @display_options File.read!(Path.expand("builder/templates/assets/com.apple.ibooks.display-options.xml", __DIR__))
+  @stylesheet File.read!(Path.expand("builder/templates/css/stylesheet.css", __DIR__))
+
   @doc """
   Generates an EPUB v3 document
   """
@@ -45,7 +49,7 @@ defmodule BUPE.Builder do
 
     File.mkdir_p!(Path.join(tmp_dir, "OEBPS"))
 
-    assets() |> assets_path() |> generate_assets(tmp_dir)
+    generate_assets(assets(), tmp_dir)
 
     generate_mimetype(tmp_dir)
     generate_package(config, tmp_dir)
@@ -217,23 +221,20 @@ defmodule BUPE.Builder do
 
   defp assets do
     [
-      {"css/*.css", "OEBPS/css"},
-      {"assets/*.xml", "META-INF"}
+      [content: @stylesheet, dir: "OEBPS/css", filename: "stylesheet.css"],
+      [content: @container_template, dir: "META-INF", filename: "container.xml"],
+      [content: @display_options, dir: "META-INF", filename: "com.apple.ibooks.display-options.xml"]
     ]
   end
 
-  defp assets_path(patterns) do
-    Enum.into(patterns, [], fn {pattern, dir} ->
-      {Application.app_dir(:bupe, "priv/bupe/builder/templates/#{pattern}"), dir}
-    end)
-  end
-
-  defp generate_assets(source, output) do
-    Enum.each source, fn({pattern, dir}) ->
-      output = "#{output}/#{dir}"
+  defp generate_assets(assets, output) do
+    Enum.each assets, fn(asset) ->
+      output = "#{output}/#{asset[:dir]}"
       File.mkdir(output)
 
-      copy_files(Path.wildcard(pattern), output)
+      output
+      |> Path.join(asset[:filename])
+      |> File.write!(asset[:content])
     end
   end
 
