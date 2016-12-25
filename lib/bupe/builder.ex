@@ -151,7 +151,7 @@ defmodule BUPE.Builder do
   end
 
   defp generate_epub(input, output) do
-    target_path = output |> Path.expand() |> String.to_char_list()
+    target_path = output |> Path.expand() |> String.to_charlist()
 
     {:ok, zip_path} = :zip.create(target_path,
                                   files_to_add(input),
@@ -211,7 +211,7 @@ defmodule BUPE.Builder do
       Enum.reduce meta ++ oebps ++ ["mimetype"], [], fn(f, acc) ->
         case File.read(f) do
           {:ok, bin} ->
-            [{f |> String.to_char_list, bin}|acc]
+            [{f |> String.to_charlist, bin}|acc]
           {:error, _} ->
             acc
         end

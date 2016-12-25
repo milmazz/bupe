@@ -71,10 +71,10 @@ defmodule BUPE.Parser do
   end
 
   defp extract_info(root_file, epub_file) do
-    root_file = String.to_char_list(root_file)
+    root_file = String.to_charlist(root_file)
     [{^root_file, content}] = extract_content(epub_file, [root_file])
 
-    {xml, _rest} = :xmerl_scan.string(String.to_char_list(content))
+    {xml, _rest} = :xmerl_scan.string(String.to_charlist(content))
 
     %BUPE.Config{
       title: find_metadata(xml, "title"),
@@ -101,8 +101,8 @@ defmodule BUPE.Parser do
   end
 
   defp extract_content(epub_file, files) when is_list(files) do
-    archive = String.to_char_list(epub_file)
-    file_list = Enum.into files, [], &(if is_list(&1), do: &1, else: String.to_char_list(&1))
+    archive = String.to_charlist(epub_file)
+    file_list = Enum.into files, [], &(if is_list(&1), do: &1, else: String.to_charlist(&1))
 
     case :zip.extract(archive, [{:file_list, file_list}, :memory]) do
       {:ok, content} ->
@@ -120,7 +120,7 @@ defmodule BUPE.Parser do
 
   defp xpath_string(xpath, xml) do
     xpath
-    |> String.to_char_list()
+    |> String.to_charlist()
     |> :xmerl_xpath.string(xml)
   end
 
