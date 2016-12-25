@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0
+
+ * Enhancements
+   * Allow BUPE as dependency in escripts projects
+ * Fixes
+   * Include reference to images in the OPF manifest
+
 ## v0.2.0
 
   * Enhancements
