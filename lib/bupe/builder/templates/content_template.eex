@@ -66,6 +66,10 @@
     <%= for {script, idx} <- Enum.with_index(config.scripts) do %>
       <item id="scripts<%= idx %>" href="content/assets/<%= Path.basename(script) %>" media-type="text/javascript"/>
     <% end %>
+    <%= for {image, idx} <- Enum.with_index(config.images) do %>
+      <item id="image<%= idx %>" href="content/assets/<%= Path.basename(image) %>" media-type="<%= media_type(Path.extname(image)) %>"/>
+    <% end %>
+
     <%= if config.logo do %>
       <item id="cover-image" href="content/assets/<%= config.logo %>" media-type="<% media_type(Path.extname(config.logo)) %>" />
     <% end %>
