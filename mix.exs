@@ -1,9 +1,11 @@
 defmodule BUPE.Mixfile do
   use Mix.Project
 
+  @version "0.3.1-dev"
+
   def project do
     [app: :bupe,
-     version: "0.3.0",
+     version: @version,
      name: "BUPE",
      source_url: "https://github.com/milmazz/bupe",
      homepage_url: "https://github.com/milmazz/bupe",
