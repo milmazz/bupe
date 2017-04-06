@@ -49,6 +49,7 @@ defmodule BUPE do
     * `scripts` - List of JS files which will be included in the EPUB document
     * `images` - List of images which will be included in the EPUB document, all
       the images will be located under the `assets` directory.
+    * `cover` - Specifies if you want a default cover page, default: true
     * `logo` - Image for the cover page
 
     [meta]: http://www.idpf.org/epub/30/spec/epub30-publications.html#sec-package-metadata
@@ -84,6 +85,7 @@ defmodule BUPE do
                 styles: [Path.t],
                 scripts: [Path.t],
                 images: [Path.t],
+                cover: boolean,
                 logo: String.t,
                 extras: Keyword.t}
 
@@ -111,6 +113,7 @@ defmodule BUPE do
               styles: [],
               scripts: [],
               images: [],
+              cover: true,
               logo: nil,
               extras: []
 

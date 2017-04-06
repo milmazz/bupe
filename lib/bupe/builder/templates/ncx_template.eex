@@ -13,14 +13,16 @@
     <text><%= config.title %></text>
   </docTitle>
   <navMap>
-    <navPoint id="navpoint-1" playOrder="1">
+    <%= if config.cover do %>
+    <navPoint id="navpoint-1" playOrder="0">
       <navLabel>
         <text>Book cover</text>
       </navLabel>
       <content src="title.xhtml" />
     </navPoint>
+    <% end %>
     <%= for {node, index} <- Enum.with_index(config.nav) do %>
-    <navPoint id="<%= node.id %>" playOrder="<%= index + 2 %>">
+    <navPoint id="<%= node.id %>" playOrder="<%= index + 1 %>">
       <navLabel>
         <text><%= node.label %></text>
       </navLabel>

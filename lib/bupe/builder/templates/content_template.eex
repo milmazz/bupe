@@ -55,7 +55,9 @@
     <%= if config.version == "3.0" do %>
     <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav" />
     <% end %>
+    <%= if config.cover do %>
     <item id="cover" href="title.xhtml" media-type="application/xhtml+xml" />
+    <% end %>
     <%= for node <- config.nav do %>
       <item id="<%= node.id %>" href="content/<%= node.content %>" media-type="<%= media_type(Path.extname(node.content)) %>" properties="scripted" />
     <% end %>

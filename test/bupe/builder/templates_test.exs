@@ -18,9 +18,9 @@ defmodule BUPE.Builder.TemplatesTest do
 
     content = Templates.ncx_template(config)
 
-    assert content =~ ~r{<navPoint id="ode-to-bacon" playOrder="2">}
-    assert content =~ ~r{<navPoint id="ode-to-ham" playOrder="3">}
-    assert content =~ ~r{<navPoint id="ode-to-egg" playOrder="4">}
+    assert content =~ ~r{<navPoint id="ode-to-bacon" playOrder="1">}
+    assert content =~ ~r{<navPoint id="ode-to-ham" playOrder="2">}
+    assert content =~ ~r{<navPoint id="ode-to-egg" playOrder="3">}
 
     assert content =~ ~r{<content src="content/bacon.xhtml" />}
     assert content =~ ~r{<content src="content/ham.xhtml" />}

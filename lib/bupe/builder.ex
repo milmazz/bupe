@@ -56,7 +56,7 @@ defmodule BUPE.Builder do
     generate_ncx(config, tmp_dir)
     # nav file is not supported for EPUB v2
     if config.version == "3.0", do: generate_nav(config, tmp_dir)
-    generate_title(config, tmp_dir)
+    if config.cover, do: generate_title(config, tmp_dir)
     generate_content(config, tmp_dir)
     copy_custom_assets(config, tmp_dir)
 
