@@ -37,6 +37,7 @@ defmodule BUPE.Builder.TemplatesTest do
 
   test "package template" do
     config = config()
+    config = Map.put(config, :modified, "2016-06-23T06:00:00Z")
 
     content = Templates.content_template(config)
 

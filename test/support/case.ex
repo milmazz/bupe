@@ -34,9 +34,7 @@ defmodule BUPETest.Case do
       language: "en",
       creator: "John Doe",
       publisher: "Sample",
-      modified: "2016-06-23T06:00:00Z",
       unique_identifier: "EXAMPLE",
-      identifier: "http://example.com/book/jdoe/1",
       pages: Path.wildcard(fixtures_dir() <> "/30/*.xhtml"),
       nav: [
         %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.xhtml"},
