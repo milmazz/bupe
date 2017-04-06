@@ -35,13 +35,38 @@ defmodule BUPE.BuilderTest do
     unzip_content(output)
 
     # cover page should not be listed in the NCX file
-    ncx_template = tmp_dir() |> Path.join("OEBPS/toc.ncx") |> File.read()
+    ncx_template = tmp_dir() |> Path.join("OEBPS/toc.ncx") |> File.read!()
     refute ncx_template =~ ~r{<content src="title.xhtml" />}
 
     # cover page should not be listed in the OPF
-    opf_template = tmp_dir() |> Path.join("OEBPS/content.opf") |> File.read()
+    opf_template = tmp_dir() |> Path.join("OEBPS/content.opf") |> File.read!()
     refute opf_template =~ ~r{<item id="cover" href="title.xhtml" media-type="application/xhtml+xml" />}
 
     refute tmp_dir() |> Path.join("OEBPS/title.xhtml") |> File.exists?()
+  end
+
+  test "should raise exception for invalid extension in EPUB v2" do
+    config = config()
+    msg = "invalid file extension for HTML file, expected '.html', '.htm' or '.xhtml'"
+
+    config =
+      config
+      |> Map.put(:pages, ["page.png"])
+      |> Map.put(:version, "2.0")
+
+    assert_raise BUPE.Config.InvalidExtensionName, msg, fn ->
+      BUPE.build(config, "sample.epub")
+    end
+  end
+
+  test "should raise exception for invalid extension in EPUB v3" do
+    config = config()
+    msg = "XHTML Content Document file names should have the extension '.xhtml'."
+
+    config = Map.put(config, :pages, ["page.png"])
+
+    assert_raise BUPE.Config.InvalidExtensionName, msg, fn ->
+      BUPE.build(config, "sample.epub")
+    end
   end
 end
