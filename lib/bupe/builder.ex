@@ -21,7 +21,7 @@ defmodule BUPE.Builder do
     ]
   })
 
-  BUPE.Builder.save(epub, "example.epub")
+  BUPE.Builder.save(config, "example.epub")
   ```
 
   """

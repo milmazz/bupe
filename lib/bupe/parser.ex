@@ -34,7 +34,7 @@ defmodule BUPE.Parser do
     check_file(epub_file)
     check_extension(epub_file)
     check_mimetype(epub_file)
-    find_rootfile(epub_file) |> extract_info(epub_file)
+    epub_file |> find_rootfile() |> extract_info(epub_file)
   end
 
   defp check_file(epub_file) do
