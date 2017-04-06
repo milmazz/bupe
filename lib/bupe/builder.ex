@@ -25,6 +25,7 @@ defmodule BUPE.Builder do
   ```
 
   """
+  @mimetype "application/epub+zip"
   alias BUPE.Config
   alias BUPE.Builder.Templates
 
@@ -51,7 +52,6 @@ defmodule BUPE.Builder do
 
     generate_assets(assets(), tmp_dir)
 
-    generate_mimetype(tmp_dir)
     generate_package(config, tmp_dir)
     generate_ncx(config, tmp_dir)
     # nav file is not supported for EPUB v2
@@ -64,7 +64,7 @@ defmodule BUPE.Builder do
 
     File.rm_rf!(tmp_dir)
 
-    epub_file
+    Path.relative_to_cwd(epub_file)
   end
 
   defp normalize_config(config) do
@@ -85,11 +85,6 @@ defmodule BUPE.Builder do
     end
 
     tmp_dir
-  end
-
-  defp generate_mimetype(output) do
-    content = "application/epub+zip"
-    File.write("#{output}/mimetype", content)
   end
 
   # Package definition builder.
@@ -151,13 +146,10 @@ defmodule BUPE.Builder do
   end
 
   defp generate_epub(input, output) do
-    target_path = output |> Path.expand() |> String.to_charlist()
-
-    {:ok, zip_path} = :zip.create(target_path,
-                                  files_to_add(input),
-                                  compress: ['.css', '.js', '.html', '.xhtml', '.ncx',
-                                             '.opf', '.jpg', '.png', '.xml'])
-    {:ok, zip_path}
+    :zip.create(String.to_charlist(output),
+                [{'mimetype', @mimetype} | files_to_add(input)],
+                compress: ['.css', '.js', '.html', '.xhtml', '.ncx',
+                            '.opf', '.jpg', '.png', '.xml'])
   end
 
   ## Helpers
@@ -204,17 +196,12 @@ defmodule BUPE.Builder do
   end
 
   defp files_to_add(path) do
-    File.cd! path, fn ->
-      meta = Path.wildcard("META-INF/*")
-      oebps = Path.wildcard("OEBPS/**/*")
-
-      Enum.reduce meta ++ oebps ++ ["mimetype"], [], fn(f, acc) ->
-        case File.read(f) do
-          {:ok, bin} ->
-            [{f |> String.to_charlist, bin}|acc]
-          {:error, _} ->
-            acc
-        end
+    Enum.reduce Path.wildcard(Path.join(path, "**/*")), [], fn(file, acc) ->
+      case File.read(file) do
+        {:ok, bin} ->
+          [{file |> Path.relative_to(path) |> String.to_charlist(), bin} | acc]
+        {:error, _} ->
+          acc
       end
     end
   end
