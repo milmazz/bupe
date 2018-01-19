@@ -1,5 +1,5 @@
 defmodule BUPE.BuilderTest do
-  use BUPETest.Case, async: true
+  use BUPETest.Case, async: false
 
   defp unzip_content(output) do
     output |> String.to_charlist() |> :zip.unzip(cwd: tmp_dir())

@@ -1,5 +1,5 @@
 defmodule BUPETest do
-  use BUPETest.Case, async: true
+  use BUPETest.Case, async: false
   doctest BUPE
 
   test "file does not exists" do
