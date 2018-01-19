@@ -30,13 +30,18 @@ defmodule BUPE.Builder do
   alias BUPE.Builder.Templates
 
   @container_template File.read!(Path.expand("builder/templates/assets/container.xml", __DIR__))
-  @display_options File.read!(Path.expand("builder/templates/assets/com.apple.ibooks.display-options.xml", __DIR__))
+  @display_options File.read!(
+                     Path.expand(
+                       "builder/templates/assets/com.apple.ibooks.display-options.xml",
+                       __DIR__
+                     )
+                   )
   @stylesheet File.read!(Path.expand("builder/templates/css/stylesheet.css", __DIR__))
 
   @doc """
   Generates an EPUB v3 document
   """
-  @spec save(Config.t, Path.t) :: String.t | no_return
+  @spec save(Config.t(), Path.t()) :: String.t() | no_return
   def save(config, output) do
     output = Path.expand(output)
 
@@ -140,16 +145,17 @@ defmodule BUPE.Builder do
   end
 
   defp generate_content(config, output) do
-      output = Path.join(output, "OEBPS/content")
-      File.mkdir! output
-      copy_files(config.pages, output)
+    output = Path.join(output, "OEBPS/content")
+    File.mkdir!(output)
+    copy_files(config.pages, output)
   end
 
   defp generate_epub(input, output) do
-    :zip.create(String.to_charlist(output),
-                [{'mimetype', @mimetype} | files_to_add(input)],
-                compress: ['.css', '.js', '.html', '.xhtml', '.ncx',
-                            '.opf', '.jpg', '.png', '.xml'])
+    :zip.create(
+      String.to_charlist(output),
+      [{'mimetype', @mimetype} | files_to_add(input)],
+      compress: ['.css', '.js', '.html', '.xhtml', '.ncx', '.opf', '.jpg', '.png', '.xml']
+    )
   end
 
   ## Helpers
@@ -176,19 +182,23 @@ defmodule BUPE.Builder do
 
   defp check_extension_name(%{version: "3.0"} = config) do
     if invalid_files?(config.pages, [".xhtml"]) do
-      raise Config.InvalidExtensionName, "XHTML Content Document file names should have the extension '.xhtml'."
+      raise Config.InvalidExtensionName,
+            "XHTML Content Document file names should have the extension '.xhtml'."
     end
   end
 
   defp check_extension_name(%{version: "2.0"} = config) do
     if invalid_files?(config.pages, [".html", ".htm", ".xhtml"]) do
-      raise Config.InvalidExtensionName, "invalid file extension for HTML file, expected '.html', '.htm' or '.xhtml'"
+      raise Config.InvalidExtensionName,
+            "invalid file extension for HTML file, expected '.html', '.htm' or '.xhtml'"
     end
   end
 
-  defp check_extension_name(_config), do: raise Config.InvalidVersion
+  defp check_extension_name(_config), do: raise(Config.InvalidVersion)
 
-  defp check_unique_identifier(%{unique_identifier: nil} = config), do: Map.put(config, :unique_identifier, "BUPE")
+  defp check_unique_identifier(%{unique_identifier: nil} = config),
+    do: Map.put(config, :unique_identifier, "BUPE")
+
   defp check_unique_identifier(config), do: config
 
   defp invalid_files?(files, extensions) do
@@ -196,40 +206,45 @@ defmodule BUPE.Builder do
   end
 
   defp files_to_add(path) do
-    Enum.reduce Path.wildcard(Path.join(path, "**/*")), [], fn(file, acc) ->
+    Enum.reduce(Path.wildcard(Path.join(path, "**/*")), [], fn file, acc ->
       case File.read(file) do
         {:ok, bin} ->
           [{file |> Path.relative_to(path) |> String.to_charlist(), bin} | acc]
+
         {:error, _} ->
           acc
       end
-    end
+    end)
   end
 
   defp assets do
     [
       [content: @stylesheet, dir: "OEBPS/css", filename: "stylesheet.css"],
       [content: @container_template, dir: "META-INF", filename: "container.xml"],
-      [content: @display_options, dir: "META-INF", filename: "com.apple.ibooks.display-options.xml"]
+      [
+        content: @display_options,
+        dir: "META-INF",
+        filename: "com.apple.ibooks.display-options.xml"
+      ]
     ]
   end
 
   defp generate_assets(assets, output) do
-    Enum.each assets, fn(asset) ->
+    Enum.each(assets, fn asset ->
       output = "#{output}/#{asset[:dir]}"
       File.mkdir(output)
 
       output
       |> Path.join(asset[:filename])
       |> File.write!(asset[:content])
-    end
+    end)
   end
 
   defp copy_files(files, output) do
-    Enum.map files, fn(file) ->
+    Enum.map(files, fn file ->
       base = Path.basename(file)
-      File.copy file, "#{output}/#{base}"
-    end
+      File.copy(file, "#{output}/#{base}")
+    end)
   end
 
   # Helper to generate an UUID, in particular version 4 as specified in
@@ -239,7 +254,10 @@ defmodule BUPE.Builder do
     bin = <<u0::48, 4::4, u1::12, 2::2, u2::62>>
     <<u0::32, u1::16, u2::16, u3::16, u4::48>> = bin
 
-    Enum.map_join([<<u0::32>>, <<u1::16>>, <<u2::16>>, <<u3::16>>, <<u4::48>>], <<45>>,
-                  &(Base.encode16(&1, case: :lower)))
+    Enum.map_join(
+      [<<u0::32>>, <<u1::16>>, <<u2::16>>, <<u3::16>>, <<u4::48>>],
+      <<45>>,
+      &Base.encode16(&1, case: :lower)
+    )
   end
 end

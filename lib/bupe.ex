@@ -57,37 +57,38 @@ defmodule BUPE do
     [types]: http://idpf.github.io/epub-registries/types/
     """
 
-    @type title       :: String.t
-    @type creator     :: String.t
-    @type contributor :: String.t
+    @type title :: String.t()
+    @type creator :: String.t()
+    @type contributor :: String.t()
 
     @type t :: %__MODULE__{
-                title: title,
-                creator: creator,
-                contributor: contributor,
-                date: String.t,
-                identifier: String.t,
-                language: String.t,
-                version: String.t,
-                unique_identifier: String.t,
-                source: String.t,
-                type: String.t,
-                modified: String.t,
-                description: String.t,
-                format: String.t,
-                coverage: String.t,
-                publisher: String.t,
-                relation: String.t,
-                rights: String.t,
-                subject: String.t,
-                pages: [Path.t] | [{Path.t, Path.t}],
-                nav: list(),
-                styles: [Path.t],
-                scripts: [Path.t],
-                images: [Path.t],
-                cover: boolean,
-                logo: String.t,
-                extras: Keyword.t}
+            title: title,
+            creator: creator,
+            contributor: contributor,
+            date: String.t(),
+            identifier: String.t(),
+            language: String.t(),
+            version: String.t(),
+            unique_identifier: String.t(),
+            source: String.t(),
+            type: String.t(),
+            modified: String.t(),
+            description: String.t(),
+            format: String.t(),
+            coverage: String.t(),
+            publisher: String.t(),
+            relation: String.t(),
+            rights: String.t(),
+            subject: String.t(),
+            pages: [Path.t()] | [{Path.t(), Path.t()}],
+            nav: list(),
+            styles: [Path.t()],
+            scripts: [Path.t()],
+            images: [Path.t()],
+            cover: boolean,
+            logo: String.t(),
+            extras: Keyword.t()
+          }
 
     @enforce_keys [:title, :pages, :nav]
     defstruct title: nil,
@@ -168,23 +169,23 @@ defmodule BUPE do
     end
   end
 
-  @bupe_version Mix.Project.config[:version]
+  @bupe_version Mix.Project.config()[:version]
 
   @doc """
   Returns the BUPE version (used in templates)
   """
-  @spec version :: String.t
+  @spec version :: String.t()
   def version, do: @bupe_version
 
   @doc """
   Generates an EPUB v3 document
   """
-  @spec build(Config.t, Path.t) :: String.t | no_return
+  @spec build(Config.t(), Path.t()) :: String.t() | no_return
   def build(config, output), do: BUPE.Builder.save(config, output)
 
   @doc """
   Parse and EPUB v3 document
   """
-  @spec parse(Path.t) :: Config.t | no_return
+  @spec parse(Path.t()) :: Config.t() | no_return
   def parse(epub_file), do: BUPE.Parser.parse(epub_file)
 end

@@ -4,19 +4,21 @@ defmodule BUPE.Mixfile do
   @version "0.3.1-dev"
 
   def project do
-    [app: :bupe,
-     version: @version,
-     name: "BUPE",
-     source_url: "https://github.com/milmazz/bupe",
-     homepage_url: "https://github.com/milmazz/bupe",
-     elixir: "~> 1.3",
-     description: description(),
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     elixirc_paths: elixirc_paths(Mix.env),
-     docs: docs(),
-     package: package(),
-     deps: deps()]
+    [
+      app: :bupe,
+      version: @version,
+      name: "BUPE",
+      source_url: "https://github.com/milmazz/bupe",
+      homepage_url: "https://github.com/milmazz/bupe",
+      elixir: "~> 1.3",
+      description: description(),
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
+      docs: docs(),
+      package: package(),
+      deps: deps()
+    ]
   end
 
   # Configuration for the OTP application

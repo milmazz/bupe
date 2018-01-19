@@ -2,7 +2,7 @@ defmodule BUPE.BuilderTest do
   use BUPETest.Case, async: true
 
   defp unzip_content(output) do
-    output |> String.to_charlist() |> :zip.unzip([cwd: tmp_dir()])
+    output |> String.to_charlist() |> :zip.unzip(cwd: tmp_dir())
   end
 
   test "build EPUB v2.0 document" do
@@ -40,7 +40,9 @@ defmodule BUPE.BuilderTest do
 
     # cover page should not be listed in the OPF
     opf_template = tmp_dir() |> Path.join("OEBPS/content.opf") |> File.read!()
-    refute opf_template =~ ~r{<item id="cover" href="title.xhtml" media-type="application/xhtml+xml" />}
+
+    refute opf_template =~
+             ~r{<item id="cover" href="title.xhtml" media-type="application/xhtml+xml" />}
 
     refute tmp_dir() |> Path.join("OEBPS/title.xhtml") |> File.exists?()
   end
