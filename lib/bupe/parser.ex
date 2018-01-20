@@ -27,7 +27,7 @@ defmodule BUPE.Parser do
   @doc """
   EPUB v3 parser
   """
-  @spec parse(Path.t) :: BUPE.Config.t | no_return
+  @spec parse(Path.t()) :: BUPE.Config.t() | no_return
   def parse(epub_file) when is_binary(epub_file) do
     epub_file
     |> Path.expand()
@@ -109,11 +109,12 @@ defmodule BUPE.Parser do
 
   defp extract_content(epub_file, files) when is_list(files) do
     archive = String.to_charlist(epub_file)
-    file_list = Enum.into files, [], &(if is_list(&1), do: &1, else: String.to_charlist(&1))
+    file_list = Enum.into(files, [], &if(is_list(&1), do: &1, else: String.to_charlist(&1)))
 
     case :zip.extract(archive, [{:file_list, file_list}, :memory]) do
       {:ok, content} ->
         content
+
       {:error, reason} ->
         raise reason
     end
@@ -144,7 +145,8 @@ defmodule BUPE.Parser do
   end
 
   defp find_language(xml) do
-    find_metadata(xml, "language") || xpath_string("/package/@xml:lang", xml) |> parse_xml_attribute()
+    find_metadata(xml, "language") ||
+      xpath_string("/package/@xml:lang", xml) |> parse_xml_attribute()
   end
 
   defp find_unique_identifier(xml) do
@@ -155,9 +157,14 @@ defmodule BUPE.Parser do
 
   defp parse_xml_text([]), do: nil
   defp parse_xml_text(xml_text), do: xml_text |> Enum.map(&extract_value/1) |> Enum.join(", ")
-  
+
   defp extract_value({:xmlText, _parents, _pos, _language, value, :text}), do: to_string(value)
 
-  defp parse_xml_attribute([{:xmlAttribute, _name, _expanded_name, _nsinfo, _namespace, _parents, _pos, _language, value, _normalized}]), do: to_string(value)
+  defp parse_xml_attribute([
+         {:xmlAttribute, _name, _expanded_name, _nsinfo, _namespace, _parents, _pos, _language,
+          value, _normalized}
+       ]),
+       do: to_string(value)
+
   defp parse_xml_attribute([]), do: nil
 end
