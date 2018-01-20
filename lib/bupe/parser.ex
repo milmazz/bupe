@@ -35,7 +35,8 @@ defmodule BUPE.Parser do
     |> check_extension()
     |> check_mimetype()
     |> find_rootfile()
-    |> extract_info()
+    |> scan_content()
+    |> parse_content()
   end
 
   defp check_file(epub_file) do
@@ -55,7 +56,7 @@ defmodule BUPE.Parser do
   end
 
   defp check_mimetype(epub_file) do
-    unless epub_file |> extract_content(["mimetype"]) |> mimetype_valid?() do
+    unless epub_file |> extract_files(["mimetype"]) |> mimetype_valid?() do
       raise "invalid mimetype, must be 'application/epub+zip'"
     end
 
@@ -67,7 +68,7 @@ defmodule BUPE.Parser do
 
   defp find_rootfile(epub_file) do
     container = 'META-INF/container.xml'
-    [{^container, content}] = extract_content(epub_file, [container])
+    [{^container, content}] = extract_files(epub_file, [container])
     captures = Regex.named_captures(~r/<rootfile\s.*full-path="(?<full_path>[^"]+)"\s/, content)
 
     unless captures do
@@ -77,12 +78,16 @@ defmodule BUPE.Parser do
     {epub_file, captures["full_path"]}
   end
 
-  defp extract_info({epub_file, root_file}) do
+  defp scan_content({epub_file, root_file}) do
     root_file = String.to_charlist(root_file)
-    [{^root_file, content}] = extract_content(epub_file, [root_file])
+    [{^root_file, content}] = extract_files(epub_file, [root_file])
 
     {xml, _rest} = content |> :erlang.bitstring_to_list() |> :xmerl_scan.string()
 
+    xml
+  end
+
+  defp parse_content(xml) do
     %BUPE.Config{
       title: find_metadata(xml, "title"),
       language: find_language(xml),
@@ -102,12 +107,17 @@ defmodule BUPE.Parser do
       relation: find_metadata(xml, "relation"),
       rights: find_metadata(xml, "rights"),
       subject: find_metadata(xml, "subject"),
-      pages: nil,
-      nav: nil
+      pages: find_manifest(xml, "application/xhtml+xml"),
+      nav: nil,
+      images: find_manifest(xml, ["image/jpeg", "image/gif", "image/png", "image/svg+xml"]),
+      scripts: find_manifest(xml, "application/javascript"),
+      styles: find_manifest(xml, "text/css"),
+      audio: find_manifest(xml, ["audio/mpeg", "audio/mp4"]),
+      fonts: find_manifest(xml, ["application/font-sfnt", "application/font-woff", "font/woff2"])
     }
   end
 
-  defp extract_content(epub_file, files) when is_list(files) do
+  defp extract_files(epub_file, files) when is_list(files) do
     archive = String.to_charlist(epub_file)
     file_list = Enum.into(files, [], &if(is_list(&1), do: &1, else: String.to_charlist(&1)))
 
@@ -125,6 +135,19 @@ defmodule BUPE.Parser do
     |> xpath_string(xml)
     |> parse_xml_text()
   end
+
+  defp find_manifest(xml, media_types) when is_list(media_types) do
+    filter =
+      media_types
+      |> Enum.map(fn type -> "@media-type='#{type}'" end)
+      |> Enum.join(" or ")
+
+    "/package/manifest/item[#{filter}]"
+    |> xpath_string(xml)
+    |> parse_xml_element()
+  end
+
+  defp find_manifest(xml, media_type), do: find_manifest(xml, [media_type])
 
   defp xpath_string(xpath, xml) do
     xpath
@@ -155,16 +178,54 @@ defmodule BUPE.Parser do
     |> parse_xml_attribute()
   end
 
+  # XML Element
+  defp parse_xml_element([]), do: nil
+
+  defp parse_xml_element(
+         {
+           :xmlElement,
+           _name,
+           _expanded_name,
+           _nsinfo,
+           _namespace,
+           _parents,
+           _pos,
+           attributes,
+           _content,
+           _language,
+           _xmlbase,
+           :undeclared
+         }
+       ) do
+    Enum.into(attributes, %{}, fn {:xmlAttribute, name, _, _, _, _, _, _, value, _} ->
+      {name, value}
+    end)
+  end
+
+  defp parse_xml_element(elements), do: elements |> Enum.map(&parse_xml_element/1)
+
+  # XML Text
   defp parse_xml_text([]), do: nil
-  defp parse_xml_text(xml_text), do: xml_text |> Enum.map(&extract_value/1) |> Enum.join(", ")
+  defp parse_xml_text({:xmlText, _parents, _pos, _language, value, :text}), do: to_string(value)
+  defp parse_xml_text(xml_text), do: xml_text |> Enum.map(&parse_xml_text/1) |> Enum.join(", ")
 
-  defp extract_value({:xmlText, _parents, _pos, _language, value, :text}), do: to_string(value)
-
+  # XML Attribute
   defp parse_xml_attribute([
-         {:xmlAttribute, _name, _expanded_name, _nsinfo, _namespace, _parents, _pos, _language,
-          value, _normalized}
+         {
+           :xmlAttribute,
+           _name,
+           _expanded_name,
+           _nsinfo,
+           _namespace,
+           _parents,
+           _pos,
+           _language,
+           value,
+           _normalized
+         }
        ]),
        do: to_string(value)
 
+  # defp parse_xml_attribute(attributes), do: attributes |> Enum.map(&parse_xml_attribute/1)
   defp parse_xml_attribute([]), do: nil
 end

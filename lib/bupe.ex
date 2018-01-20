@@ -80,14 +80,16 @@ defmodule BUPE do
             relation: String.t(),
             rights: String.t(),
             subject: String.t(),
-            pages: [Path.t()] | [{Path.t(), Path.t()}],
+            pages: [Path.t() | map() | {Path.t(), Path.t()}],
             nav: list(),
-            styles: [Path.t()],
-            scripts: [Path.t()],
-            images: [Path.t()],
+            styles: [Path.t() | map()],
+            scripts: [Path.t() | map()],
+            images: [Path.t() | map()],
             cover: boolean,
             logo: String.t(),
-            extras: Keyword.t()
+            extras: Keyword.t(),
+            audio: [map()],
+            fonts: [map()]
           }
 
     @enforce_keys [:title, :pages, :nav]
@@ -116,7 +118,9 @@ defmodule BUPE do
               images: [],
               cover: true,
               logo: nil,
-              extras: []
+              extras: [],
+              audio: [],
+              fonts: []
 
     defmodule InvalidDate do
       defexception message: "date is invalid"
@@ -169,7 +173,7 @@ defmodule BUPE do
     end
   end
 
-  @bupe_version 0.1
+  @bupe_version Mix.Project.config()[:version]
 
   @doc """
   Returns the BUPE version (used in templates)
