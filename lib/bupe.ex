@@ -169,7 +169,7 @@ defmodule BUPE do
     end
   end
 
-  @bupe_version Mix.Project.config()[:version]
+  @bupe_version 0.1
 
   @doc """
   Returns the BUPE version (used in templates)

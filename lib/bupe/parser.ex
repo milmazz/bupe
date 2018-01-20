@@ -90,10 +90,10 @@ defmodule BUPE.Parser do
       identifier: find_metadata(xml, "identifier"),
       creator: find_metadata(xml, "creator"),
       contributor: find_metadata(xml, "contributor"),
-      modified: find_modified(xml),
+      modified: find_metadata_property(xml, "dcterms:modified"),
       date: find_metadata(xml, "date"),
       unique_identifier: find_unique_identifier(xml),
-      source: find_metadata(xml, "source"),
+      source: find_metadata(xml, "source") || find_metadata_property(xml, "dcterms:source"),
       type: find_metadata(xml, "type"),
       description: find_metadata(xml, "description"),
       format: find_metadata(xml, "format"),
@@ -132,8 +132,8 @@ defmodule BUPE.Parser do
     |> :xmerl_xpath.string(xml)
   end
 
-  defp find_modified(xml) do
-    "/package/metadata/meta[contains(@property, 'dcterms:modified')]/text()"
+  defp find_metadata_property(xml, property) do
+    "/package/metadata/meta[contains(@property, '#{property}')]/text()"
     |> xpath_string(xml)
     |> parse_xml_text()
   end
