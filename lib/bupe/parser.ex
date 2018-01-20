@@ -36,7 +36,9 @@ defmodule BUPE.Parser do
     |> check_mimetype()
     |> find_rootfile()
     |> scan_content()
-    |> parse_content()
+    |> parse_metadata()
+    |> parse_manifest()
+    |> parse_extras()
   end
 
   defp check_file(epub_file) do
@@ -87,17 +89,38 @@ defmodule BUPE.Parser do
     xml
   end
 
-  defp parse_content(xml) do
-    %BUPE.Config{
+  defp parse_extras({xml, config}) do
+    %{
+      config
+      | language: find_language(xml),
+        version: find_version(xml),
+        unique_identifier: find_unique_identifier(xml)
+    }
+  end
+
+  defp parse_manifest({xml, config}) do
+    {xml, %{
+      config
+      | images: find_manifest(xml, ["image/jpeg", "image/gif", "image/png", "image/svg+xml"]),
+        scripts: find_manifest(xml, "application/javascript"),
+        styles: find_manifest(xml, "text/css"),
+        pages: find_manifest(xml, "application/xhtml+xml"),
+        audio: find_manifest(xml, ["audio/mpeg", "audio/mp4"]),
+        fonts:
+          find_manifest(xml, ["application/font-sfnt", "application/font-woff", "font/woff2"])
+    }}
+  end
+
+  defp parse_metadata(xml) do
+    {xml, %BUPE.Config{
       title: find_metadata(xml, "title"),
-      language: find_language(xml),
-      version: find_version(xml),
+      nav: nil,
+      pages: nil,
       identifier: find_metadata(xml, "identifier"),
       creator: find_metadata(xml, "creator"),
       contributor: find_metadata(xml, "contributor"),
       modified: find_metadata_property(xml, "dcterms:modified"),
       date: find_metadata(xml, "date"),
-      unique_identifier: find_unique_identifier(xml),
       source: find_metadata(xml, "source") || find_metadata_property(xml, "dcterms:source"),
       type: find_metadata(xml, "type"),
       description: find_metadata(xml, "description"),
@@ -106,15 +129,8 @@ defmodule BUPE.Parser do
       publisher: find_metadata(xml, "publisher"),
       relation: find_metadata(xml, "relation"),
       rights: find_metadata(xml, "rights"),
-      subject: find_metadata(xml, "subject"),
-      pages: find_manifest(xml, "application/xhtml+xml"),
-      nav: nil,
-      images: find_manifest(xml, ["image/jpeg", "image/gif", "image/png", "image/svg+xml"]),
-      scripts: find_manifest(xml, "application/javascript"),
-      styles: find_manifest(xml, "text/css"),
-      audio: find_manifest(xml, ["audio/mpeg", "audio/mp4"]),
-      fonts: find_manifest(xml, ["application/font-sfnt", "application/font-woff", "font/woff2"])
-    }
+      subject: find_metadata(xml, "subject")
+    }}
   end
 
   defp extract_files(epub_file, files) when is_list(files) do
