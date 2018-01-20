@@ -7,13 +7,13 @@ defmodule BUPE.Builder.Templates do
 
   @media_types
   |> String.split("\n", trim: true)
-  |> Enum.each(fn(line) ->
-       [extension, media] = line |> String.trim() |> String.split(",")
+  |> Enum.each(fn line ->
+    [extension, media] = line |> String.trim() |> String.split(",")
 
-       def media_type("." <> unquote(extension)) do
-         unquote(media)
-       end
-     end)
+    def media_type("." <> unquote(extension)) do
+      unquote(media)
+    end
+  end)
 
   def media_type(_), do: nil
 
@@ -24,9 +24,9 @@ defmodule BUPE.Builder.Templates do
     title_template: [:config]
   ]
 
-  Enum.each templates, fn({name, args}) ->
+  Enum.each(templates, fn {name, args} ->
     filename = Path.expand("templates/#{name}.eex", __DIR__)
     @doc false
-    EEx.function_from_file :def, name, filename, args
-  end
+    EEx.function_from_file(:def, name, filename, args)
+  end)
 end
