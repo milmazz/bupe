@@ -29,30 +29,37 @@ defmodule BUPE.Parser do
   """
   @spec parse(Path.t) :: BUPE.Config.t | no_return
   def parse(epub_file) when is_binary(epub_file) do
-    epub_file = Path.expand(epub_file)
-
-    check_file(epub_file)
-    check_extension(epub_file)
-    check_mimetype(epub_file)
-    epub_file |> find_rootfile() |> extract_info(epub_file)
+    epub_file
+    |> Path.expand()
+    |> check_file()
+    |> check_extension()
+    |> check_mimetype()
+    |> find_rootfile()
+    |> extract_info()
   end
 
   defp check_file(epub_file) do
     unless File.exists?(epub_file) do
       raise ArgumentError, "file #{epub_file} does not exists"
     end
+
+    epub_file
   end
 
   defp check_extension(epub_file) do
     unless epub_file |> Path.extname() |> String.downcase() == ".epub" do
       raise ArgumentError, "file #{epub_file} does not have an '.epub' extension"
     end
+
+    epub_file
   end
 
   defp check_mimetype(epub_file) do
     unless epub_file |> extract_content(["mimetype"]) |> mimetype_valid?() do
       raise "invalid mimetype, must be 'application/epub+zip'"
     end
+
+    epub_file
   end
 
   defp mimetype_valid?([{'mimetype', "application/epub+zip"}]), do: true
@@ -67,14 +74,14 @@ defmodule BUPE.Parser do
       raise "could not find rootfile in META-INF/container.xml"
     end
 
-    captures["full_path"]
+    {epub_file, captures["full_path"]}
   end
 
-  defp extract_info(root_file, epub_file) do
+  defp extract_info({epub_file, root_file}) do
     root_file = String.to_charlist(root_file)
     [{^root_file, content}] = extract_content(epub_file, [root_file])
 
-    {xml, _rest} = :xmerl_scan.string(String.to_charlist(content))
+    {xml, _rest} = content |> :erlang.bitstring_to_list() |> :xmerl_scan.string()
 
     %BUPE.Config{
       title: find_metadata(xml, "title"),
@@ -146,8 +153,10 @@ defmodule BUPE.Parser do
     |> parse_xml_attribute()
   end
 
-  defp parse_xml_text([{:xmlText, _parents, _pos, _language, value, :text}]), do: to_string(value)
   defp parse_xml_text([]), do: nil
+  defp parse_xml_text(xml_text), do: xml_text |> Enum.map(&extract_value/1) |> Enum.join(", ")
+  
+  defp extract_value({:xmlText, _parents, _pos, _language, value, :text}), do: to_string(value)
 
   defp parse_xml_attribute([{:xmlAttribute, _name, _expanded_name, _nsinfo, _namespace, _parents, _pos, _language, value, _normalized}]), do: to_string(value)
   defp parse_xml_attribute([]), do: nil
