@@ -48,15 +48,35 @@ If you want to parse an EPUB file you can do the following:
 ```elixir
 iex> BUPE.parse("sample.epub")
 %BUPE.Config{
-  title: "Sample",
   creator: "John Doe",
-  unique_identifier: "EXAMPLE",
-  pages: ["bacon.xhtml", "ham.xhtml", "egg.xhtml"],
   nav: [
-    %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.xhtml"},
-    %{id: "ode-to-ham", label: "2. Ode to Ham", content: "ham.xhtml"},
-    %{id: "ode-to-egg", label: "3. Ode to Egg", content: "egg.xhtml"}
-  ]
+    %{idref: 'ode-to-bacon'},
+    %{idref: 'ode-to-ham'},
+    %{idref: 'ode-to-egg'}
+  ],
+  pages: [
+    %{
+      href: 'bacon.xhtml',
+      id: 'ode-to-bacon',
+      "media-type": 'application/xhtml+xml'
+    },
+    %{
+      href: 'ham.xhtml',
+      id: 'ode-to-ham',
+      "media-type": 'application/xhtml+xml'
+    },
+    %{
+      href: "egg.xhtml",
+      id: 'ode-to-egg',
+      "media-type": 'application/xhtml+xml'
+    }
+  ],
+  styles: [
+    %{href: 'stylesheet.css', id: 'styles', "media-type": 'text/css'}
+  ],
+  title: "Sample",
+  unique_identifier: "EXAMPLE",
+  version: "3.0"
 }
 ```
 

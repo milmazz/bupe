@@ -33,7 +33,7 @@ defmodule BUPE.Parser do
         ],
         styles: [
           %{href: 'stylesheet.css', id: 'styles', "media-type": 'text/css'}
-        ]
+        ],
         title: "Sample",
         unique_identifier: "EXAMPLE",
         version: "3.0"
