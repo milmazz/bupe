@@ -8,15 +8,35 @@ defmodule BUPE.Parser do
   ```iex
   BUPE.Parser.parse("sample.epub")
   #=> %BUPE.Config{
-        title: "Sample",
         creator: "John Doe",
-        unique_identifier: "EXAMPLE",
-        pages: ["bacon.xhtml", "ham.xhtml", "egg.xhtml"],
         nav: [
-          %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.xhtml"},
-          %{id: "ode-to-ham", label: "2. Ode to Ham", content: "ham.xhtml"},
-          %{id: "ode-to-egg", label: "3. Ode to Egg", content: "egg.xhtml"}
+          %{idref: 'ode-to-bacon'},
+          %{idref: 'ode-to-ham'},
+          %{idref: 'ode-to-egg'}
+        ],
+        pages: [
+          %{
+            href: 'bacon.xhtml',
+            id: 'ode-to-bacon',
+            "media-type": 'application/xhtml+xml'
+          },
+          %{
+            href: 'ham.xhtml',
+            id: 'ode-to-ham',
+            "media-type": 'application/xhtml+xml'
+          },
+          %{
+            href: "egg.xhtml",
+            id: 'ode-to-egg',
+            "media-type": 'application/xhtml+xml'
+          }
+        ],
+        styles: [
+          %{href: 'stylesheet.css', id: 'styles', "media-type": 'text/css'}
         ]
+        title: "Sample",
+        unique_identifier: "EXAMPLE",
+        version: "3.0"
       }
   ```
 
@@ -36,9 +56,10 @@ defmodule BUPE.Parser do
     |> check_mimetype()
     |> find_rootfile()
     |> scan_content()
-    |> parse_metadata()
-    |> parse_manifest()
-    |> parse_extras()
+    |> parse_xml(:metadata)
+    |> parse_xml(:manifest)
+    |> parse_xml(:navigation)
+    |> parse_xml(:extras)
   end
 
   defp check_file(epub_file) do
@@ -74,7 +95,7 @@ defmodule BUPE.Parser do
     captures = Regex.named_captures(~r/<rootfile\s.*full-path="(?<full_path>[^"]+)"\s/, content)
 
     unless captures do
-      raise "could not find rootfile in META-INF/container.xml"
+      raise "could not find rootfile in #{container}"
     end
 
     {epub_file, captures["full_path"]}
@@ -89,48 +110,54 @@ defmodule BUPE.Parser do
     xml
   end
 
-  defp parse_extras({xml, config}) do
+  defp parse_xml({xml, config}, :extras) do
     %{
       config
       | language: find_language(xml),
-        version: find_version(xml),
-        unique_identifier: find_unique_identifier(xml)
+        version: find_xml(xml, filter: "/package/@version", type: :attribute),
+        unique_identifier: find_xml(xml, filter: "/package/@unique-identifier", type: :attribute)
     }
   end
 
-  defp parse_manifest({xml, config}) do
-    {xml, %{
-      config
-      | images: find_manifest(xml, ["image/jpeg", "image/gif", "image/png", "image/svg+xml"]),
-        scripts: find_manifest(xml, "application/javascript"),
-        styles: find_manifest(xml, "text/css"),
-        pages: find_manifest(xml, "application/xhtml+xml"),
-        audio: find_manifest(xml, ["audio/mpeg", "audio/mp4"]),
-        fonts:
-          find_manifest(xml, ["application/font-sfnt", "application/font-woff", "font/woff2"])
-    }}
+  defp parse_xml({xml, config}, :manifest) do
+    {xml,
+     %{
+       config
+       | images: find_manifest(xml, ["image/jpeg", "image/gif", "image/png", "image/svg+xml"]),
+         scripts: find_manifest(xml, "application/javascript"),
+         styles: find_manifest(xml, "text/css"),
+         pages: find_manifest(xml, "application/xhtml+xml"),
+         audio: find_manifest(xml, ["audio/mpeg", "audio/mp4"]),
+         fonts:
+           find_manifest(xml, ["application/font-sfnt", "application/font-woff", "font/woff2"])
+     }}
   end
 
-  defp parse_metadata(xml) do
-    {xml, %BUPE.Config{
-      title: find_metadata(xml, "title"),
-      nav: nil,
-      pages: nil,
-      identifier: find_metadata(xml, "identifier"),
-      creator: find_metadata(xml, "creator"),
-      contributor: find_metadata(xml, "contributor"),
-      modified: find_metadata_property(xml, "dcterms:modified"),
-      date: find_metadata(xml, "date"),
-      source: find_metadata(xml, "source") || find_metadata_property(xml, "dcterms:source"),
-      type: find_metadata(xml, "type"),
-      description: find_metadata(xml, "description"),
-      format: find_metadata(xml, "format"),
-      coverage: find_metadata(xml, "coverage"),
-      publisher: find_metadata(xml, "publisher"),
-      relation: find_metadata(xml, "relation"),
-      rights: find_metadata(xml, "rights"),
-      subject: find_metadata(xml, "subject")
-    }}
+  defp parse_xml(xml, :metadata) do
+    {xml,
+     %BUPE.Config{
+       title: find_metadata(xml, "title"),
+       nav: nil,
+       pages: nil,
+       identifier: find_metadata(xml, "identifier"),
+       creator: find_metadata(xml, "creator"),
+       contributor: find_metadata(xml, "contributor"),
+       modified: find_metadata_property(xml, "dcterms:modified"),
+       date: find_metadata(xml, "date"),
+       source: find_metadata(xml, "source") || find_metadata_property(xml, "dcterms:source"),
+       type: find_metadata(xml, "type"),
+       description: find_metadata(xml, "description"),
+       format: find_metadata(xml, "format"),
+       coverage: find_metadata(xml, "coverage"),
+       publisher: find_metadata(xml, "publisher"),
+       relation: find_metadata(xml, "relation"),
+       rights: find_metadata(xml, "rights"),
+       subject: find_metadata(xml, "subject")
+     }}
+  end
+
+  defp parse_xml({xml, config}, :navigation) do
+    {xml, %{config | nav: find_xml(xml, filter: "/package/spine/*", type: :element)}}
   end
 
   defp extract_files(epub_file, files) when is_list(files) do
@@ -147,9 +174,15 @@ defmodule BUPE.Parser do
   end
 
   defp find_metadata(xml, meta) do
-    "/package/metadata/dc:#{meta}/text()"
-    |> xpath_string(xml)
-    |> parse_xml_text()
+    find_xml(xml, filter: "/package/metadata/dc:#{meta}/text()", type: :text)
+  end
+
+  defp find_metadata_property(xml, property) do
+    find_xml(
+      xml,
+      filter: "/package/metadata/meta[contains(@property, '#{property}')]/text()",
+      type: :text
+    )
   end
 
   defp find_manifest(xml, media_types) when is_list(media_types) do
@@ -158,12 +191,20 @@ defmodule BUPE.Parser do
       |> Enum.map(fn type -> "@media-type='#{type}'" end)
       |> Enum.join(" or ")
 
-    "/package/manifest/item[#{filter}]"
-    |> xpath_string(xml)
-    |> parse_xml_element()
+    find_xml(xml, filter: "/package/manifest/item[#{filter}]", type: :element)
   end
 
   defp find_manifest(xml, media_type), do: find_manifest(xml, [media_type])
+
+  defp find_xml(xml, filter: filter, type: :attribute),
+    do: filter |> xpath_string(xml) |> transform()
+
+  defp find_xml(xml, filter: filter, type: type),
+    do: filter |> xpath_string(xml) |> transform(from: type)
+
+  defp find_language(xml) do
+    find_metadata(xml, "language") || xpath_string("/package/@xml:lang", xml) |> transform()
+  end
 
   defp xpath_string(xpath, xml) do
     xpath
@@ -171,62 +212,28 @@ defmodule BUPE.Parser do
     |> :xmerl_xpath.string(xml)
   end
 
-  defp find_metadata_property(xml, property) do
-    "/package/metadata/meta[contains(@property, '#{property}')]/text()"
-    |> xpath_string(xml)
-    |> parse_xml_text()
-  end
-
-  defp find_version(xml) do
-    "/package/@version"
-    |> xpath_string(xml)
-    |> parse_xml_attribute()
-  end
-
-  defp find_language(xml) do
-    find_metadata(xml, "language") ||
-      xpath_string("/package/@xml:lang", xml) |> parse_xml_attribute()
-  end
-
-  defp find_unique_identifier(xml) do
-    "/package/@unique-identifier"
-    |> xpath_string(xml)
-    |> parse_xml_attribute()
-  end
-
-  # XML Element
-  defp parse_xml_element([]), do: nil
-
-  defp parse_xml_element(
-         {
-           :xmlElement,
-           _name,
-           _expanded_name,
-           _nsinfo,
-           _namespace,
-           _parents,
-           _pos,
-           attributes,
-           _content,
-           _language,
-           _xmlbase,
-           :undeclared
-         }
-       ) do
+  defp transform({
+         :xmlElement,
+         _name,
+         _expanded_name,
+         _nsinfo,
+         _namespace,
+         _parents,
+         _pos,
+         attributes,
+         _content,
+         _language,
+         _xmlbase,
+         :undeclared
+       }) do
     Enum.into(attributes, %{}, fn {:xmlAttribute, name, _, _, _, _, _, _, value, _} ->
       {name, value}
     end)
   end
 
-  defp parse_xml_element(elements), do: elements |> Enum.map(&parse_xml_element/1)
+  defp transform({:xmlText, _parents, _pos, _language, value, :text}), do: to_string(value)
 
-  # XML Text
-  defp parse_xml_text([]), do: nil
-  defp parse_xml_text({:xmlText, _parents, _pos, _language, value, :text}), do: to_string(value)
-  defp parse_xml_text(xml_text), do: xml_text |> Enum.map(&parse_xml_text/1) |> Enum.join(", ")
-
-  # XML Attribute
-  defp parse_xml_attribute([
+  defp transform([
          {
            :xmlAttribute,
            _name,
@@ -242,6 +249,7 @@ defmodule BUPE.Parser do
        ]),
        do: to_string(value)
 
-  # defp parse_xml_attribute(attributes), do: attributes |> Enum.map(&parse_xml_attribute/1)
-  defp parse_xml_attribute([]), do: nil
+  defp transform([], _), do: nil
+  defp transform(source, from: :element), do: Enum.map(source, &transform/1)
+  defp transform(source, from: :text), do: source |> Enum.map(&transform/1) |> Enum.join(", ")
 end
