@@ -25,18 +25,88 @@ $ mix deps.get
 If you want to create an EPUB file you can do the following:
 
 ```elixir
-iex> config = %BUPE.Config{
-...>   title: "Sample",
-...>   creator: "John Doe",
-...>   unique_identifier: "EXAMPLE",
-...>   pages: ["bacon.xhtml", "ham.xhtml", "egg.xhtml"],
-...>   nav: [
-...>     %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.xhtml"},
-...>     %{id: "ode-to-ham", label: "2. Ode to Ham", content: "ham.xhtml"},
-...>     %{id: "ode-to-egg", label: "3. Ode to Egg", content: "egg.xhtml"}
-...>   ]
-...> }
-iex> BUPE.build(config, "food.epub")
+iex(1)> files = "~/book/*.xhtml" |> Path.expand() |> Path.wildcard()
+["/Users/dev/book/bacon.xhtml", "/Users/dev/book/egg.xhtml", "/Users/dev/book/ham.xhtml"]
+iex(2)> get_id = fn file -> Path.basename(file, ".xhtml") end
+#Function<6.99386804/1 in :erl_eval.expr/5>
+iex(3)> pages = Enum.map(files, fn file ->
+...(3)>   %{href: file, id: get_id.(file), description: file |> get_id.() |> String.capitalize()}
+...(3)> end)
+[
+  %{
+    description: "Bacon",
+    href: "/Users/dev/book/bacon.xhtml",
+    id: "bacon"
+  },
+  %{
+    description: "Egg",
+    href: "/Users/dev/book/egg.xhtml",
+    id: "egg"
+  },
+  %{
+    description: "Ham",
+    href: "/Users/dev/book/ham.xhtml",
+    id: "ham"
+  }
+]
+iex(4)> config = %BUPE.Config{
+...(4)>  title: "Sample",
+...(4)>  language: "en",
+...(4)>  creator: "John Doe",
+...(4)>  publisher: "Sample",
+...(4)>  date: "2016-06-23T06:00:00Z",
+...(4)>  unique_identifier: "EXAMPLE",
+...(4)>  identifier: "http://example.com/book/jdoe/1",
+...(4)>  pages: pages,
+...(4)>  nav: nav
+...(4)> }
+%BUPE.Config{
+  audio: [],
+  contributor: nil,
+  cover: true,
+  coverage: nil,
+  creator: "John Doe",
+  date: "2016-06-23T06:00:00Z",
+  description: nil,
+  fonts: [],
+  format: nil,
+  identifier: "http://example.com/book/jdoe/1",
+  images: [],
+  language: "en",
+  logo: nil,
+  modified: nil,
+  nav: nil,,
+  pages: [
+    %{
+      description: "Bacon",
+      href: "/Users/dev/book/bacon.xhtml",
+      id: "bacon"
+    },
+    %{
+      description: "Egg",
+      href: "/Users/dev/book/egg.xhtml",
+      id: "egg"
+    },
+    %{
+      description: "Ham",
+      href: "/Users/dev/book/ham.xhtml",
+      id: "ham"
+    }
+  ],
+  publisher: "Sample",
+  relation: nil,
+  rights: nil,
+  scripts: [],
+  source: nil,
+  styles: [],
+  subject: nil,
+  title: "Sample",
+  type: nil,
+  unique_identifier: "EXAMPLE",
+  version: "3.0"
+}
+iex(6)> BUPE.build(config, "example.epub")
+{:ok, '/Users/dev/example.epub'}
 ```
 
 See `BUPE.Builder` for more details.

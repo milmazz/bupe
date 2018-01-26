@@ -48,7 +48,7 @@ defmodule BUPETest do
     msg = "invalid EPUB version, expected '2.0' or '3.0'"
 
     assert_raise BUPE.Config.InvalidVersion, msg, fn ->
-      BUPE.Builder.save(config, "sample.epub")
+      BUPE.build(config, "sample.epub")
     end
   end
 end

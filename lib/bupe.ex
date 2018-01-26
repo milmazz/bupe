@@ -42,13 +42,12 @@ defmodule BUPE do
 
     ## Support configuration
 
-    * `pages` - List of XHTML files which will be included in the EPUB document
-    * `nav` - List of maps which is required to create the EPUB Navigation
-      document.
+    * `pages` - List of XHTML files which will be included in the EPUB document,
+      please keep in mind that the sequence here will stablish the navigation
+      order in the EPUB document.
     * `styles` - List of CSS files which will be included in the EPUB document
     * `scripts` - List of JS files which will be included in the EPUB document
-    * `images` - List of images which will be included in the EPUB document, all
-      the images will be located under the `assets` directory.
+    * `images` - List of images which will be included in the EPUB document.
     * `cover` - Specifies if you want a default cover page, default: true
     * `logo` - Image for the cover page
 
@@ -87,12 +86,11 @@ defmodule BUPE do
             images: [Path.t() | map()],
             cover: boolean,
             logo: String.t(),
-            extras: Keyword.t(),
             audio: [map()],
             fonts: [map()]
           }
 
-    @enforce_keys [:title, :pages, :nav]
+    @enforce_keys [:title, :pages]
     defstruct title: nil,
               creator: nil,
               contributor: nil,
@@ -118,7 +116,6 @@ defmodule BUPE do
               images: [],
               cover: true,
               logo: nil,
-              extras: [],
               audio: [],
               fonts: []
 
@@ -181,15 +178,7 @@ defmodule BUPE do
   @spec version :: String.t()
   def version, do: @bupe_version
 
-  @doc """
-  Generates an EPUB v3 document
-  """
-  @spec build(Config.t(), Path.t()) :: String.t() | no_return
-  def build(config, output), do: BUPE.Builder.save(config, output)
+  defdelegate build(config, output, options \\ []), to: BUPE.Builder, as: :run
 
-  @doc """
-  Parse and EPUB v3 document
-  """
-  @spec parse(Path.t()) :: Config.t() | no_return
-  def parse(epub_file), do: BUPE.Parser.parse(epub_file)
+  defdelegate parse(epub_file), to: BUPE.Parser, as: :run
 end

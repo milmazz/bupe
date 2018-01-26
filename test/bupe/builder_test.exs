@@ -34,10 +34,6 @@ defmodule BUPE.BuilderTest do
     # Extract EPUB content
     unzip_content(output)
 
-    # cover page should not be listed in the NCX file
-    ncx_template = tmp_dir() |> Path.join("OEBPS/toc.ncx") |> File.read!()
-    refute ncx_template =~ ~r{<content src="title.xhtml" />}
-
     # cover page should not be listed in the OPF
     opf_template = tmp_dir() |> Path.join("OEBPS/content.opf") |> File.read!()
 
@@ -53,7 +49,7 @@ defmodule BUPE.BuilderTest do
 
     config =
       config
-      |> Map.put(:pages, ["page.png"])
+      |> Map.put(:pages, [%{href: "page.png"}])
       |> Map.put(:version, "2.0")
 
     assert_raise BUPE.Config.InvalidExtensionName, msg, fn ->
@@ -65,10 +61,22 @@ defmodule BUPE.BuilderTest do
     config = config()
     msg = "XHTML Content Document file names should have the extension '.xhtml'."
 
-    config = Map.put(config, :pages, ["page.png"])
+    config = Map.put(config, :pages, [%{href: "page.png"}])
 
     assert_raise BUPE.Config.InvalidExtensionName, msg, fn ->
       BUPE.build(config, "sample.epub")
     end
+  end
+
+  test "should allow to build the EPUB in memory" do
+    config = config()
+    output = Path.join(tmp_dir(), "v30.epub")
+
+    {:ok, {filename, binary}} = BUPE.Builder.run(config, output, [:memory])
+
+    File.write!(filename, binary)
+
+    epub_info = BUPE.parse(output)
+    assert epub_info.version == "3.0" 
   end
 end

@@ -17,6 +17,11 @@ defmodule BUPE.Builder.Templates do
 
   def media_type(_), do: nil
 
+  defp get_content_path(node) do
+    path = Path.basename(node.href)
+    "content/#{path}"
+  end
+
   templates = [
     content_template: [:config],
     ncx_template: [:config],

@@ -29,21 +29,25 @@ defmodule BUPETest.Case do
   end
 
   def config do
+    files =
+      "/30/*.xhtml"
+      |> fixtures_dir()
+      |> Path.wildcard()
+
+    get_id = fn file -> Path.basename(file, ".xhtml") end
+
+    pages =
+      Enum.map(files, fn file ->
+        %{href: file, id: get_id.(file), description: file |> get_id.() |> String.capitalize()}
+      end)
+
     %BUPE.Config{
       title: "Sample",
       language: "en",
       creator: "John Doe",
       publisher: "Sample",
       unique_identifier: "EXAMPLE",
-      pages: Path.wildcard(fixtures_dir() <> "/30/*.xhtml"),
-      nav: [
-        %{id: "ode-to-bacon", label: "1. Ode to Bacon", content: "bacon.xhtml"},
-        %{id: "ode-to-ham", label: "2. Ode to Ham", content: "ham.xhtml"},
-        %{id: "ode-to-egg", label: "3. Ode to Egg", content: "egg.xhtml"}
-      ],
-      extras: [
-        tmp_dir: tmp_dir()
-      ]
+      pages: pages
     }
   end
 end

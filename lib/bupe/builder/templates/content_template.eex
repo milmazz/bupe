@@ -58,22 +58,22 @@
     <%= if config.cover do %>
     <item id="cover" href="title.xhtml" media-type="application/xhtml+xml" />
     <% end %>
-    <%= for node <- config.nav do %>
-      <item id="<%= node.id %>" href="content/<%= node.content %>" media-type="<%= media_type(Path.extname(node.content)) %>" properties="scripted" />
+    <%= for node <- config.pages do %>
+      <item id="<%= node.id %>" href="<%= get_content_path(node) %>" media-type="<%= media_type(Path.extname(node.href)) %>" />
     <% end %>
     <item id="css" href="css/stylesheet.css" media-type="text/css"/>
     <%= for {style, idx} <- Enum.with_index(config.styles) do %>
-      <item id="styles<%= idx %>" href="content/assets/<%= Path.basename(style) %>" media-type="text/css"/>
+      <item id="styles<%= idx %>" href="<%= get_content_path(style) %>" media-type="text/css"/>
     <% end %>
     <%= for {script, idx} <- Enum.with_index(config.scripts) do %>
-      <item id="scripts<%= idx %>" href="content/assets/<%= Path.basename(script) %>" media-type="text/javascript"/>
+      <item id="scripts<%= idx %>" href="<%= get_content_path(script) %>" media-type="text/javascript"/>
     <% end %>
     <%= for {image, idx} <- Enum.with_index(config.images) do %>
-      <item id="image<%= idx %>" href="content/assets/<%= Path.basename(image) %>" media-type="<%= media_type(Path.extname(image)) %>"/>
+      <item id="image<%= idx %>" href="<%= get_content_path(image) %>" media-type="<%= media_type(Path.extname(image)) %>"/>
     <% end %>
 
     <%= if config.logo do %>
-      <item id="cover-image" href="content/assets/<%= config.logo %>" media-type="<% media_type(Path.extname(config.logo)) %>" />
+      <item id="cover-image" href="content/<%= config.logo %>" media-type="<% media_type(Path.extname(config.logo)) %>" />
     <% end %>
   </manifest>
   <spine toc="ncx">
@@ -82,7 +82,7 @@
     <itemref idref="nav" />
     <% end %>
     <%= for node <- config.nav do %>
-      <itemref idref="<%= node.id %>" />
+      <itemref idref="<%= node.idref %>" />
     <% end %>
   </spine>
 </package>

@@ -21,12 +21,12 @@
       <content src="title.xhtml" />
     </navPoint>
     <% end %>
-    <%= for {node, index} <- Enum.with_index(config.nav) do %>
+    <%= for {node, index} <- Enum.with_index(config.pages) do %>
     <navPoint id="<%= node.id %>" playOrder="<%= index + 1 %>">
       <navLabel>
-        <text><%= node.label %></text>
+        <text><%= node.description %></text>
       </navLabel>
-      <content src="content/<%= node.content %>" />
+      <content src="<%= get_content_path(node) %>" />
     </navPoint>
     <% end %>
   </navMap>

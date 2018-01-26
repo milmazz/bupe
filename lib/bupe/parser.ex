@@ -47,8 +47,8 @@ defmodule BUPE.Parser do
   @doc """
   EPUB v3 parser
   """
-  @spec parse(Path.t()) :: BUPE.Config.t() | no_return
-  def parse(epub_file) when is_binary(epub_file) do
+  @spec run(Path.t()) :: BUPE.Config.t() | no_return
+  def run(epub_file) when is_binary(epub_file) do
     epub_file
     |> Path.expand()
     |> check_file()

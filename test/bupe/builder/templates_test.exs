@@ -8,9 +8,9 @@ defmodule BUPE.Builder.TemplatesTest do
 
     content = Templates.nav_template(config)
 
-    assert content =~ ~r{<li><a href="content/bacon.xhtml">1. Ode to Bacon</a></li>}
-    assert content =~ ~r{<li><a href="content/ham.xhtml">2. Ode to Ham</a></li>}
-    assert content =~ ~r{<li><a href="content/egg.xhtml">3. Ode to Egg</a></li>}
+    assert content =~ ~r{<li><a href="content/bacon.xhtml">Bacon</a></li>}
+    assert content =~ ~r{<li><a href="content/ham.xhtml">Ham</a></li>}
+    assert content =~ ~r{<li><a href="content/egg.xhtml">Egg</a></li>}
   end
 
   test "toc template" do
@@ -18,9 +18,9 @@ defmodule BUPE.Builder.TemplatesTest do
 
     content = Templates.ncx_template(config)
 
-    assert content =~ ~r{<navPoint id="ode-to-bacon" playOrder="1">}
-    assert content =~ ~r{<navPoint id="ode-to-ham" playOrder="2">}
-    assert content =~ ~r{<navPoint id="ode-to-egg" playOrder="3">}
+    assert content =~ ~r{<navPoint id="bacon" playOrder="1">}
+    assert content =~ ~r{<navPoint id="egg" playOrder="2">}
+    assert content =~ ~r{<navPoint id="ham" playOrder="3">}
 
     assert content =~ ~r{<content src="content/bacon.xhtml" />}
     assert content =~ ~r{<content src="content/ham.xhtml" />}

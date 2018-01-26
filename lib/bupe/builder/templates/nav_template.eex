@@ -7,15 +7,15 @@
     <meta name="generator" content="BUPE" />
     <link type="text/css" rel="stylesheet" href="css/stylesheet.css" />
     <%= for style <- config.styles do %>
-      <link type="text/css" rel="stylesheet" href="content/assets/<%= Path.basename(style) %>" />
+      <link type="text/css" rel="stylesheet" href="<%= get_content_path(style) %>" />
     <% end %>
   </head>
   <body>
     <h2>Table of contents</h2>
     <nav epub:type="toc">
       <ol>
-        <%= for node <- config.nav do %>
-        <li><a href="content/<%= node.content %>"><%= node.label %></a></li>
+        <%= for node <- config.pages do %>
+        <li><a href="<%= get_content_path(node) %>"><%= node.description %></a></li>
         <% end %>
       </ol>
     </nav>
