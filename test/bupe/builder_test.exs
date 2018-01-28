@@ -19,9 +19,10 @@ defmodule BUPE.BuilderTest do
     assert epub_info.version == "2.0"
 
     # NAV file is not supported in EPUB v2
-    refute epub |> unzip() |> Enum.find(fn {name, _binary} ->
-      name == 'OEBPS/nav.xhtml'
-    end)
+    refute epub |> unzip()
+           |> Enum.find(fn {name, _binary} ->
+             name == 'OEBPS/nav.xhtml'
+           end)
   end
 
   test "do not include cover page" do
@@ -46,8 +47,8 @@ defmodule BUPE.BuilderTest do
              ~r{<item id="cover" href="title.xhtml" media-type="application/xhtml+xml" />}
 
     refute Enum.find(content, fn {name, _binary} ->
-      name == 'OEBPS/title.xhtml'
-    end)
+             name == 'OEBPS/title.xhtml'
+           end)
   end
 
   test "should raise exception for invalid extension in EPUB v2" do

@@ -188,11 +188,14 @@ defmodule BUPE.Builder do
   end
 
   defp generate_content(config) do
-    sources = config.details.pages ++ config.details.styles ++ config.details.scripts ++ config.details.images
+    sources =
+      config.details.pages ++
+        config.details.styles ++ config.details.scripts ++ config.details.images
+
     Enum.into(sources, config.files, fn source ->
       content = File.read!(source.href)
       path = "OEBPS/content" |> Path.join(Path.basename(source.href)) |> String.to_charlist()
-      
+
       {path, content}
     end)
   end
@@ -263,7 +266,7 @@ defmodule BUPE.Builder do
   end
 
   defp generate_assets(config, assets) do
-    files = 
+    files =
       Enum.into(assets, config.files, fn asset ->
         {asset[:dir] |> Path.join(asset[:filename]) |> String.to_charlist(), asset[:content]}
       end)

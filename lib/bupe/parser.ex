@@ -47,7 +47,7 @@ defmodule BUPE.Parser do
   @doc """
   EPUB v3 parser
   """
-  def run(<<0x04034b50 :: little-size(32), _ :: binary>> = epub) do
+  def run(<<0x04034B50::little-size(32), _::binary>> = epub) do
     parse(epub)
   end
 
@@ -130,40 +130,38 @@ defmodule BUPE.Parser do
   end
 
   defp parse_xml({xml, config}, :manifest) do
-    {xml,
-     %{
-       config
-       | images: find_manifest(xml, ["image/jpeg", "image/gif", "image/png", "image/svg+xml"]),
-         scripts: find_manifest(xml, "application/javascript"),
-         styles: find_manifest(xml, "text/css"),
-         pages: find_manifest(xml, "application/xhtml+xml"),
-         audio: find_manifest(xml, ["audio/mpeg", "audio/mp4"]),
-         fonts:
-           find_manifest(xml, ["application/font-sfnt", "application/font-woff", "font/woff2"])
-     }}
+    {xml, %{
+      config
+      | images: find_manifest(xml, ["image/jpeg", "image/gif", "image/png", "image/svg+xml"]),
+        scripts: find_manifest(xml, "application/javascript"),
+        styles: find_manifest(xml, "text/css"),
+        pages: find_manifest(xml, "application/xhtml+xml"),
+        audio: find_manifest(xml, ["audio/mpeg", "audio/mp4"]),
+        fonts:
+          find_manifest(xml, ["application/font-sfnt", "application/font-woff", "font/woff2"])
+    }}
   end
 
   defp parse_xml(xml, :metadata) do
-    {xml,
-     %BUPE.Config{
-       title: find_metadata(xml, "title"),
-       nav: nil,
-       pages: nil,
-       identifier: find_metadata(xml, "identifier"),
-       creator: find_metadata(xml, "creator"),
-       contributor: find_metadata(xml, "contributor"),
-       modified: find_metadata_property(xml, "dcterms:modified"),
-       date: find_metadata(xml, "date"),
-       source: find_metadata(xml, "source") || find_metadata_property(xml, "dcterms:source"),
-       type: find_metadata(xml, "type"),
-       description: find_metadata(xml, "description"),
-       format: find_metadata(xml, "format"),
-       coverage: find_metadata(xml, "coverage"),
-       publisher: find_metadata(xml, "publisher"),
-       relation: find_metadata(xml, "relation"),
-       rights: find_metadata(xml, "rights"),
-       subject: find_metadata(xml, "subject")
-     }}
+    {xml, %BUPE.Config{
+      title: find_metadata(xml, "title"),
+      nav: nil,
+      pages: nil,
+      identifier: find_metadata(xml, "identifier"),
+      creator: find_metadata(xml, "creator"),
+      contributor: find_metadata(xml, "contributor"),
+      modified: find_metadata_property(xml, "dcterms:modified"),
+      date: find_metadata(xml, "date"),
+      source: find_metadata(xml, "source") || find_metadata_property(xml, "dcterms:source"),
+      type: find_metadata(xml, "type"),
+      description: find_metadata(xml, "description"),
+      format: find_metadata(xml, "format"),
+      coverage: find_metadata(xml, "coverage"),
+      publisher: find_metadata(xml, "publisher"),
+      relation: find_metadata(xml, "relation"),
+      rights: find_metadata(xml, "rights"),
+      subject: find_metadata(xml, "subject")
+    }}
   end
 
   defp parse_xml({xml, config}, :navigation) do
@@ -221,20 +219,22 @@ defmodule BUPE.Parser do
     |> :xmerl_xpath.string(xml)
   end
 
-  defp transform({
-         :xmlElement,
-         _name,
-         _expanded_name,
-         _nsinfo,
-         _namespace,
-         _parents,
-         _pos,
-         attributes,
-         _content,
-         _language,
-         _xmlbase,
-         :undeclared
-       }) do
+  defp transform(
+         {
+           :xmlElement,
+           _name,
+           _expanded_name,
+           _nsinfo,
+           _namespace,
+           _parents,
+           _pos,
+           attributes,
+           _content,
+           _language,
+           _xmlbase,
+           :undeclared
+         }
+       ) do
     Enum.into(attributes, %{}, fn {:xmlAttribute, name, _, _, _, _, _, _, value, _} ->
       {name, value}
     end)
