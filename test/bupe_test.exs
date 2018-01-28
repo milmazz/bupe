@@ -1,8 +1,8 @@
 defmodule BUPETest do
-  use BUPETest.Case, async: false
+  use BUPETest.Case, async: true
   doctest BUPE
 
-  test "file does not exists" do
+  test "parser should detect that file does not exists" do
     file_path = fixtures_dir("404.epub")
     msg = "file #{file_path} does not exists"
 
@@ -11,7 +11,7 @@ defmodule BUPETest do
     end
   end
 
-  test "invalid extension" do
+  test "parser should detect invalid extensions" do
     file_path = fixtures_dir("30/bacon.xhtml")
     msg = "file #{file_path} does not have an '.epub' extension"
 
@@ -20,7 +20,7 @@ defmodule BUPETest do
     end
   end
 
-  test "invalid mimetype" do
+  test "parser should report invalid EPUB mimetype" do
     msg = "invalid mimetype, must be 'application/epub+zip'"
 
     assert_raise RuntimeError, msg, fn ->
@@ -32,17 +32,16 @@ defmodule BUPETest do
     config = config()
 
     output = Path.join(tmp_dir(), "sample.epub")
-    BUPE.build(config, output)
+    {:ok, {_name, epub}} = BUPE.build(config, output, [:memory])
 
-    epub_info = BUPE.parse(output)
+    epub_info = BUPE.parse(epub)
 
-    assert File.exists?(output)
     assert epub_info.title == config.title
     assert epub_info.creator == config.creator
     assert epub_info.version == config.version
   end
 
-  test "invalid version" do
+  test "builder should report invalid EPUB version" do
     config = config()
     config = Map.put(config, :version, "4.0")
     msg = "invalid EPUB version, expected '2.0' or '3.0'"
