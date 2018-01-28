@@ -47,12 +47,22 @@ defmodule BUPE.Parser do
   @doc """
   EPUB v3 parser
   """
+  def run(<<0x04034b50 :: little-size(32), _ :: binary>> = epub) do
+    parse(epub)
+  end
+
   @spec run(Path.t()) :: BUPE.Config.t() | no_return
-  def run(epub_file) when is_binary(epub_file) do
-    epub_file
+  def run(epub) when is_binary(epub) do
+    epub
     |> Path.expand()
+    |> String.to_charlist()
     |> check_file()
     |> check_extension()
+    |> parse()
+  end
+
+  defp parse(epub) do
+    epub
     |> check_mimetype()
     |> find_rootfile()
     |> scan_content()
@@ -62,48 +72,48 @@ defmodule BUPE.Parser do
     |> parse_xml(:extras)
   end
 
-  defp check_file(epub_file) do
-    unless File.exists?(epub_file) do
-      raise ArgumentError, "file #{epub_file} does not exists"
+  defp check_file(epub) do
+    unless File.exists?(epub) do
+      raise ArgumentError, "file #{epub} does not exists"
     end
 
-    epub_file
+    epub
   end
 
-  defp check_extension(epub_file) do
-    unless epub_file |> Path.extname() |> String.downcase() == ".epub" do
-      raise ArgumentError, "file #{epub_file} does not have an '.epub' extension"
+  defp check_extension(epub) do
+    unless epub |> Path.extname() |> String.downcase() == ".epub" do
+      raise ArgumentError, "file #{epub} does not have an '.epub' extension"
     end
 
-    epub_file
+    epub
   end
 
-  defp check_mimetype(epub_file) do
-    unless epub_file |> extract_files(["mimetype"]) |> mimetype_valid?() do
+  defp check_mimetype(epub) do
+    unless epub |> extract_files(["mimetype"]) |> mimetype_valid?() do
       raise "invalid mimetype, must be 'application/epub+zip'"
     end
 
-    epub_file
+    epub
   end
 
   defp mimetype_valid?([{'mimetype', "application/epub+zip"}]), do: true
   defp mimetype_valid?(_), do: false
 
-  defp find_rootfile(epub_file) do
+  defp find_rootfile(epub) do
     container = 'META-INF/container.xml'
-    [{^container, content}] = extract_files(epub_file, [container])
+    [{^container, content}] = extract_files(epub, [container])
     captures = Regex.named_captures(~r/<rootfile\s.*full-path="(?<full_path>[^"]+)"\s/, content)
 
     unless captures do
       raise "could not find rootfile in #{container}"
     end
 
-    {epub_file, captures["full_path"]}
+    {epub, captures["full_path"]}
   end
 
-  defp scan_content({epub_file, root_file}) do
+  defp scan_content({epub, root_file}) do
     root_file = String.to_charlist(root_file)
-    [{^root_file, content}] = extract_files(epub_file, [root_file])
+    [{^root_file, content}] = extract_files(epub, [root_file])
 
     {xml, _rest} = content |> :erlang.bitstring_to_list() |> :xmerl_scan.string()
 
@@ -160,8 +170,7 @@ defmodule BUPE.Parser do
     {xml, %{config | nav: find_xml(xml, filter: "/package/spine/*", type: :element)}}
   end
 
-  defp extract_files(epub_file, files) when is_list(files) do
-    archive = String.to_charlist(epub_file)
+  defp extract_files(archive, files) when is_list(files) do
     file_list = Enum.into(files, [], &if(is_list(&1), do: &1, else: String.to_charlist(&1)))
 
     case :zip.extract(archive, [{:file_list, file_list}, :memory]) do
