@@ -2,7 +2,7 @@
 
 ## v0.4.0
 
-## Enhancements
+### Enhancements
 
 * Allow to parse/create EPUBs in memory
 * README: Update sample for the EPUB Parser
@@ -15,7 +15,7 @@
 * Add more tests for the Builder
 * Allow to opt-out of the default cover page
 
-## Bug fixes
+### Bug fixes
 
 * Fix example in `BUPE.Builder` docs
 
