@@ -19,7 +19,8 @@ defmodule BUPE.BuilderTest do
     assert epub_info.version == "2.0"
 
     # NAV file is not supported in EPUB v2
-    refute epub |> unzip()
+    refute epub
+           |> unzip()
            |> Enum.find(fn {name, _binary} ->
              name == 'OEBPS/nav.xhtml'
            end)
