@@ -214,6 +214,7 @@ defmodule BUPE.Builder do
     Map.put(config, :modified, dt)
   end
 
+  # credo:disable-for-next-line Credo.Check.Design.TagTODO
   # TODO: Check if format is compatible with ISO8601
   defp modified_date(config), do: config
 
