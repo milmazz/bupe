@@ -69,7 +69,7 @@
       <item id="scripts<%= idx %>" href="<%= get_content_path(script) %>" media-type="text/javascript"/>
     <% end %>
     <%= for {image, idx} <- Enum.with_index(config.images) do %>
-      <item id="image<%= idx %>" href="<%= get_content_path(image) %>" media-type="<%= media_type(Path.extname(image)) %>"/>
+      <item id="image<%= idx %>" href="<%= get_content_path(image) %>" media-type="<%= media_type(Path.extname(image.href)) %>"/>
     <% end %>
 
     <%= if config.logo do %>

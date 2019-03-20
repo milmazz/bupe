@@ -19,7 +19,7 @@ defmodule BUPE.Mixfile do
       package: package(),
       deps: deps(),
       dialyzer: [
-        plt_add_apps: [:mix, :ex_unit],
+        plt_add_apps: [:mix, :ex_unit, :xmerl],
         check_plt: true,
         flags: [:error_handling, :race_conditions, :underspecs]
       ]

@@ -203,7 +203,7 @@ defmodule BUPE.Builder do
   defp generate_epub(files, name, options) do
     opts = [compress: ['.css', '.js', '.html', '.xhtml', '.ncx', '.opf', '.jpg', '.png', '.xml']]
 
-    opts = if Enum.find(options, fn x -> x == :memory end), do: [:memory | opts], else: opts
+    opts = if Enum.find(options, &(&1 == :memory)), do: [:memory | opts], else: opts
 
     :zip.create(String.to_charlist(name), [{'mimetype', @mimetype} | files], opts)
   end

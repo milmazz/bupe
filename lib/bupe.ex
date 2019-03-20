@@ -83,7 +83,7 @@ defmodule BUPE do
             nav: list(),
             styles: [Path.t() | map()],
             scripts: [Path.t() | map()],
-            images: [Path.t() | map()],
+            images: [Path.t()],
             cover: boolean,
             logo: String.t(),
             audio: [map()],
