@@ -17,7 +17,12 @@ defmodule BUPE.Mixfile do
       elixirc_paths: elixirc_paths(Mix.env()),
       docs: docs(),
       package: package(),
-      deps: deps()
+      deps: deps(),
+      dialyzer: [
+        plt_add_apps: [:mix, :ex_unit],
+        check_plt: true,
+        flags: [:error_handling, :race_conditions, :underspecs]
+      ]
     ]
   end
 
@@ -30,8 +35,10 @@ defmodule BUPE.Mixfile do
 
   defp deps do
     [
-      {:ex_doc, "~> 0.13", only: :dev},
-      {:earmark, "~> 1.0", only: :dev}
+      {:ex_doc, "~> 0.19", only: :dev},
+      {:earmark, "~> 1.0", only: :dev},
+      {:dialyxir, "~> 1.0.0-rc.3", only: :dev, runtime: false},
+      {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false}
     ]
   end
 

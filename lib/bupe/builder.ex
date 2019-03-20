@@ -105,7 +105,7 @@ defmodule BUPE.Builder do
   @doc """
   Generates an EPUB v3 document
   """
-  @spec run(Config.t(), Path.t(), Keyword.t()) :: String.t() | no_return
+  @spec run(Config.t(), Path.t(), Keyword.t()) :: {:ok, String.t()} | {:error, String.t()}
   def run(config, name, options \\ []) do
     name = Path.expand(name)
 
@@ -250,7 +250,7 @@ defmodule BUPE.Builder do
   defp check_unique_identifier(config), do: config
 
   defp invalid_files?(files, extensions) do
-    Enum.filter(files, &((Path.extname(&1.href) |> String.downcase()) in extensions)) != files
+    Enum.filter(files, &((&1.href |> Path.extname() |> String.downcase()) in extensions)) != files
   end
 
   defp assets do

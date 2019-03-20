@@ -1,4 +1,5 @@
 defmodule BUPETest.Case do
+  # credo:disable-for-this-file Credo.Check.Readability.ModuleDoc
   use ExUnit.CaseTemplate
 
   using do
