@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.4.1
+
+## Bug fixes
+
+* Improve backward compatibility
+
 ## v0.4.0
 
 ### Enhancements
