@@ -59,21 +59,21 @@
     <item id="cover" href="title.xhtml" media-type="application/xhtml+xml" />
     <% end %>
     <%= for node <- config.pages do %>
-      <item id="<%= node.id %>" href="<%= get_content_path(node) %>" media-type="<%= media_type(Path.extname(node.href)) %>" />
+      <item id="<%= node.id %>" href="<%= get_content_path(node) %>" media-type="<%= media_type_from_node(node) %>" <%= if node[:properties] do %>properties="<%= node.properties %>"<% end %> />
     <% end %>
     <item id="css" href="css/stylesheet.css" media-type="text/css"/>
-    <%= for {style, idx} <- Enum.with_index(config.styles) do %>
-      <item id="styles<%= idx %>" href="<%= get_content_path(style) %>" media-type="text/css"/>
+    <%= for node <- config.styles do %>
+      <item id="<%= node.id %>" href="<%= get_content_path(node) %>" media-type="text/css"/>
     <% end %>
-    <%= for {script, idx} <- Enum.with_index(config.scripts) do %>
-      <item id="scripts<%= idx %>" href="<%= get_content_path(script) %>" media-type="text/javascript"/>
+    <%= for node <- config.scripts do %>
+      <item id="<%= node.id %>" href="<%= get_content_path(node) %>" media-type="text/javascript"/>
     <% end %>
-    <%= for {image, idx} <- Enum.with_index(config.images) do %>
-      <item id="image<%= idx %>" href="<%= get_content_path(image) %>" media-type="<%= media_type(Path.extname(image.href)) %>"/>
+    <%= for node <- config.images do %>
+      <item id="<%= node.id %>" href="<%= get_content_path(node) %>" media-type="<%= media_type_from_node(node) %>"/>
     <% end %>
 
     <%= if config.logo do %>
-      <item id="cover-image" href="content/<%= config.logo %>" media-type="<% media_type(Path.extname(config.logo)) %>" />
+      <item id="cover-image" href="content/<%= config.logo %>" media-type="<% config.log |> Path.extname() |> String.downcase() |> media_type() %>" />
     <% end %>
   </manifest>
   <spine toc="ncx">
@@ -81,8 +81,8 @@
     <%= if config.version == "3.0" do %>
     <itemref idref="nav" />
     <% end %>
-    <%= for node <- config.nav do %>
-      <itemref idref="<%= node.idref %>" />
+    <%= for node <- config.pages do %>
+      <itemref idref="<%= node.id %>" />
     <% end %>
   </spine>
 </package>

@@ -17,8 +17,12 @@ defmodule BUPE.Builder.Templates do
 
   def media_type(_), do: nil
 
-  defp get_content_path(node) do
-    path = Path.basename(node.href)
+  def media_type_from_node(%{href: href}) do
+    href |> Path.extname() |> String.downcase() |> media_type()
+  end
+
+  defp get_content_path(%{href: href}) do
+    path = Path.basename(href)
     "content/#{path}"
   end
 

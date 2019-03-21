@@ -54,7 +54,6 @@ defmodule BUPE.Builder do
     language: "en",
     logo: nil,
     modified: nil,
-    nav: nil,
     pages: [
       %{
         description: "Bacon",
@@ -124,11 +123,40 @@ defmodule BUPE.Builder do
     config =
       config
       |> modified_date()
+      |> normalize_assets()
       |> check_identifier()
       |> check_files_extension()
       |> check_unique_identifier()
 
     %{files: [], details: config}
+  end
+
+  defp normalize_assets(config) do
+    [pages, styles, scripts, images] =
+      for asset <- ~w(pages styles scripts images)a do
+        config
+        |> Map.get(asset)
+        |> transform_assets(asset)
+      end
+
+    %{config | pages: pages, styles: styles, scripts: scripts, images: images}
+  end
+
+  defp transform_assets([], _), do: []
+  defp transform_assets(assets, kind), do: Enum.map(assets, &transform_asset(&1, kind))
+
+  defp transform_asset(asset, _) when is_map(asset), do: asset
+
+  defp transform_asset(asset, kind) when is_binary(asset) do
+    id = Enum.join([kind, uuid4()], "-")
+    description = Path.basename(asset, Path.extname(asset))
+    asset = %{id: id, description: description, href: asset}
+
+    if kind == :pages do
+      Map.put(asset, :properties, "scripted")
+    else
+      asset
+    end
   end
 
   # Package definition builder.
