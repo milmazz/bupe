@@ -10,7 +10,7 @@ defmodule BUPE.Mixfile do
       name: "BUPE",
       source_url: "https://github.com/milmazz/bupe",
       homepage_url: "https://github.com/milmazz/bupe",
-      elixir: "~> 1.8",
+      elixir: "~> 1.3",
       description: description(),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
