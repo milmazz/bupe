@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.5.0
+
+## Enhancements
+
+* Improve documentation
+* Refactor EPUB builder
+* Introduce `BUPE.Item` definition
+* Fix unit tests after moving exception definitions
+* Provide an utility module
+* Move BUPE.Config and exceptions into its own files
+* Revert Elixir version bump
+
 ## v0.4.1
 
 ## Bug fixes
