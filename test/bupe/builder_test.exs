@@ -58,10 +58,10 @@ defmodule BUPE.BuilderTest do
 
     config =
       config
-      |> Map.put(:pages, [%{href: "page.png"}])
+      |> Map.put(:pages, [%BUPE.Item{href: "page.png"}])
       |> Map.put(:version, "2.0")
 
-    assert_raise BUPE.Config.InvalidExtensionName, msg, fn ->
+    assert_raise BUPE.InvalidExtensionName, msg, fn ->
       BUPE.build(config, "sample.epub", [:memory])
     end
   end
@@ -70,9 +70,9 @@ defmodule BUPE.BuilderTest do
     config = config()
     msg = "XHTML Content Document file names should have the extension '.xhtml'."
 
-    config = Map.put(config, :pages, [%{href: "page.png"}])
+    config = Map.put(config, :pages, [%BUPE.Item{href: "page.png"}])
 
-    assert_raise BUPE.Config.InvalidExtensionName, msg, fn ->
+    assert_raise BUPE.InvalidExtensionName, msg, fn ->
       BUPE.build(config, "sample.epub", [:memory])
     end
   end

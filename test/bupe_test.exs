@@ -46,7 +46,7 @@ defmodule BUPETest do
     config = Map.put(config, :version, "4.0")
     msg = "invalid EPUB version, expected '2.0' or '3.0'"
 
-    assert_raise BUPE.Config.InvalidVersion, msg, fn ->
+    assert_raise BUPE.InvalidVersion, msg, fn ->
       BUPE.build(config, "sample.epub")
     end
   end
