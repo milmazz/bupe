@@ -1,8 +1,14 @@
 # Changelog
 
+## v0.5.1
+
+### Bug fixes
+
+* Provide an alternative description for `BUPE.Item` in case is missing
+
 ## v0.5.0
 
-## Enhancements
+### Enhancements
 
 * Improve documentation
 * Refactor EPUB builder
@@ -14,7 +20,7 @@
 
 ## v0.4.1
 
-## Bug fixes
+### Bug fixes
 
 * Improve backward compatibility
 
