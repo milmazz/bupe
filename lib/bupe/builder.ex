@@ -4,92 +4,120 @@ defmodule BUPE.Builder do
 
   ## Example
 
-  ```elixir
-  iex(1)> files = "~/book/*.xhtml" |> Path.expand() |> Path.wildcard()
-  ["/Users/dev/book/bacon.xhtml", "/Users/dev/book/egg.xhtml", "/Users/dev/book/ham.xhtml"]
-  iex(2)> get_id = fn file -> Path.basename(file, ".xhtml") end
-  #Function<6.99386804/1 in :erl_eval.expr/5>
-  iex(3)> pages = Enum.map(files, fn file ->
-  ...(3)>   %{href: file, id: get_id.(file), description: file |> get_id.() |> String.capitalize()}
-  ...(3)> end)
-  [
-    %{
-      description: "Bacon",
-      href: "/Users/dev/book/bacon.xhtml",
-      id: "bacon"
-    },
-    %{
-      description: "Egg",
-      href: "/Users/dev/book/egg.xhtml",
-      id: "egg"
-    },
-    %{
-      description: "Ham",
-      href: "/Users/dev/book/ham.xhtml",
-      id: "ham"
-    }
-  ]
-  iex(4)> config = %BUPE.Config{
-  ...(4)>  title: "Sample",
-  ...(4)>  language: "en",
-  ...(4)>  creator: "John Doe",
-  ...(4)>  publisher: "Sample",
-  ...(4)>  date: "2016-06-23T06:00:00Z",
-  ...(4)>  unique_identifier: "EXAMPLE",
-  ...(4)>  identifier: "http://example.com/book/jdoe/1",
-  ...(4)>  pages: pages
-  ...(4)> }
-  %BUPE.Config{
-    audio: [],
-    contributor: nil,
-    cover: true,
-    coverage: nil,
-    creator: "John Doe",
-    date: "2016-06-23T06:00:00Z",
-    description: nil,
-    fonts: [],
-    format: nil,
-    identifier: "http://example.com/book/jdoe/1",
-    images: [],
-    language: "en",
-    logo: nil,
-    modified: nil,
-    pages: [
-      %{
-        description: "Bacon",
-        href: "/Users/dev/book/bacon.xhtml",
-        id: "bacon"
-      },
-      %{
-        description: "Egg",
-        href: "/Users/dev/book/egg.xhtml",
-        id: "egg"
-      },
-      %{
-        description: "Ham"
-        href: "/Users/dev/book/ham.xhtml",
-        id: "ham"
+      iex(1)> files = "~/book/*.xhtml" |> Path.expand() |> Path.wildcard()
+      ["/Users/dev/book/bacon.xhtml", "/Users/dev/book/egg.xhtml", "/Users/dev/book/ham.xhtml"]
+      iex(2)> get_id = fn file -> Path.basename(file, ".xhtml") end
+      #Function<6.99386804/1 in :erl_eval.expr/5>
+      iex(3)> pages = Enum.map(files, fn file ->
+      ...(3)>   %BUPE.Item{href: file, id: get_id.(file), description: file |> get_id.() |> String.capitalize()}
+      ...(3)> end)
+      [
+        %BUPE.Item{
+          description: "Bacon",
+          duration: nil,
+          fallback: nil,
+          href: "/Users/dev/book/bacon.xhtml",
+          id: "bacon",
+          media_overlay: nil,
+          media_type: nil,
+          properties: nil
+        },
+        %BUPE.Item{
+          description: "Egg",
+          duration: nil,
+          fallback: nil,
+          href: "/Users/dev/book/egg.xhtml",
+          id: "egg",
+          media_overlay: nil,
+          media_type: nil,
+          properties: nil
+        },
+        %BUPE.Item{
+          description: "Ham",
+          duration: nil,
+          fallback: nil,
+          href: "/Users/dev/book/ham.xhtml",
+          id: "ham",
+          media_overlay: nil,
+          media_type: nil,
+          properties: nil
+        }
+      ]
+      iex(4)> config = %BUPE.Config{
+      ...(4)>  title: "Sample",
+      ...(4)>  language: "en",
+      ...(4)>  creator: "John Doe",
+      ...(4)>  publisher: "Sample",
+      ...(4)>  date: "2016-06-23T06:00:00Z",
+      ...(4)>  unique_identifier: "EXAMPLE",
+      ...(4)>  identifier: "http://example.com/book/jdoe/1",
+      ...(4)>  pages: pages
+      ...(4)> }
+      %BUPE.Config{
+        audio: [],
+        contributor: nil,
+        cover: true,
+        coverage: nil,
+        creator: "John Doe",
+        date: "2016-06-23T06:00:00Z",
+        description: nil,
+        fonts: [],
+        format: nil,
+        identifier: "http://example.com/book/jdoe/1",
+        images: [],
+        language: "en",
+        logo: nil,
+        modified: nil,
+        nav: [],
+        pages: [
+          %BUPE.Item{
+            description: "Bacon",
+            duration: nil,
+            fallback: nil,
+            href: "/Users/dev/book/bacon.xhtml",
+            id: "bacon",
+            media_overlay: nil,
+            media_type: nil,
+            properties: nil
+          },
+          %BUPE.Item{
+            description: "Egg",
+            duration: nil,
+            fallback: nil,
+            href: "/Users/dev/book/egg.xhtml",
+            id: "egg",
+            media_overlay: nil,
+            media_type: nil,
+            properties: nil
+          },
+          %BUPE.Item{
+            description: "Ham",
+            duration: nil,
+            fallback: nil,
+            href: "/Users/dev/book/ham.xhtml",
+            id: "ham",
+            media_overlay: nil,
+            media_type: nil,
+            properties: nil
+          }
+        ],
+        publisher: "Sample",
+        relation: nil,
+        rights: nil,
+        scripts: [],
+        source: nil,
+        styles: [],
+        subject: nil,
+        title: "Sample",
+        type: nil,
+        unique_identifier: "EXAMPLE",
+        version: "3.0"
       }
-    ],
-    publisher: "Sample",
-    relation: nil,
-    rights: nil,
-    scripts: [],
-    source: nil,
-    styles: [],
-    subject: nil,
-    title: "Sample",
-    type: nil,
-    unique_identifier: "EXAMPLE",
-    version: "3.0"
-  }
-  iex(6)> BUPE.Builder.run(config, "example.epub")
-  {:ok, '/Users/dev/example.epub'}
-  ```
+      iex(6)> BUPE.Builder.run(config, "example.epub")
+      {:ok, '/Users/dev/example.epub'}
 
   """
-  alias BUPE.Config
-  alias BUPE.Builder.Templates
+  alias BUPE.{Builder.Templates, Config, Item, Util}
 
   @mimetype "application/epub+zip"
   @container_template File.read!(Path.expand("builder/templates/assets/container.xml", __DIR__))
@@ -136,27 +164,21 @@ defmodule BUPE.Builder do
       for asset <- ~w(pages styles scripts images)a do
         config
         |> Map.get(asset)
-        |> transform_assets(asset)
+        |> transform_assets()
       end
 
     %{config | pages: pages, styles: styles, scripts: scripts, images: images}
   end
 
-  defp transform_assets([], _), do: []
-  defp transform_assets(assets, kind), do: Enum.map(assets, &transform_asset(&1, kind))
+  defp transform_assets([]), do: []
+  defp transform_assets(assets), do: Enum.map(assets, &transform_asset/1)
 
-  defp transform_asset(asset, _) when is_map(asset), do: asset
+  defp transform_asset(%Item{} = asset) do
+    Item.normalize(asset)
+  end
 
-  defp transform_asset(asset, kind) when is_binary(asset) do
-    id = Enum.join([kind, uuid4()], "-")
-    description = Path.basename(asset, Path.extname(asset))
-    asset = %{id: id, description: description, href: asset}
-
-    if kind == :pages do
-      Map.put(asset, :properties, "scripted")
-    else
-      asset
-    end
+  defp transform_asset(asset) when is_binary(asset) do
+    Item.from_string(asset)
   end
 
   # Package definition builder.
@@ -247,7 +269,7 @@ defmodule BUPE.Builder do
   defp modified_date(config), do: config
 
   defp check_identifier(%{identifier: nil} = config) do
-    identifier = "urn:uuid:#{uuid4()}"
+    identifier = "urn:uuid:#{Util.uuid4()}"
     Map.put(config, :identifier, identifier)
   end
 
@@ -255,7 +277,7 @@ defmodule BUPE.Builder do
 
   defp check_files_extension(%{version: "3.0"} = config) do
     if invalid_files?(config.pages, [".xhtml"]) do
-      raise Config.InvalidExtensionName,
+      raise BUPE.InvalidExtensionName,
             "XHTML Content Document file names should have the extension '.xhtml'."
     end
 
@@ -264,14 +286,14 @@ defmodule BUPE.Builder do
 
   defp check_files_extension(%{version: "2.0"} = config) do
     if invalid_files?(config.pages, [".html", ".htm", ".xhtml"]) do
-      raise Config.InvalidExtensionName,
+      raise BUPE.InvalidExtensionName,
             "invalid file extension for HTML file, expected '.html', '.htm' or '.xhtml'"
     end
 
     config
   end
 
-  defp check_files_extension(_config), do: raise(Config.InvalidVersion)
+  defp check_files_extension(_config), do: raise(BUPE.InvalidVersion)
 
   defp check_unique_identifier(%{unique_identifier: nil} = config),
     do: Map.put(config, :unique_identifier, "BUPE")
@@ -301,19 +323,5 @@ defmodule BUPE.Builder do
       end)
 
     %{config | files: files}
-  end
-
-  # Helper to generate an UUID, in particular version 4 as specified in
-  # [RFC 4122](https://tools.ietf.org/html/rfc4122.html)
-  defp uuid4 do
-    <<u0::48, _::4, u1::12, _::2, u2::62>> = :crypto.strong_rand_bytes(16)
-    bin = <<u0::48, 4::4, u1::12, 2::2, u2::62>>
-    <<u0::32, u1::16, u2::16, u3::16, u4::48>> = bin
-
-    Enum.map_join(
-      [<<u0::32>>, <<u1::16>>, <<u2::16>>, <<u3::16>>, <<u4::48>>],
-      <<45>>,
-      &Base.encode16(&1, case: :lower)
-    )
   end
 end

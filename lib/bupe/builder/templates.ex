@@ -3,24 +3,6 @@ defmodule BUPE.Builder.Templates do
 
   require EEx
 
-  @media_types File.read!(Path.expand("templates/media-types.txt", __DIR__))
-
-  @media_types
-  |> String.split("\n", trim: true)
-  |> Enum.each(fn line ->
-    [extension, media] = line |> String.trim() |> String.split(",")
-
-    def media_type("." <> unquote(extension)) do
-      unquote(media)
-    end
-  end)
-
-  def media_type(_), do: nil
-
-  def media_type_from_node(%{href: href}) do
-    href |> Path.extname() |> String.downcase() |> media_type()
-  end
-
   defp get_content_path(%{href: href}) do
     path = Path.basename(href)
     "content/#{path}"

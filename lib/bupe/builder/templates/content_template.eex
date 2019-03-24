@@ -59,7 +59,7 @@
     <item id="cover" href="title.xhtml" media-type="application/xhtml+xml" />
     <% end %>
     <%= for node <- config.pages do %>
-      <item id="<%= node.id %>" href="<%= get_content_path(node) %>" media-type="<%= media_type_from_node(node) %>" <%= if node[:properties] do %>properties="<%= node.properties %>"<% end %> />
+      <item id="<%= node.id %>" href="<%= get_content_path(node) %>" media-type="<%= node.media_type %>"<%= if node.properties do %> properties="<%= node.properties %>"<% end %> />
     <% end %>
     <item id="css" href="css/stylesheet.css" media-type="text/css"/>
     <%= for node <- config.styles do %>
@@ -69,11 +69,11 @@
       <item id="<%= node.id %>" href="<%= get_content_path(node) %>" media-type="text/javascript"/>
     <% end %>
     <%= for node <- config.images do %>
-      <item id="<%= node.id %>" href="<%= get_content_path(node) %>" media-type="<%= media_type_from_node(node) %>"/>
+      <item id="<%= node.id %>" href="<%= get_content_path(node) %>" media-type="<%= node.media_type %>"/>
     <% end %>
 
     <%= if config.logo do %>
-      <item id="cover-image" href="content/<%= config.logo %>" media-type="<% config.log |> Path.extname() |> String.downcase() |> media_type() %>" />
+      <item id="cover-image" href="content/<%= config.logo %>" media-type="<% BUPE.Util.media_type_from_path(config.logo) %>" />
     <% end %>
   </manifest>
   <spine toc="ncx">

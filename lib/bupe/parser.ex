@@ -5,9 +5,8 @@ defmodule BUPE.Parser do
 
   ## Example
 
-  ```iex
-  BUPE.Parser.parse("sample.epub")
-  #=> %BUPE.Config{
+      BUPE.Parser.parse("sample.epub")
+      #=> %BUPE.Config{
         creator: "John Doe",
         nav: [
           %{idref: 'ode-to-bacon'},
@@ -38,7 +37,6 @@ defmodule BUPE.Parser do
         unique_identifier: "EXAMPLE",
         version: "3.0"
       }
-  ```
 
   [EPUB]: http://www.idpf.org/epub3/latest/overview
 

@@ -39,7 +39,11 @@ defmodule BUPETest.Case do
 
     pages =
       Enum.map(files, fn file ->
-        %{href: file, id: get_id.(file), description: file |> get_id.() |> String.capitalize()}
+        %BUPE.Item{
+          href: file,
+          id: get_id.(file),
+          description: file |> get_id.() |> String.capitalize()
+        }
       end)
 
     %BUPE.Config{
