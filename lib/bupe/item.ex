@@ -32,6 +32,24 @@ defmodule BUPE.Item do
     :properties
   ]
 
+  @doc """
+  Convert a given path into a `BUPE.Item` struct.
+
+  ## Examples
+
+      iex> BUPE.Item.from_string("book/bacon.xhtml")
+      #=> %BUPE.Item{
+        description: "bacon",
+        duration: nil,
+        fallback: nil,
+        href: "book/bacon.xhtml",
+        id: "i-fddafede-7628-4cc9-b7e9-4a653cd2fef3",
+        media_overlay: nil,
+        media_type: "application/xhtml+xml",
+        properties: nil
+      }
+
+  """
   @spec from_string(binary()) :: t()
   def from_string(path) when is_binary(path) do
     id = "i-#{Util.uuid4()}"
@@ -46,9 +64,34 @@ defmodule BUPE.Item do
     }
   end
 
+  @doc """
+  Normalize the given `BUPE.Item` struct.
+
+  ## Examples
+
+      iex> BUPE.Item.normalize(%BUPE.Item{
+      ...>   id: "ode-to-bacon",
+      ...>   href: "book/bacon.xhtml",
+      ...>   description: "Ode to Bacon"
+      ...> })
+      %BUPE.Item{
+        description: "Ode to Bacon",
+        duration: nil,
+        fallback: nil,
+        href: "book/bacon.xhtml",
+        id: "ode-to-bacon",
+        media_overlay: nil,
+        media_type: "application/xhtml+xml",
+        properties: nil
+      }
+
+  """
   @spec normalize(t()) :: t()
-  def normalize(%__MODULE__{id: id, media_type: media_type, href: href} = item) do
+  def normalize(
+        %__MODULE__{id: id, media_type: media_type, href: href, description: description} = item
+      ) do
     id = if id, do: id, else: "i-#{Util.uuid4()}"
+    description = if description, do: description, else: Path.basename(href, Path.extname(href))
 
     media_type =
       if media_type do
@@ -57,6 +100,6 @@ defmodule BUPE.Item do
         Util.media_type_from_path(href)
       end
 
-    %{item | id: id, media_type: media_type}
+    %{item | id: id, media_type: media_type, description: description}
   end
 end
