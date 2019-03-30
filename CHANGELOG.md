@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.6.0
+
+* Add CLI interface
+
 ## v0.5.1
 
 ### Bug fixes

@@ -1,7 +1,7 @@
 defmodule BUPE.Mixfile do
   use Mix.Project
 
-  @version "0.5.2-dev"
+  @version "0.6.0"
 
   def project do
     [
@@ -19,11 +19,8 @@ defmodule BUPE.Mixfile do
       docs: docs(),
       package: package(),
       deps: deps(),
-      dialyzer: [
-        plt_add_apps: [:mix, :ex_unit, :xmerl],
-        check_plt: true,
-        flags: [:error_handling, :race_conditions, :underspecs]
-      ]
+      dialyzer: dialyzer(),
+      escript: escript()
     ]
   end
 
@@ -32,6 +29,18 @@ defmodule BUPE.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     [applications: []]
+  end
+
+  def dialyzer do
+    [
+      plt_add_apps: [:mix, :ex_unit, :xmerl],
+      check_plt: true,
+      flags: [:error_handling, :race_conditions, :underspecs]
+    ]
+  end
+
+  def escript do
+    [main_module: BUPE.CLI]
   end
 
   defp deps do

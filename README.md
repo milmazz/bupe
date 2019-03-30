@@ -132,6 +132,28 @@ have any JavaScript, you will get warnings from validation tools such as
 
 See `BUPE.Builder`, `BUPE.Config`, and `BUPE.Item` for more details.
 
+### Using the builder via command line
+
+You can build EPUB documents using the command line as follows:
+
+1. Install `BUPE` as an escript:
+
+```console
+mix escript.install hex bupe
+```
+
+2. Then you are ready to use it in your projects:
+
+```console
+bupe "EPUB_TITLE" -p egg.xhtml -p bacon.xhtml -l path/to/logo.png
+```
+
+For more details about using the command line tool, review the usage guide:
+
+```console
+bupe --help
+```
+
 ### Parser
 
 If you want to parse an EPUB file you can do the following:
