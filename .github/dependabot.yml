@@ -1,0 +1,24 @@
+version: 2
+updates:
+- package-ecosystem: mix
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: "11:00"
+  open-pull-requests-limit: 10
+  reviewers:
+  - milmazz
+  assignees:
+  - milmazz
+  ignore:
+  - dependency-name: ex_doc
+    versions:
+    - 0.23.0
+    - 0.24.1
+  - dependency-name: earmark
+    versions:
+    - 1.4.13
+    - 1.4.14
+  - dependency-name: credo
+    versions:
+    - 1.5.4
