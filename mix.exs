@@ -1,6 +1,7 @@
 defmodule BUPE.Mixfile do
   use Mix.Project
 
+  @source_url "https://github.com/milmazz/bupe"
   @version "0.6.0"
 
   def project do
@@ -8,8 +9,8 @@ defmodule BUPE.Mixfile do
       app: :bupe,
       version: @version,
       name: "BUPE",
-      source_url: "https://github.com/milmazz/bupe",
-      homepage_url: "https://github.com/milmazz/bupe",
+      source_url: @source_url,
+      homepage_url: @source_url,
       elixir: "~> 1.3",
       description: description(),
       build_embedded: Mix.env() == :prod,
@@ -59,16 +60,26 @@ defmodule BUPE.Mixfile do
   end
 
   defp docs do
-    [extras: ["README.md"], main: "readme"]
+    [
+      extras: [
+        "CHANGELOG.md": [],
+        "CODE_OF_CONDUCT.md": [title: "Code of Conduct"],
+        "CONTRIBUTING.md": [title: "Contributing"],
+        LICENSE: [title: "License"],
+        "README.md": [title: "Overview"]
+      ],
+      main: "readme"
+    ]
   end
 
   defp package do
     [
       links: %{
-        "GitHub" => "https://github.com/milmazz/bupe"
+        "Changelog" => "https://hexdocs.pm/bupe/changelog.html",
+        "GitHub" => @source_url
       },
       maintainers: ["Milton Mazzarri"],
-      licenses: ["Apache 2.0"]
+      licenses: ["Apache-2.0"]
     ]
   end
 
