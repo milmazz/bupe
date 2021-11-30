@@ -193,10 +193,7 @@ defmodule BUPE.Parser do
   end
 
   defp find_manifest(xml, media_types) when is_list(media_types) do
-    filter =
-      media_types
-      |> Enum.map(fn type -> "@media-type='#{type}'" end)
-      |> Enum.join(" or ")
+    filter = Enum.map_join(media_types, " or ", fn type -> "@media-type='#{type}'" end)
 
     find_xml(xml, filter: "/package/manifest/item[#{filter}]", type: :element)
   end
@@ -258,5 +255,5 @@ defmodule BUPE.Parser do
 
   defp transform([], _), do: nil
   defp transform(source, from: :element), do: Enum.map(source, &transform/1)
-  defp transform(source, from: :text), do: source |> Enum.map(&transform/1) |> Enum.join(", ")
+  defp transform(source, from: :text), do: Enum.map_join(source, ", ", &transform/1)
 end
