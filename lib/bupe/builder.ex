@@ -242,12 +242,14 @@ defmodule BUPE.Builder do
       config.details.pages ++
         config.details.styles ++ config.details.scripts ++ config.details.images
 
-    Enum.into(sources, config.files, fn source ->
+    sources
+    |> Enum.map(fn source ->
       content = File.read!(source.href)
       path = "OEBPS/content" |> Path.join(Path.basename(source.href)) |> String.to_charlist()
 
       {path, content}
     end)
+    |> Enum.concat(config.files)
   end
 
   defp generate_epub(files, name, options) do
