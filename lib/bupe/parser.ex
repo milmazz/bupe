@@ -137,7 +137,7 @@ defmodule BUPE.Parser do
          pages: find_manifest(xml, "application/xhtml+xml"),
          audio: find_manifest(xml, ["audio/mpeg", "audio/mp4"]),
          fonts:
-           find_manifest(xml, ["application/font-sfnt", "application/font-woff", "font/woff2"]),
+           find_manifest(xml, ["application/font-sfnt", "application/font-woff", "font/woff2", "application/vnd.ms-opentype"]),
          toc: find_manifest(xml, "application/x-dtbncx+xml")
      }}
   end
