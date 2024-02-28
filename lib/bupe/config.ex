@@ -84,7 +84,8 @@ defmodule BUPE.Config do
           cover: boolean,
           logo: String.t(),
           audio: [map()],
-          fonts: [map()]
+          fonts: [map()],
+          toc: [map()]
         }
 
   @enforce_keys [:title, :pages]
@@ -114,5 +115,6 @@ defmodule BUPE.Config do
             cover: true,
             logo: nil,
             audio: [],
-            fonts: []
+            fonts: [],
+            toc: []
 end
