@@ -71,27 +71,27 @@ defmodule BUPE.Parser do
   end
 
   defp check_file(epub) do
-    unless File.exists?(epub) do
+    if File.exists?(epub) do
+      epub
+    else
       raise ArgumentError, "file #{epub} does not exists"
     end
-
-    epub
   end
 
   defp check_extension(epub) do
-    unless epub |> Path.extname() |> String.downcase() == ".epub" do
+    if epub |> Path.extname() |> String.downcase() == ".epub" do
+      epub
+    else
       raise ArgumentError, "file #{epub} does not have an '.epub' extension"
     end
-
-    epub
   end
 
   defp check_mimetype(epub) do
-    unless epub |> extract_files(["mimetype"]) |> mimetype_valid?() do
+    if epub |> extract_files(["mimetype"]) |> mimetype_valid?() do
+      epub
+    else
       raise "invalid mimetype, must be 'application/epub+zip'"
     end
-
-    epub
   end
 
   defp mimetype_valid?([{~c"mimetype", "application/epub+zip"}]), do: true
@@ -102,11 +102,11 @@ defmodule BUPE.Parser do
     [{^container, content}] = extract_files(epub, [container])
     captures = Regex.named_captures(~r/<rootfile\s.*full-path="(?<full_path>[^"]+)"\s/, content)
 
-    unless captures do
+    if captures do
+      {epub, captures["full_path"]}
+    else
       raise "could not find rootfile in #{container}"
     end
-
-    {epub, captures["full_path"]}
   end
 
   defp scan_content({epub, root_file}) do
