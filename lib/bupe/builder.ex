@@ -173,13 +173,8 @@ defmodule BUPE.Builder do
   defp transform_assets([]), do: []
   defp transform_assets(assets), do: Enum.map(assets, &transform_asset/1)
 
-  defp transform_asset(%Item{} = asset) do
-    Item.normalize(asset)
-  end
-
-  defp transform_asset(asset) when is_binary(asset) do
-    Item.from_string(asset)
-  end
+  defp transform_asset(%Item{} = asset), do: Item.normalize(asset)
+  defp transform_asset(asset) when is_binary(asset), do: Item.from_string(asset)
 
   # Package definition builder.
   #
