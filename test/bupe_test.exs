@@ -2,7 +2,7 @@ defmodule BUPETest do
   use BUPETest.Case, async: true
   doctest BUPE
 
-  describe "pase/1" do
+  describe "parse/1" do
     test "parser should detect that file does not exists" do
       file_path = fixtures_dir("404.epub")
       msg = "file #{file_path} does not exists"
