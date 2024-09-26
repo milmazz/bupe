@@ -79,6 +79,24 @@ defmodule BUPE.BuilderTest do
     end
   end
 
+  test "raises exception for invalid dates" do
+    config = config()
+    msg = "date is invalid"
+
+    for invalid_date_format <- [DateTime.utc_now(), "2015-01-23T23:50:07,123+02:30"] do
+      config = Map.put(config, :modified, invalid_date_format)
+
+      assert_raise BUPE.InvalidDate, msg, fn ->
+        BUPE.build(config, "sample.epub", [:memory])
+      end
+    end
+
+    assert {:ok, _} =
+             config
+             |> Map.put(:modified, _valid_datetime = "2015-01-23T23:50:07Z")
+             |> BUPE.build("sample.epub", [:memory])
+  end
+
   @tag :tmp_dir
   test "should allow to build the EPUB in memory", %{tmp_dir: tmp_dir} do
     config = config()

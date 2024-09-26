@@ -273,9 +273,14 @@ defmodule BUPE.Builder do
     Map.put(config, :modified, dt)
   end
 
-  # credo:disable-for-next-line Credo.Check.Design.TagTODO
-  # TODO: Check if format is compatible with ISO8601
-  defp modified_date(config), do: config
+  defp modified_date(%{modified: modified} = config) when is_binary(modified) do
+    case DateTime.from_iso8601(modified) do
+      {:ok, _, 0} -> config
+      _ -> raise BUPE.InvalidDate
+    end
+  end
+
+  defp modified_date(_config), do: raise(BUPE.InvalidDate)
 
   defp check_identifier(%{identifier: nil} = config) do
     identifier = "urn:uuid:#{Util.uuid4()}"
