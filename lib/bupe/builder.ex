@@ -192,7 +192,7 @@ defmodule BUPE.Builder do
   defp generate_package(config) do
     content = Templates.content_template(config.details)
 
-    %{config | files: [{'OEBPS/content.opf', content} | config.files]}
+    %{config | files: [{~c"OEBPS/content.opf", content} | config.files]}
   end
 
   # Navigation Center eXtended definition
@@ -206,7 +206,7 @@ defmodule BUPE.Builder do
   defp generate_ncx(config) do
     content = Templates.ncx_template(config.details)
 
-    %{config | files: [{'OEBPS/toc.ncx', content} | config.files]}
+    %{config | files: [{~c"OEBPS/toc.ncx", content} | config.files]}
   end
 
   # Navigation Document Definition
@@ -221,7 +221,7 @@ defmodule BUPE.Builder do
     if config.details.version == "3.0" do
       content = Templates.nav_template(config.details)
 
-      %{config | files: [{'OEBPS/nav.xhtml', content} | config.files]}
+      %{config | files: [{~c"OEBPS/nav.xhtml", content} | config.files]}
     else
       config
     end
@@ -231,7 +231,7 @@ defmodule BUPE.Builder do
   defp generate_title(config) do
     if config.details.cover do
       content = Templates.title_template(config.details)
-      %{config | files: [{'OEBPS/title.xhtml', content} | config.files]}
+      %{config | files: [{~c"OEBPS/title.xhtml", content} | config.files]}
     else
       config
     end
@@ -253,11 +253,23 @@ defmodule BUPE.Builder do
   end
 
   defp generate_epub(files, name, options) do
-    opts = [compress: ['.css', '.js', '.html', '.xhtml', '.ncx', '.opf', '.jpg', '.png', '.xml']]
+    opts = [
+      compress: [
+        ~c".css",
+        ~c".js",
+        ~c".html",
+        ~c".xhtml",
+        ~c".ncx",
+        ~c".opf",
+        ~c".jpg",
+        ~c".png",
+        ~c".xml"
+      ]
+    ]
 
     opts = if Enum.find(options, &(&1 == :memory)), do: [:memory | opts], else: opts
 
-    :zip.create(String.to_charlist(name), [{'mimetype', @mimetype} | files], opts)
+    :zip.create(String.to_charlist(name), [{~c"mimetype", @mimetype} | files], opts)
   end
 
   ## Helpers
