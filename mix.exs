@@ -2,7 +2,7 @@ defmodule BUPE.Mixfile do
   use Mix.Project
 
   @source_url "https://github.com/milmazz/bupe"
-  @version "0.6.0"
+  @version "0.6.1-dev"
 
   def project do
     [
@@ -29,7 +29,7 @@ defmodule BUPE.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [], extra_applications: [:xmerl, :eex, :crypto]]
+    [extra_applications: [:xmerl, :eex, :crypto]]
   end
 
   def dialyzer do
@@ -46,9 +46,9 @@ defmodule BUPE.Mixfile do
 
   defp deps do
     [
-      {:ex_doc, "~> 0.19", only: :dev},
-      {:dialyxir, "~> 1.0.0-rc.3", only: :dev, runtime: false},
-      {:credo, "~> 1.6.1", only: [:dev, :test], runtime: false}
+      {:ex_doc, "~> 0.19", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.0", only: :dev, runtime: false},
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
     ]
   end
 
