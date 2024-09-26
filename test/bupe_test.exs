@@ -28,10 +28,11 @@ defmodule BUPETest do
     end
   end
 
-  test "build epub document version 3" do
+  @tag :tmp_dir
+  test "build epub document version 3", %{tmp_dir: tmp_dir} do
     config = config()
 
-    output = Path.join(tmp_dir(), "sample.epub")
+    output = Path.join(tmp_dir, "sample.epub")
     {:ok, {_name, epub}} = BUPE.build(config, output, [:memory])
 
     epub_info = BUPE.parse(epub)

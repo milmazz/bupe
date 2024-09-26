@@ -6,9 +6,10 @@ defmodule BUPE.BuilderTest do
     file_bin_list
   end
 
-  test "build EPUB v2.0 document" do
+  @tag :tmp_dir
+  test "build EPUB v2.0 document", %{tmp_dir: tmp_dir} do
     config = config()
-    output = Path.join(tmp_dir(), "v20.epub")
+    output = Path.join(tmp_dir, "v20.epub")
 
     {:ok, {_name, epub}} =
       config
@@ -26,9 +27,10 @@ defmodule BUPE.BuilderTest do
            end)
   end
 
-  test "do not include cover page" do
+  @tag :tmp_dir
+  test "do not include cover page", %{tmp_dir: tmp_dir} do
     config = config()
-    output = Path.join(tmp_dir(), "sample.epub")
+    output = Path.join(tmp_dir, "sample.epub")
 
     {:ok, {_name, epub}} =
       config
@@ -77,9 +79,10 @@ defmodule BUPE.BuilderTest do
     end
   end
 
-  test "should allow to build the EPUB in memory" do
+  @tag :tmp_dir
+  test "should allow to build the EPUB in memory", %{tmp_dir: tmp_dir} do
     config = config()
-    output = Path.join(tmp_dir(), "v30.epub")
+    output = Path.join(tmp_dir, "v30.epub")
 
     {:ok, {filename, binary}} = BUPE.Builder.run(config, output, [:memory])
 

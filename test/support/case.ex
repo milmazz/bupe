@@ -8,26 +8,9 @@ defmodule BUPETest.Case do
     end
   end
 
-  setup do
-    File.rm_rf(tmp_dir())
-    File.mkdir_p!(tmp_dir())
-  end
+  def fixtures_dir, do: Path.expand("../fixtures", __DIR__)
 
-  def tmp_dir do
-    Path.expand("../tmp", __DIR__)
-  end
-
-  def tmp_dir(path) do
-    Path.join(tmp_dir(), path)
-  end
-
-  def fixtures_dir do
-    Path.expand("../fixtures", __DIR__)
-  end
-
-  def fixtures_dir(path) do
-    Path.join(fixtures_dir(), path)
-  end
+  def fixtures_dir(path), do: Path.join(fixtures_dir(), path)
 
   def config do
     files =

@@ -60,14 +60,17 @@ defmodule BUPE.Parser do
   end
 
   defp parse(epub) do
-    epub
-    |> check_mimetype()
-    |> find_rootfile()
-    |> scan_content()
-    |> parse_xml(:metadata)
-    |> parse_xml(:manifest)
-    |> parse_xml(:navigation)
-    |> parse_xml(:extras)
+    xml =
+      epub
+      |> check_mimetype()
+      |> find_rootfile()
+      |> scan_content()
+
+    Enum.reduce(
+      ~w(metadata manifest navigation extras)a,
+      %BUPE.Config{title: nil, pages: nil},
+      &parse_xml(&2, xml, &1)
+    )
   end
 
   defp check_file(epub) do
@@ -118,7 +121,7 @@ defmodule BUPE.Parser do
     xml
   end
 
-  defp parse_xml({xml, config}, :extras) do
+  defp parse_xml(config, xml, :extras) do
     %{
       config
       | language: find_language(xml),
@@ -127,55 +130,54 @@ defmodule BUPE.Parser do
     }
   end
 
-  defp parse_xml({xml, config}, :manifest) do
-    {xml,
-     %{
-       config
-       | images: find_manifest(xml, ["image/jpeg", "image/gif", "image/png", "image/svg+xml"]),
-         scripts: find_manifest(xml, "application/javascript"),
-         styles: find_manifest(xml, "text/css"),
-         pages: find_manifest(xml, "application/xhtml+xml"),
-         audio: find_manifest(xml, ["audio/mpeg", "audio/mp4"]),
-         fonts:
-           find_manifest(xml, [
-             "application/font-sfnt",
-             "application/font-woff",
-             "font/woff2",
-             "application/vnd.ms-opentype"
-           ]),
-         toc: find_manifest(xml, "application/x-dtbncx+xml")
-     }}
+  defp parse_xml(config, xml, :manifest) do
+    %{
+      config
+      | images: find_manifest(xml, ["image/jpeg", "image/gif", "image/png", "image/svg+xml"]),
+        scripts: find_manifest(xml, "application/javascript"),
+        styles: find_manifest(xml, "text/css"),
+        pages: find_manifest(xml, "application/xhtml+xml"),
+        audio: find_manifest(xml, ["audio/mpeg", "audio/mp4"]),
+        fonts:
+          find_manifest(xml, [
+            "application/font-sfnt",
+            "application/font-woff",
+            "font/woff2",
+            "application/vnd.ms-opentype"
+          ]),
+        toc: find_manifest(xml, "application/x-dtbncx+xml")
+    }
   end
 
-  defp parse_xml(xml, :metadata) do
-    {xml,
-     %BUPE.Config{
-       title: find_metadata(xml, "title"),
-       nav: nil,
-       pages: nil,
-       identifier: find_metadata(xml, "identifier"),
-       creator: find_metadata(xml, "creator"),
-       contributor: find_metadata(xml, "contributor"),
-       modified: find_metadata_property(xml, "dcterms:modified"),
-       date: find_metadata(xml, "date"),
-       source: find_metadata(xml, "source") || find_metadata_property(xml, "dcterms:source"),
-       type: find_metadata(xml, "type"),
-       description: find_metadata(xml, "description"),
-       format: find_metadata(xml, "format"),
-       coverage: find_metadata(xml, "coverage"),
-       publisher: find_metadata(xml, "publisher"),
-       relation: find_metadata(xml, "relation"),
-       rights: find_metadata(xml, "rights"),
-       subject: find_metadata(xml, "subject")
-     }}
+  defp parse_xml(config, xml, :metadata) do
+    %{
+      config
+      | title: find_metadata(xml, "title"),
+        nav: nil,
+        pages: nil,
+        identifier: find_metadata(xml, "identifier"),
+        creator: find_metadata(xml, "creator"),
+        contributor: find_metadata(xml, "contributor"),
+        modified: find_metadata_property(xml, "dcterms:modified"),
+        date: find_metadata(xml, "date"),
+        source: find_metadata(xml, "source") || find_metadata_property(xml, "dcterms:source"),
+        type: find_metadata(xml, "type"),
+        description: find_metadata(xml, "description"),
+        format: find_metadata(xml, "format"),
+        coverage: find_metadata(xml, "coverage"),
+        publisher: find_metadata(xml, "publisher"),
+        relation: find_metadata(xml, "relation"),
+        rights: find_metadata(xml, "rights"),
+        subject: find_metadata(xml, "subject")
+    }
   end
 
-  defp parse_xml({xml, config}, :navigation) do
-    {xml, %{config | nav: find_xml(xml, filter: "/package/spine/*", type: :element)}}
+  defp parse_xml(config, xml, :navigation) do
+    %{config | nav: find_xml(xml, filter: "/package/spine/*", type: :element)}
   end
 
   defp extract_files(archive, files) when is_list(files) do
-    file_list = Enum.into(files, [], &if(is_list(&1), do: &1, else: String.to_charlist(&1)))
+    file_list = Enum.map(files, &if(is_binary(&1), do: String.to_charlist(&1), else: &1))
 
     case :zip.extract(archive, [{:file_list, file_list}, :memory]) do
       {:ok, content} ->
@@ -236,7 +238,7 @@ defmodule BUPE.Parser do
          _xmlbase,
          :undeclared
        }) do
-    Enum.into(attributes, %{}, fn {:xmlAttribute, name, _, _, _, _, _, _, value, _} ->
+    Map.new(attributes, fn {:xmlAttribute, name, _, _, _, _, _, _, value, _} ->
       {name, value}
     end)
   end
