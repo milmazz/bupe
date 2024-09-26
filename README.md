@@ -15,13 +15,12 @@ First, add `:bupe` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:bupe, "~> MAJOR.MINOR"}
+    {:bupe, "~> 0.6"}
   ]
 end
 ```
 
-To find out the latest release available on Hex, you can run `mix hex.info
-bupe` in your shell, or by going to the
+To find out the latest release available on Hex, you can run `mix hex.info bupe` in your shell, or by going to the
 [`bupe` page on Hex.pm](https://hex.pm/packages/bupe)
 
 Then, update your dependencies:
@@ -235,7 +234,7 @@ See `BUPE.Parser` for more details.
 
 ## Copyright and License
 
-Copyright 2016 Milton Mazzarri
+Copyright 2024 Milton Mazzarri
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
