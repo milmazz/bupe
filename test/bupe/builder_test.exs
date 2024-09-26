@@ -22,7 +22,7 @@ defmodule BUPE.BuilderTest do
     refute epub
            |> unzip()
            |> Enum.find(fn {name, _binary} ->
-             name == 'OEBPS/nav.xhtml'
+             name == ~c"OEBPS/nav.xhtml"
            end)
   end
 
@@ -41,14 +41,14 @@ defmodule BUPE.BuilderTest do
     # cover page should not be listed in the OPF
     {_, opf_template} =
       Enum.find(content, fn {name, _binary} ->
-        name == 'OEBPS/content.opf'
+        name == ~c"OEBPS/content.opf"
       end)
 
     refute opf_template =~
              ~r{<item id="cover" href="title.xhtml" media-type="application/xhtml+xml" />}
 
     refute Enum.find(content, fn {name, _binary} ->
-             name == 'OEBPS/title.xhtml'
+             name == ~c"OEBPS/title.xhtml"
            end)
   end
 

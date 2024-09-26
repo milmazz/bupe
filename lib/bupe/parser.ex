@@ -94,11 +94,11 @@ defmodule BUPE.Parser do
     epub
   end
 
-  defp mimetype_valid?([{'mimetype', "application/epub+zip"}]), do: true
+  defp mimetype_valid?([{~c"mimetype", "application/epub+zip"}]), do: true
   defp mimetype_valid?(_), do: false
 
   defp find_rootfile(epub) do
-    container = 'META-INF/container.xml'
+    container = ~c"META-INF/container.xml"
     [{^container, content}] = extract_files(epub, [container])
     captures = Regex.named_captures(~r/<rootfile\s.*full-path="(?<full_path>[^"]+)"\s/, content)
 
@@ -137,7 +137,12 @@ defmodule BUPE.Parser do
          pages: find_manifest(xml, "application/xhtml+xml"),
          audio: find_manifest(xml, ["audio/mpeg", "audio/mp4"]),
          fonts:
-           find_manifest(xml, ["application/font-sfnt", "application/font-woff", "font/woff2", "application/vnd.ms-opentype"]),
+           find_manifest(xml, [
+             "application/font-sfnt",
+             "application/font-woff",
+             "font/woff2",
+             "application/vnd.ms-opentype"
+           ]),
          toc: find_manifest(xml, "application/x-dtbncx+xml")
      }}
   end
