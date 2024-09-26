@@ -5,7 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.6.1 (2024-09-26)
+
+### Enhancements
+
+* Update Elixir/OTP version, minor refactorings
+* Improve test suite to use `tmp_dir` tag and avoid flaky tests
+* Validate modification dates
+
 ## v0.6.0 (2019-03-30)
+
+### Enhancements
 
 * Add CLI interface
 
