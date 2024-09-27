@@ -9,29 +9,25 @@ defmodule BUPE.Parser do
       #=> %BUPE.Config{
         creator: "John Doe",
         nav: [
-          %{idref: 'ode-to-bacon'},
-          %{idref: 'ode-to-ham'},
-          %{idref: 'ode-to-egg'}
+          %{idref: "ode-to-bacon"},
+          %{idref: "ode-to-ham"},
+          %{idref: "ode-to-egg"}
         ],
         pages: [
-          %{
-            href: 'bacon.xhtml',
-            id: 'ode-to-bacon',
-            "media-type": 'application/xhtml+xml'
-          },
-          %{
-            href: 'ham.xhtml',
-            id: 'ode-to-ham',
-            "media-type": 'application/xhtml+xml'
-          },
-          %{
-            href: "egg.xhtml",
-            id: 'ode-to-egg',
-            "media-type": 'application/xhtml+xml'
+          %BUPE.Item{
+            duration: nil,
+            fallback: nil,
+            href: "bacon.xhtml",
+            id: "ode-to-bacon",
+            media_overlay: nil,
+            media_type: "application/xhtml+xml",
+            description: nil,
+            properties: "scripted",
+            content: "<!DOCTYPE html>\n...",
           }
-        ],
+       ],
         styles: [
-          %{href: 'stylesheet.css', id: 'styles', "media-type": 'text/css'}
+          %BUPE.Item{href: "stylesheet.css", id: "styles", "media-type": "text/css", content: "..."}
         ],
         title: "Sample",
         unique_identifier: "EXAMPLE",
@@ -69,25 +65,43 @@ defmodule BUPE.Parser do
           &parse_xml(&2, xml, &1)
         )
 
-      %{config | pages: extract_page_content(epub, root_file, config.pages)}
+      %{
+        config
+        | pages: extract_item_content(epub, root_file, config.pages || []),
+          images: extract_item_content(epub, root_file, config.images || []),
+          styles: extract_item_content(epub, root_file, config.styles || []),
+          scripts: extract_item_content(epub, root_file, config.scripts || [])
+      }
     end
   end
 
-  defp extract_page_content(epub, root_file, pages) do
+  defp extract_item_content(epub, root_file, items) do
     root_dir = Path.dirname(root_file)
     root_dir_length = String.length(root_dir) + 1
 
-    page_paths = Enum.map(pages, &Path.join([root_dir, &1.href]))
+    item_paths = Enum.map(items, &Path.join([root_dir, &1.href]))
 
     content =
       epub
-      |> extract_files(page_paths)
+      |> extract_files(item_paths)
       |> Map.new(fn {path, content} ->
-        {Enum.drop(path, root_dir_length), content}
+        {path |> Enum.drop(root_dir_length) |> to_string(), content}
       end)
 
-    Enum.map(pages, fn %{href: href} = page ->
-      Map.put(page, :xhtml_content, Map.get(content, href, ""))
+    normalize_keys = ~w(media-overlay media-type)a
+
+    Enum.map(items, fn %{href: href} = item ->
+      {tmp, item} = Map.split(item, normalize_keys)
+
+      item =
+        tmp
+        |> Map.new(fn {k, v} ->
+          {k |> to_string() |> String.replace("-", "_") |> String.to_existing_atom(), v}
+        end)
+        |> Map.merge(item)
+        |> Map.put(:content, Map.get(content, href, ""))
+
+      struct(BUPE.Item, item)
     end)
   end
 
@@ -275,7 +289,7 @@ defmodule BUPE.Parser do
          :undeclared
        }) do
     Map.new(attributes, fn {:xmlAttribute, name, _, _, _, _, _, _, value, _} ->
-      {name, value}
+      {name, to_string(value)}
     end)
   end
 

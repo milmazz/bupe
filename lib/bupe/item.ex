@@ -6,6 +6,10 @@ defmodule BUPE.Item do
 
   [item]: http://www.idpf.org/epub/31/spec/epub-packages.html#sec-manifest-elem
   [pub-resource]: (http://www.idpf.org/epub/31/spec/epub-spec.html#gloss-publication-resource-cmt-or-foreign).
+
+  NOTE: The key `content` in the following struct is not part of the EPUB spec, but,
+  we use that key internally to hold the content of the file that's associated
+  with the Item for parsing purposes.
   """
   alias BUPE.Util
 
@@ -17,7 +21,8 @@ defmodule BUPE.Item do
           media_overlay: nil | String.t(),
           media_type: nil | String.t(),
           properties: nil | String.t(),
-          description: nil | String.t()
+          description: nil | String.t(),
+          content: nil | String.t()
         }
 
   @enforce_keys [:href]
@@ -29,7 +34,8 @@ defmodule BUPE.Item do
     :media_overlay,
     :media_type,
     :description,
-    :properties
+    :properties,
+    :content
   ]
 
   @doc """
@@ -87,9 +93,9 @@ defmodule BUPE.Item do
 
   """
   @spec normalize(t()) :: t()
-  def normalize(
-        %__MODULE__{id: id, media_type: media_type, href: href, description: description} = item
-      ) do
+  def normalize(%__MODULE__{} = item) do
+    %{id: id, media_type: media_type, href: href, description: description} = item
+
     id = if id, do: id, else: "i-#{Util.uuid4()}"
     description = if description, do: description, else: Path.basename(href, Path.extname(href))
 
