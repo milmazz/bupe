@@ -87,7 +87,7 @@ defmodule BUPE.Parser do
       end)
 
     Enum.map(pages, fn %{href: href} = page ->
-      Map.put(page, :content, Map.get(content, href, ""))
+      Map.put(page, :xhtml_content, Map.get(content, href, ""))
     end)
   end
 
@@ -153,44 +153,58 @@ defmodule BUPE.Parser do
   end
 
   defp parse_xml(config, xml, :manifest) do
-    %{
-      config
-      | images: find_manifest(xml, ["image/jpeg", "image/gif", "image/png", "image/svg+xml"]),
-        scripts: find_manifest(xml, "application/javascript"),
-        styles: find_manifest(xml, "text/css"),
-        pages: find_manifest(xml, "application/xhtml+xml"),
-        audio: find_manifest(xml, ["audio/mpeg", "audio/mp4"]),
-        fonts:
-          find_manifest(xml, [
+    manifest =
+      Map.new(
+        [
+          images: ["image/jpeg", "image/gif", "image/png", "image/svg+xml"],
+          scripts: "application/javascript",
+          styles: "text/css",
+          pages: "application/xhtml+xml",
+          audio: ["audio/mpeg", "audio/mp4"],
+          fonts: [
             "application/font-sfnt",
             "application/font-woff",
             "font/woff2",
             "application/vnd.ms-opentype"
-          ]),
-        toc: find_manifest(xml, "application/x-dtbncx+xml")
-    }
+          ],
+          toc: "application/x-dtbncx+xml"
+        ],
+        fn {key, pattern} ->
+          {key, find_manifest(xml, pattern)}
+        end
+      )
+
+    struct(config, manifest)
   end
 
   defp parse_xml(config, xml, :metadata) do
+    metadata =
+      Map.new(
+        ~w(
+          title
+          identifier
+          creator
+          contributor
+          date
+          source
+          type
+          description
+          format
+          coverage
+          publisher
+          relation
+          rights
+          subject
+      )a,
+        fn key -> {key, find_metadata(xml, to_string(key))} end
+      )
+
+    config = struct(config, metadata)
+
     %{
       config
-      | title: find_metadata(xml, "title"),
-        nav: nil,
-        pages: nil,
-        identifier: find_metadata(xml, "identifier"),
-        creator: find_metadata(xml, "creator"),
-        contributor: find_metadata(xml, "contributor"),
-        modified: find_metadata_property(xml, "dcterms:modified"),
-        date: find_metadata(xml, "date"),
-        source: find_metadata(xml, "source") || find_metadata_property(xml, "dcterms:source"),
-        type: find_metadata(xml, "type"),
-        description: find_metadata(xml, "description"),
-        format: find_metadata(xml, "format"),
-        coverage: find_metadata(xml, "coverage"),
-        publisher: find_metadata(xml, "publisher"),
-        relation: find_metadata(xml, "relation"),
-        rights: find_metadata(xml, "rights"),
-        subject: find_metadata(xml, "subject")
+      | modified: find_metadata_property(xml, "dcterms:modified"),
+        source: config.source || find_metadata_property(xml, "dcterms:source")
     }
   end
 
