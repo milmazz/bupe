@@ -3,9 +3,9 @@ defmodule BUPETest do
   doctest BUPE
 
   describe "parse/1" do
-    test "parser should detect that file does not exists" do
+    test "parser should detect that file does not exist" do
       file_path = fixtures_dir("404.epub")
-      msg = "file #{file_path} does not exists"
+      msg = "file #{file_path} does not exist"
 
       assert_raise ArgumentError, msg, fn ->
         BUPE.parse(file_path)
@@ -27,6 +27,17 @@ defmodule BUPETest do
       assert_raise RuntimeError, msg, fn ->
         "invalid_mimetype.epub" |> fixtures_dir() |> BUPE.parse()
       end
+    end
+
+    test "parser should return page content" do
+      epub_path = "test/fixtures/hemingway-old-man-and-the-sea.epub"
+      config = BUPE.parse(epub_path)
+      page_4 = Enum.at(config.pages, 3)
+
+      assert String.contains?(
+               page_4.content,
+               "He was an old man who fished alone in a skiff in the Gulf Stream"
+             )
     end
   end
 

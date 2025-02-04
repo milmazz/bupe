@@ -78,15 +78,23 @@ defmodule BUPE.Parser do
   end
 
   defp extract_item_content(epub, root_dir, items) do
-    root_dir_length = String.length(root_dir) + 1
-
-    item_paths = Enum.map(items, &Path.join([root_dir, &1.href]))
+    item_paths =
+      if root_dir == "." do
+        Enum.map(items, & &1.href)
+      else
+        Enum.map(items, &Path.join([root_dir, &1.href]))
+      end
 
     content =
       epub
       |> extract_files(item_paths)
       |> Map.new(fn {path, content} ->
-        {path |> Enum.drop(root_dir_length) |> to_string(), content}
+        if root_dir == "." do
+          {to_string(path), content}
+        else
+          root_dir_length = String.length(root_dir) + 1
+          {path |> Enum.drop(root_dir_length) |> to_string(), content}
+        end
       end)
 
     normalize_keys = ~w(media-overlay media-type)a
@@ -110,7 +118,7 @@ defmodule BUPE.Parser do
     if File.exists?(epub) do
       :ok
     else
-      raise ArgumentError, "file #{epub} does not exists"
+      raise ArgumentError, "file #{epub} does not exist"
     end
   end
 
