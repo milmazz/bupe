@@ -28,6 +28,28 @@ defmodule BUPETest do
         "invalid_mimetype.epub" |> fixtures_dir() |> BUPE.parse()
       end
     end
+
+    test "parse files direct under the root directory" do
+      file_path = fixtures_dir("ocf-minimal-valid.epub")
+
+      assert %BUPE.Config{} = result = BUPE.parse(file_path)
+
+      assert result.version == "2.0"
+      assert result.title == "Minimal EPUB 2.0"
+      assert result.identifier == "NOID"
+
+      assert result.toc == [
+               %{id: "ncx", href: "toc.ncx", "media-type": "application/x-dtbncx+xml"}
+             ]
+
+      assert result.nav == [%{idref: "content_001"}]
+
+      [page] = result.pages
+      assert page.href == "content_001.xhtml"
+      assert page.id == "content_001"
+      assert page.media_type == "application/xhtml+xml"
+      assert page.content =~ "<title>Minimal EPUB</title>"
+    end
   end
 
   describe "build/3" do

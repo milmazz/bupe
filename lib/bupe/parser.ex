@@ -65,20 +65,19 @@ defmodule BUPE.Parser do
           &parse_xml(&2, xml, &1)
         )
 
-      root_dir = Path.dirname(root_file)
-
       %{
         config
-        | pages: extract_item_content(epub, root_dir, config.pages || []),
-          images: extract_item_content(epub, root_dir, config.images || []),
-          styles: extract_item_content(epub, root_dir, config.styles || []),
-          scripts: extract_item_content(epub, root_dir, config.scripts || [])
+        | pages: extract_item_content(epub, root_file, config.pages || []),
+          images: extract_item_content(epub, root_file, config.images || []),
+          styles: extract_item_content(epub, root_file, config.styles || []),
+          scripts: extract_item_content(epub, root_file, config.scripts || [])
       }
     end
   end
 
-  defp extract_item_content(epub, root_dir, items) do
-    root_dir_length = String.length(root_dir) + 1
+  defp extract_item_content(epub, root_file, items) do
+    root_dir = Path.dirname(root_file)
+    root_dir = if root_dir == ".", do: "", else: root_dir
 
     item_paths = Enum.map(items, &Path.join([root_dir, &1.href]))
 
@@ -86,7 +85,7 @@ defmodule BUPE.Parser do
       epub
       |> extract_files(item_paths)
       |> Map.new(fn {path, content} ->
-        {path |> Enum.drop(root_dir_length) |> to_string(), content}
+        {Path.relative_to(path, root_dir), content}
       end)
 
     normalize_targets = %{
