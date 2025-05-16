@@ -36,7 +36,7 @@ defmodule BUPE.Mixfile do
     [
       plt_add_apps: [:mix, :ex_unit, :xmerl],
       check_plt: true,
-      flags: [:error_handling, :race_conditions, :underspecs]
+      flags: [:error_handling, :underspecs]
     ]
   end
 
