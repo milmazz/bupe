@@ -89,7 +89,12 @@ defmodule BUPE.Parser do
         {path |> Enum.drop(root_dir_length) |> to_string(), content}
       end)
 
-    normalize_keys = ~w(media-overlay media-type)a
+    normalize_targets = %{
+      :"media-overlay" => :media_overlay,
+      :"media-type" => :media_type
+    }
+
+    normalize_keys = Map.keys(normalize_targets)
 
     Enum.map(items, fn %{href: href} = item ->
       {tmp, item} = Map.split(item, normalize_keys)
@@ -97,7 +102,7 @@ defmodule BUPE.Parser do
       item =
         tmp
         |> Map.new(fn {k, v} ->
-          {k |> to_string() |> String.replace("-", "_") |> String.to_existing_atom(), v}
+          {Map.get(normalize_targets, k), v}
         end)
         |> Map.merge(item)
         |> Map.put(:content, Map.get(content, href, ""))
