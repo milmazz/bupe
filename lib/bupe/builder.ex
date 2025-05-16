@@ -132,7 +132,8 @@ defmodule BUPE.Builder do
   @doc """
   Generates an EPUB v3 document
   """
-  @spec run(Config.t(), Path.t(), Keyword.t()) :: {:ok, String.t()} | {:ok, {String.t(), binary()}} | {:error, String.t()}
+  @spec run(Config.t(), Path.t(), Keyword.t()) ::
+          {:ok, String.t()} | {:ok, {String.t(), binary()}} | {:error, String.t()}
   def run(config, name, options \\ []) do
     name = Path.expand(name)
 
