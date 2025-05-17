@@ -72,7 +72,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* Fix example in `BUPE.Builder` docs
+* Fix example in `BUPE.build/3` docs
 
 ## v0.3.0 (2016-12-25)
 

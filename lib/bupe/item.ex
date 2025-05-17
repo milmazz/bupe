@@ -43,16 +43,11 @@ defmodule BUPE.Item do
 
   ## Examples
 
-      iex> BUPE.Item.from_string("book/bacon.xhtml")
-      #=> %BUPE.Item{
+      iex> BUPE.Item.from_string("book/bacon.xhtml") |> Map.take(~w(description href media_type)a)
+      %{
         description: "bacon",
-        duration: nil,
-        fallback: nil,
         href: "book/bacon.xhtml",
-        id: "i-fddafede-7628-4cc9-b7e9-4a653cd2fef3",
-        media_overlay: nil,
-        media_type: "application/xhtml+xml",
-        properties: nil
+        media_type: "application/xhtml+xml"
       }
 
   """

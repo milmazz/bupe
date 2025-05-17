@@ -1,46 +1,5 @@
 defmodule BUPE.Parser do
-  @moduledoc ~S"""
-  An [EPUB 3][EPUB] conforming parser. This implementation should support also
-  EPUB 2.
-
-  ## Example
-
-      BUPE.Parser.parse("sample.epub")
-      #=> %BUPE.Config{
-        creator: "John Doe",
-        nav: [
-          %{idref: "ode-to-bacon"},
-          %{idref: "ode-to-ham"},
-          %{idref: "ode-to-egg"}
-        ],
-        pages: [
-          %BUPE.Item{
-            duration: nil,
-            fallback: nil,
-            href: "bacon.xhtml",
-            id: "ode-to-bacon",
-            media_overlay: nil,
-            media_type: "application/xhtml+xml",
-            description: nil,
-            properties: "scripted",
-            content: "<!DOCTYPE html>\n...",
-          }
-       ],
-        styles: [
-          %BUPE.Item{href: "stylesheet.css", id: "styles", "media-type": "text/css", content: "..."}
-        ],
-        title: "Sample",
-        unique_identifier: "EXAMPLE",
-        version: "3.0"
-      }
-
-  [EPUB]: http://www.idpf.org/epub3/latest/overview
-
-  """
-
-  @doc """
-  EPUB v3 parser
-  """
+  @moduledoc false
 
   def run(<<0x04034B50::little-size(32), _::binary>> = epub), do: parse(epub)
 

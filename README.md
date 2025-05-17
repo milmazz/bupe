@@ -137,7 +137,7 @@ Keep in mind that if you put the `scripted` property on a page that does not
 have any JavaScript, you will get warnings from validation tools such as
 [EPUBCheck][epubcheck].
 
-See `BUPE.Builder`, `BUPE.Config`, and `BUPE.Item` for more details.
+See `BUPE.build/3`, `BUPE.Config`, and `BUPE.Item` for more details.
 
 ### Using the builder via command line
 
@@ -272,7 +272,7 @@ iex(1)> BUPE.parse "Elixir.epub"
 }
 ```
 
-See `BUPE.Parser` for more details.
+See `BUPE.parse/1` for more details.
 
 ## Copyright and License
 

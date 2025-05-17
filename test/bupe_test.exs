@@ -1,6 +1,7 @@
 defmodule BUPETest do
   use BUPETest.Case, async: true
   doctest BUPE
+  doctest BUPE.Item
 
   describe "parse/1" do
     test "parser should detect that file does not exists" do
