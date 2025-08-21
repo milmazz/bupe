@@ -170,7 +170,7 @@ defmodule BUPE do
         version: "3.0"
       }
 
-  [EPUB]: http://www.idpf.org/epub3/latest/overview
+  [EPUB]: https://idpf.org/epub/301/spec/epub-overview.html
   """
   defdelegate parse(epub_file), to: BUPE.Parser, as: :run
 end
