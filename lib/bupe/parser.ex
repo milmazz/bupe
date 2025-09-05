@@ -19,7 +19,7 @@ defmodule BUPE.Parser do
          {:ok, xml} <- parse_xml_file(epub, root_file) do
       config =
         Enum.reduce(
-          ~w(metadata manifest navigation extras)a,
+          ~w(metadata manifest navigation extras toc)a,
           %BUPE.Config{title: nil, pages: nil},
           &parse_xml(&2, xml, &1)
         )
@@ -29,7 +29,8 @@ defmodule BUPE.Parser do
         | pages: extract_item_content(epub, root_file, config.pages || []),
           images: extract_item_content(epub, root_file, config.images || []),
           styles: extract_item_content(epub, root_file, config.styles || []),
-          scripts: extract_item_content(epub, root_file, config.scripts || [])
+          scripts: extract_item_content(epub, root_file, config.scripts || []),
+          toc: extract_item_content(epub, root_file, config.toc || [])
       }
     end
   end
@@ -144,8 +145,7 @@ defmodule BUPE.Parser do
             "application/font-woff",
             "font/woff2",
             "application/vnd.ms-opentype"
-          ],
-          toc: "application/x-dtbncx+xml"
+          ]
         ],
         fn {key, pattern} ->
           {key, find_manifest(xml, pattern)}
@@ -184,6 +184,40 @@ defmodule BUPE.Parser do
       | modified: find_metadata_property(xml, "dcterms:modified"),
         source: config.source || find_metadata_property(xml, "dcterms:source")
     }
+  end
+
+  defp parse_xml(%BUPE.Config{version: "3.0"} = config, xml, :toc) do
+    case find_xml(xml,
+           filter: "/package/manifest/item[contains(@properties,'nav')]",
+           type: :element
+         ) do
+      [toc_item] ->
+        %{config | toc: [toc_item]}
+
+      [] ->
+        raise "no nav item with properties containing nav in manifest"
+
+      items when is_list(items) ->
+        raise "there should be exactly one item with properties containing nav in manifest, found #{length(items)}"
+    end
+  end
+
+  defp parse_xml(%BUPE.Config{version: "2.0"} = config, xml, :toc) do
+    with toc_id <- find_xml(xml, filter: "/package/spine/@toc", type: :attribute),
+         [toc_item] <-
+           find_xml(xml, filter: "/package/manifest/item[@id='#{toc_id}']", type: :element) do
+      %{config | toc: [toc_item]}
+    else
+      [] ->
+        raise "no toc item found in manifest"
+
+      items when is_list(items) ->
+        raise "there should be exactly one toc item in manifest, found #{length(items)}"
+    end
+  end
+
+  defp parse_xml(_, _, :toc) do
+    raise "cannot parse navigation information, because no version number is found in config.version"
   end
 
   defp parse_xml(config, xml, :navigation) do

@@ -39,12 +39,12 @@ defmodule BUPETest do
       assert result.title == "Minimal EPUB 2.0"
       assert result.identifier == "NOID"
 
-      assert result.toc == [
-               %{id: "ncx", href: "toc.ncx", "media-type": "application/x-dtbncx+xml"}
-             ]
+      [toc] = result.toc
+      assert toc.id == "ncx"
+      assert toc.href == "toc.ncx"
+      assert toc.media_type == "application/x-dtbncx+xml"
 
       assert result.nav == [%{idref: "content_001"}]
-
       [page] = result.pages
       assert page.href == "content_001.xhtml"
       assert page.id == "content_001"
