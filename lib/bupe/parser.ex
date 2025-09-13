@@ -253,7 +253,7 @@ defmodule BUPE.Parser do
     do: filter |> xpath_string(xml) |> transform()
 
   defp find_xml(xml, filter, type),
-    do: filter |> xpath_string(xml) |> transform(from: type)
+    do: filter |> xpath_string(xml) |> transform(type)
 
   defp find_language(xml) do
     find_metadata(xml, "language") || xpath_string("/package/@xml:lang", xml) |> transform()
@@ -302,7 +302,8 @@ defmodule BUPE.Parser do
        ]),
        do: to_string(value)
 
+  defp transform(source, from_type)
   defp transform([], _), do: nil
-  defp transform(source, from: :element), do: Enum.map(source, &transform/1)
-  defp transform(source, from: :text), do: Enum.map_join(source, ", ", &transform/1)
+  defp transform(source, :element), do: Enum.map(source, &transform/1)
+  defp transform(source, :text), do: Enum.map_join(source, ", ", &transform/1)
 end
