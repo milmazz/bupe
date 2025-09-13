@@ -39,17 +39,45 @@ defmodule BUPETest do
       assert result.title == "Minimal EPUB 2.0"
       assert result.identifier == "NOID"
 
-      [toc] = result.toc
-      assert toc.id == "ncx"
-      assert toc.href == "toc.ncx"
-      assert toc.media_type == "application/x-dtbncx+xml"
-
       assert result.nav == [%{idref: "content_001"}]
       [page] = result.pages
       assert page.href == "content_001.xhtml"
       assert page.id == "content_001"
       assert page.media_type == "application/xhtml+xml"
       assert page.content =~ "<title>Minimal EPUB</title>"
+    end
+
+    @tag :tmp_dir
+    test "parse toc of epub version 3.0", %{tmp_dir: tmp_dir} do
+      config = config()
+
+      output = Path.join(tmp_dir, "sample.epub")
+      {:ok, {_name, epub}} = BUPE.build(config, output, [:memory])
+
+      epub_info = BUPE.parse(epub)
+
+      [toc] = epub_info.toc
+      assert toc.id == "nav"
+      assert toc.href == "nav.xhtml"
+      assert toc.media_type == "application/xhtml+xml"
+      assert String.length(toc.content) > 0
+    end
+
+    @tag :tmp_dir
+    test "parse toc of epub version 2.0", %{tmp_dir: tmp_dir} do
+      config = config()
+      config = Map.put(config, :version, "2.0")
+
+      output = Path.join(tmp_dir, "sample.epub")
+      {:ok, {_name, epub}} = BUPE.build(config, output, [:memory])
+
+      epub_info = BUPE.parse(epub)
+
+      [toc] = epub_info.toc
+      assert toc.id == "ncx"
+      assert toc.href == "toc.ncx"
+      assert toc.media_type == "application/x-dtbncx+xml"
+      assert String.length(toc.content) > 0
     end
   end
 
