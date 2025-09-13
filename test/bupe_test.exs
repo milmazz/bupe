@@ -60,7 +60,7 @@ defmodule BUPETest do
       assert toc.id == "nav"
       assert toc.href == "nav.xhtml"
       assert toc.media_type == "application/xhtml+xml"
-      assert String.length(toc.content) > 0
+      assert toc.content =~ "Table of contents"
     end
 
     @tag :tmp_dir
@@ -77,7 +77,7 @@ defmodule BUPETest do
       assert toc.id == "ncx"
       assert toc.href == "toc.ncx"
       assert toc.media_type == "application/x-dtbncx+xml"
-      assert String.length(toc.content) > 0
+      assert toc.content =~ "Book cover"
     end
   end
 
