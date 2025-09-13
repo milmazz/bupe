@@ -126,8 +126,8 @@ defmodule BUPE.Parser do
     %{
       config
       | language: find_language(xml),
-        version: find_xml(xml, filter: "/package/@version", type: :attribute),
-        unique_identifier: find_xml(xml, filter: "/package/@unique-identifier", type: :attribute)
+        version: find_xml(xml, "/package/@version"),
+        unique_identifier: find_xml(xml, "/package/@unique-identifier")
     }
   end
 
@@ -187,10 +187,7 @@ defmodule BUPE.Parser do
   end
 
   defp parse_xml(%BUPE.Config{version: "3.0"} = config, xml, :toc) do
-    case find_xml(xml,
-           filter: "/package/manifest/item[contains(@properties,'nav')]",
-           type: :element
-         ) do
+    case find_xml(xml, "/package/manifest/item[contains(@properties,'nav')]", :element) do
       [toc_item] ->
         %{config | toc: [toc_item]}
 
@@ -203,9 +200,8 @@ defmodule BUPE.Parser do
   end
 
   defp parse_xml(%BUPE.Config{version: "2.0"} = config, xml, :toc) do
-    with toc_id <- find_xml(xml, filter: "/package/spine/@toc", type: :attribute),
-         [toc_item] <-
-           find_xml(xml, filter: "/package/manifest/item[@id='#{toc_id}']", type: :element) do
+    with toc_id <- find_xml(xml, "/package/spine/@toc"),
+         [toc_item] <- find_xml(xml, "/package/manifest/item[@id='#{toc_id}']", :element) do
       %{config | toc: [toc_item]}
     else
       [] ->
@@ -221,7 +217,7 @@ defmodule BUPE.Parser do
   end
 
   defp parse_xml(config, xml, :navigation) do
-    %{config | nav: find_xml(xml, filter: "/package/spine/*", type: :element)}
+    %{config | nav: find_xml(xml, "/package/spine/*", :element)}
   end
 
   defp extract_files(archive, files) when is_list(files) do
@@ -237,29 +233,26 @@ defmodule BUPE.Parser do
   end
 
   defp find_metadata(xml, meta) do
-    find_xml(xml, filter: "/package/metadata/dc:#{meta}/text()", type: :text)
+    find_xml(xml, "/package/metadata/dc:#{meta}/text()", :text)
   end
 
-  defp find_metadata_property(xml, property) do
-    find_xml(
-      xml,
-      filter: "/package/metadata/meta[contains(@property, '#{property}')]/text()",
-      type: :text
-    )
-  end
+  defp find_metadata_property(xml, property),
+    do: find_xml(xml, "/package/metadata/meta[contains(@property, '#{property}')]/text()", :text)
 
   defp find_manifest(xml, media_types) when is_list(media_types) do
     filter = Enum.map_join(media_types, " or ", fn type -> "@media-type='#{type}'" end)
 
-    find_xml(xml, filter: "/package/manifest/item[#{filter}]", type: :element)
+    find_xml(xml, "/package/manifest/item[#{filter}]", :element)
   end
 
   defp find_manifest(xml, media_type), do: find_manifest(xml, [media_type])
 
-  defp find_xml(xml, filter: filter, type: :attribute),
+  defp find_xml(xml, filter, type \\ :attribute)
+
+  defp find_xml(xml, filter, :attribute),
     do: filter |> xpath_string(xml) |> transform()
 
-  defp find_xml(xml, filter: filter, type: type),
+  defp find_xml(xml, filter, type),
     do: filter |> xpath_string(xml) |> transform(from: type)
 
   defp find_language(xml) do
