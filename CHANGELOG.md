@@ -7,9 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v0.6.3-dev (unreleased)
 
+### Added
+
+* Extract the table of contents (TOC) while parsing an EPUB
+
 ### Fixed
 
 * Fix content extraction from files directly under the root directory
+
+### Changed
+
+* Update Elixir/OTP version, minor refactoring
 
 ## v0.6.2 (2025-05-16)
 
@@ -19,9 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v0.6.1 (2024-09-26)
 
-### Added
+### Changed
 
-* Update Elixir/OTP version, minor refactorings
+* Update Elixir/OTP version, minor refactoring
 * Improve test suite to use `tmp_dir` tag and avoid flaky tests
 * Validate modification dates
 
