@@ -1,9 +1,11 @@
 defmodule BUPE.Parser do
   @moduledoc false
 
+  alias BUPE.Config
+
   def run(<<0x04034B50::little-size(32), _::binary>> = epub), do: parse(epub)
 
-  @spec run(Path.t()) :: BUPE.Config.t() | no_return
+  @spec run(Path.t()) :: Config.t() | no_return
   def run(path) when is_binary(path) do
     path = path |> Path.expand() |> String.to_charlist()
 
@@ -20,18 +22,19 @@ defmodule BUPE.Parser do
       config =
         Enum.reduce(
           ~w(metadata manifest navigation extras toc)a,
-          %BUPE.Config{title: nil, pages: nil},
+          %Config{title: nil, pages: nil},
           &parse_xml(&2, xml, &1)
         )
 
-      %{
-        config
-        | pages: extract_item_content(epub, root_file, config.pages || []),
-          images: extract_item_content(epub, root_file, config.images || []),
-          styles: extract_item_content(epub, root_file, config.styles || []),
-          scripts: extract_item_content(epub, root_file, config.scripts || []),
-          toc: extract_item_content(epub, root_file, config.toc || [])
-      }
+      item_contents = ~w(pages images styles scripts toc)a
+
+      content =
+        Map.new(
+          item_contents,
+          &{&1, extract_item_content(epub, root_file, Map.get(config, &1) || [])}
+        )
+
+      struct(config, content)
     end
   end
 
@@ -48,22 +51,14 @@ defmodule BUPE.Parser do
         {Path.relative_to(path, root_dir), content}
       end)
 
-    normalize_targets = %{
-      :"media-overlay" => :media_overlay,
-      :"media-type" => :media_type
-    }
-
-    normalize_keys = Map.keys(normalize_targets)
-
     Enum.map(items, fn %{href: href} = item ->
-      {tmp, item} = Map.split(item, normalize_keys)
-
       item =
-        tmp
-        |> Map.new(fn {k, v} ->
-          {Map.get(normalize_targets, k), v}
+        item
+        |> Map.new(fn
+          {:"media-overlay", v} -> {:media_overlay, v}
+          {:"media-type", v} -> {:media_type, v}
+          {k, v} -> {k, v}
         end)
-        |> Map.merge(item)
         |> Map.put(:content, Map.get(content, href, ""))
 
       struct(BUPE.Item, item)
@@ -98,18 +93,14 @@ defmodule BUPE.Parser do
   defp mimetype_valid?(_), do: false
 
   defp find_rootfile(epub) do
-    container = ~c"META-INF/container.xml"
-    [{^container, content}] = extract_files(epub, [container])
+    container = "META-INF/container.xml"
 
-    full_path =
-      Regex.named_captures(~r/<rootfile\s.*full-path="(?<full_path>[^"]+)"\s/, content)[
-        "full_path"
-      ]
-
-    if full_path do
-      {:ok, full_path}
+    with {:ok, xml} <- parse_xml_file(epub, container),
+         path when is_binary(path) <- find_xml(xml, "/container/rootfiles/rootfile/@full-path") do
+      {:ok, path}
     else
-      raise "could not find rootfile in #{container}"
+      _ ->
+        raise "could not find rootfile in #{container}"
     end
   end
 
@@ -186,7 +177,7 @@ defmodule BUPE.Parser do
     }
   end
 
-  defp parse_xml(%BUPE.Config{version: "3.0"} = config, xml, :toc) do
+  defp parse_xml(%{version: "3.0"} = config, xml, :toc) do
     case find_xml(xml, "/package/manifest/item[contains(@properties,'nav')]", :element) do
       [toc_item] ->
         %{config | toc: [toc_item]}
@@ -199,7 +190,7 @@ defmodule BUPE.Parser do
     end
   end
 
-  defp parse_xml(%BUPE.Config{version: "2.0"} = config, xml, :toc) do
+  defp parse_xml(%{version: "2.0"} = config, xml, :toc) do
     with toc_id <- find_xml(xml, "/package/spine/@toc"),
          [toc_item] <- find_xml(xml, "/package/manifest/item[@id='#{toc_id}']", :element) do
       %{config | toc: [toc_item]}
