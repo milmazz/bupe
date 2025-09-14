@@ -119,4 +119,7 @@ defmodule BUPE.Config do
     fonts: [],
     toc: []
   ]
+
+  @doc "Creates a new `BUPE.Config` struct using the given data"
+  def new(data), do: struct!(__MODULE__, data)
 end

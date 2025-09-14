@@ -67,7 +67,7 @@ defmodule BUPE.Mixfile do
         LICENSE: [title: "License"],
         "README.md": [title: "Overview"]
       ],
-      main: "readme"
+      main: "BUPE"
     ]
   end
 
