@@ -56,5 +56,5 @@ defmodule BUPE do
 
   [EPUB]: https://idpf.org/epub/301/spec/epub-overview.html
   """
-  defdelegate parse(epub_file), to: BUPE.Parser, as: :run
+  defdelegate parse(epub_file), to: BUPE.Parser, as: :run_ng
 end

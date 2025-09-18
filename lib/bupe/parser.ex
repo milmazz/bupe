@@ -15,6 +15,15 @@ defmodule BUPE.Parser do
     end
   end
 
+  def run_ng(path) when is_binary(path) do
+    path = path |> Path.expand() |> String.to_charlist()
+
+    with :ok <- check_file(path),
+         :ok <- check_extension(path) do
+      parse2(path)
+    end
+  end
+
   defp parse(epub) do
     with :ok <- check_mimetype(epub),
          {:ok, root_file} <- find_rootfile(epub),
@@ -26,6 +35,22 @@ defmodule BUPE.Parser do
           &parse_xml(&2, xml, &1)
         )
 
+      item_contents = ~w(pages images styles scripts toc)a
+
+      content =
+        Map.new(
+          item_contents,
+          &{&1, extract_item_content(epub, root_file, Map.get(config, &1) || [])}
+        )
+
+      struct(config, content)
+    end
+  end
+
+  defp parse2(epub) do
+    with :ok <- check_mimetype(epub),
+         {:ok, root_file} <- find_rootfile2(epub),
+         {:ok, config} <- parse_root_file(epub, root_file) do
       item_contents = ~w(pages images styles scripts toc)a
 
       content =
@@ -101,6 +126,26 @@ defmodule BUPE.Parser do
     else
       _ ->
         raise "could not find rootfile in #{container}"
+    end
+  end
+
+  def find_rootfile2(epub) do
+    container = ~c"META-INF/container.xml"
+    [{^container, content}] = extract_files(epub, [container])
+
+    case Saxy.parse_string(content, BUPE.Parser.ContainerHandler, nil) do
+      {:ok, path} when is_binary(path) -> {:ok, path}
+      _ -> raise "could not find rootfile in #{container}"
+    end
+  end
+
+  defp parse_root_file(epub, root_file) do
+    file = String.to_charlist(root_file)
+    [{^file, content}] = extract_files(epub, [file])
+
+    case Saxy.parse_string(content, BUPE.Parser.RootFileHandler, %Config{title: nil, pages: nil}) do
+      {:ok, config} -> {:ok, config}
+      _ -> raise "could not parse the rootfile #{root_file}"
     end
   end
 
