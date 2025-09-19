@@ -158,12 +158,7 @@ defmodule BUPE.Parser.RootFileHandler do
               ]
             ],
             fn {k, media_types} ->
-              sub_items =
-                Enum.flat_map(media_types, fn media_type ->
-                  Map.get(items, media_type, [])
-                end)
-
-              {k, sub_items}
+              publication_resources(k, media_types, items)
             end
           )
 
@@ -191,5 +186,15 @@ defmodule BUPE.Parser.RootFileHandler do
 
   def handle_event(_, _, state) do
     {:ok, state}
+  end
+
+  ## Helpers
+  defp publication_resources(category, media_types, items) do
+    resources =
+      Enum.flat_map(media_types, fn media_type ->
+        Map.get(items, media_type, [])
+      end)
+
+    {category, resources}
   end
 end
