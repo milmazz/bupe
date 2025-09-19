@@ -1,4 +1,5 @@
 defmodule BUPE.Parser.ContainerHandler do
+  @moduledoc false
   @behaviour Saxy.Handler
 
   def handle_event(:start_element, {"rootfile", attributes}, _state) do

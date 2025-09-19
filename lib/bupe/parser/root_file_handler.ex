@@ -1,4 +1,5 @@
 defmodule BUPE.Parser.RootFileHandler do
+  @moduledoc false
   @behaviour Saxy.Handler
 
   @dcterms ~w|identifier title language contributor coverage creator date description format publisher relation rights source subject type|
@@ -66,7 +67,7 @@ defmodule BUPE.Parser.RootFileHandler do
       end)
 
     state =
-      case Map.fetch!(attributes, :property) do
+      case Map.get(attributes, :property) do
         "dcterms:" <> dcterm when dcterm in @meta_dcterms ->
           Map.put(state, :dcterm, dcterm)
 
@@ -122,7 +123,7 @@ defmodule BUPE.Parser.RootFileHandler do
 
     nav = nav |> List.wrap() |> Enum.reverse()
 
-    {:ok, %{state | config: struct(state.config, %{nav: Enum.reverse(nav)})}}
+    {:ok, %{state | config: struct(state.config, %{nav: nav})}}
   end
 
   def handle_event(:end_element, "manifest", %{parent: "manifest"} = state) do
