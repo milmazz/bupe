@@ -15,6 +15,8 @@ defmodule BUPE.Parser do
     end
   end
 
+  def run_ng(<<0x04034B50::little-size(32), _::binary>> = epub), do: parse2(epub)
+
   def run_ng(path) when is_binary(path) do
     path = path |> Path.expand() |> String.to_charlist()
 

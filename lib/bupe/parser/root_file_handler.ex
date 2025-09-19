@@ -1,111 +1,194 @@
 defmodule BUPE.Parser.RootFileHandler do
   @behaviour Saxy.Handler
 
-  @metadata ~w(
-          contributor
-          coverage
-          creator
-          date
-          description
-          format
-          identifier
-          language
-          publisher
-          relation
-          rights
-          source
-          subject
-          title
-          type
-      )
+  @dcterms ~w|identifier title language contributor coverage creator date description format publisher relation rights source subject type|
+  @meta_dcterms ~w|modified source|
+  @item_attributes ~w|id media-type href media-overlay properties fallback|
+  @package_attributes ~w|dir id prefix xml:lang version unique-identifier|
+  @itemref_attributes ~w|id idref linear properties|
+  @meta_attributes ~w|dir id property refines scheme xml:lang|
+  @spine_attributes ~w|id toc|
 
-  def handle_event(:start_document, _prolog, %BUPE.Config{} = config) do
-    IO.inspect("Start parsing document")
-    {:ok, %{config: config}}
-  end
+  def handle_event(:start_document, _prolog, %BUPE.Config{} = config),
+    do: {:ok, %{config: config}}
 
-  def handle_event(:end_document, _data, state) do
-    IO.inspect("Finish parsing document")
-    {:ok, state.config}
-  end
+  def handle_event(:end_document, _data, state), do: {:ok, state.config}
 
   # START ELEMENT
   def handle_event(:start_element, {"package", attributes}, state) do
     attributes =
       attributes
-      |> Enum.filter(&match?({k, _} when k in ~w|version unique-identifier|, &1))
+      |> Enum.filter(&match?({k, _} when k in @package_attributes, &1))
       |> Map.new(fn
-        {"version", v} -> {:version, v}
+        {"xml:lang", v} -> {:language, v}
         {"unique-identifier", v} -> {:unique_identifier, v}
+        {k, v} -> {String.to_atom(k), v}
       end)
 
     {:ok, %{state | config: struct(state.config, attributes)}}
   end
 
-  def handle_event(:start_element, {"dc:" <> metadata, _attributes}, state)
-      when metadata in @metadata do
-    {:ok, Map.put(state, :meta, metadata)}
+  def handle_event(:start_element, {element, _attributes}, state)
+      when element in ~w(metadata manifest), do: {:ok, Map.put(state, :parent, element)}
+
+  def handle_event(:start_element, {"spine", attributes}, state) do
+    config =
+      if state.config.version == "2.0" do
+        attributes =
+          attributes
+          |> Enum.filter(&match?({k, _} when k in @spine_attributes, &1))
+          |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
+
+        toc_id = Map.fetch!(attributes, :toc)
+        toc_attributes = Enum.find(state.legacy_ncx, &(&1.id == toc_id))
+        struct(state.config, %{toc: [toc_attributes]})
+      else
+        state.config
+      end
+
+    {:ok, Map.merge(state, %{config: config, parent: "spine"})}
   end
 
-  def handle_event(:start_element, {"item", _attributes}, state) do
-    {:ok, state}
-  end
+  def handle_event(
+        :start_element,
+        {"dc:" <> dcterm, _attributes},
+        %{parent: "metadata"} = state
+      )
+      when dcterm in @dcterms, do: {:ok, Map.put(state, :dcterm, dcterm)}
 
-  # def handle_event(:start_element, {"spine", _attributes}, state) do
-  #   {:ok, Map.put(state, :nav, [])}
-  # end
-
-  # def handle_event(:start_element, {"manifest", attributes}, state) do
-  # end
-  #
-  def handle_event(:start_element, {"itemref", attributes}, state) do
+  def handle_event(:start_element, {"meta", attributes}, %{parent: "metadata"} = state) do
     attributes =
       attributes
-      |> Enum.filter(&match?({k, _} when k in ~w|idref|, &1))
-      |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
-
-    {:ok, Map.update(state, :nav, [attributes], &[attributes | &1])}
-  end
-
-  def handle_event(:start_element, {name, attributes}, state) do
-    IO.inspect("Start parsing element #{name} with attributes #{inspect(attributes)}")
-    {:ok, state}
-  end
-
-  # END ELEMENT
-  def handle_event(:end_element, "spine", state) do
-    {nav, state} = Map.pop(state, :nav)
+      |> Enum.filter(&match?({k, _} when k in @meta_attributes, &1))
+      |> Map.new(fn
+        {"xml:lang", v} -> {:language, v}
+        {k, v} -> {String.to_atom(k), v}
+      end)
 
     state =
-      case nav do
-        nil -> state
-        nav when is_list(nav) -> %{state | config: struct(state.config, %{nav: nav})}
+      case Map.fetch!(attributes, :property) do
+        "dcterms:" <> dcterm when dcterm in @meta_dcterms ->
+          Map.put(state, :dcterm, dcterm)
+
+        _ ->
+          state
       end
 
     {:ok, state}
   end
 
-  def handle_event(:end_element, name, state) do
-    IO.inspect("Finish parsing element #{name}")
+  def handle_event(:start_element, {"item", attributes}, %{parent: "manifest"} = state) do
+    attributes =
+      attributes
+      |> Enum.filter(&match?({k, _} when k in @item_attributes, &1))
+      |> Map.new(fn
+        {"media-type", v} -> {:media_type, v}
+        {"media-overlay", v} -> {:media_overlay, v}
+        {k, v} -> {String.to_atom(k), v}
+      end)
+
+    properties = attributes |> Map.get(:properties, "") |> String.split()
+
+    config =
+      if state.config.version == "3.0" and "nav" in properties do
+        struct(state.config, %{toc: [attributes]})
+      else
+        state.config
+      end
+
+    state =
+      state
+      |> Map.update(:items, [attributes], &[attributes | &1])
+      |> Map.put(:config, config)
+
     {:ok, state}
+  end
+
+  def handle_event(:start_element, {"itemref", attributes}, %{parent: "spine"} = state) do
+    attributes =
+      attributes
+      |> Enum.filter(&match?({k, _} when k in @itemref_attributes, &1))
+      |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
+
+    {:ok, Map.update(state, :nav, [attributes], &[attributes | &1])}
+  end
+
+  # END ELEMENT
+  def handle_event(:end_element, "spine", %{parent: "spine"} = state) do
+    {nav, state} =
+      state
+      |> Map.delete(:parent)
+      |> Map.pop(:nav)
+
+    nav = nav |> List.wrap() |> Enum.reverse()
+
+    {:ok, %{state | config: struct(state.config, %{nav: Enum.reverse(nav)})}}
+  end
+
+  def handle_event(:end_element, "manifest", %{parent: "manifest"} = state) do
+    {items, state} =
+      state
+      |> Map.delete(:parent)
+      |> Map.pop(:items)
+
+    items =
+      items
+      |> List.wrap()
+      |> Enum.group_by(& &1.media_type)
+
+    state =
+      if Enum.any?(items) do
+        publication_resources =
+          Map.new(
+            [
+              images: ["image/jpeg", "image/gif", "image/png", "image/svg+xml", "image/webp"],
+              scripts: ["application/javascript", "application/ecmascript", "text/javascript"],
+              styles: ["text/css"],
+              pages: ["application/xhtml+xml"],
+              audio: ["audio/mpeg", "audio/mp4", "audio/ogg; codecs=opus"],
+              fonts: [
+                "font/ttf",
+                "font/otf",
+                "font/woff",
+                "font/woff2",
+                "application/font-sfnt",
+                "application/font-woff",
+                "application/vnd.ms-opentype"
+              ]
+            ],
+            fn {k, media_types} ->
+              sub_items =
+                Enum.flat_map(media_types, fn media_type ->
+                  Map.get(items, media_type, [])
+                end)
+
+              {k, sub_items}
+            end
+          )
+
+        legacy_ncx = Map.get(items, "application/x-dtbncx+xml", [])
+        config = struct(state.config, publication_resources)
+        Map.merge(state, %{config: config, legacy_ncx: legacy_ncx})
+      else
+        state
+      end
+
+    {:ok, state}
+  end
+
+  def handle_event(:end_element, "metadata", %{parent: "metadata"} = state) do
+    {:ok, Map.delete(state, :parent)}
   end
 
   # Characters
-  def handle_event(:characters, chars, %{meta: current_key} = state)
-      when current_key in @metadata do
-    state = Map.delete(state, :meta)
-    current_key = String.to_atom(current_key)
+  def handle_event(:characters, chars, %{dcterm: dcterm, parent: "metadata"} = state)
+      when dcterm in @dcterms or dcterm in @meta_dcterms do
+    state = Map.delete(state, :dcterm)
+    current_key = String.to_atom(dcterm)
     {:ok, %{state | config: struct(state.config, %{current_key => chars})}}
   end
 
-  def handle_event(:characters, chars, state) do
-    IO.inspect("Receive characters #{chars}")
-    {:ok, state}
-  end
-
-  # CDATA
-  def handle_event(:cdata, cdata, state) do
-    IO.inspect("Receive CData #{cdata}")
+  def handle_event(_, _, state) do
     {:ok, state}
   end
 end
