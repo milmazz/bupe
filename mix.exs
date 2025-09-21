@@ -2,7 +2,7 @@ defmodule BUPE.Mixfile do
   use Mix.Project
 
   @source_url "https://github.com/milmazz/bupe"
-  @version "0.6.3-dev"
+  @version "0.6.3"
 
   def project do
     [
