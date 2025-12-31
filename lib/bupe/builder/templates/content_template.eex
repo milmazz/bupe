@@ -73,7 +73,7 @@
     <% end %>
 
     <%= if config.logo do %>
-      <item id="cover-image" href="content/<%= config.logo %>" media-type="<% BUPE.Util.media_type_from_path(config.logo) %>" />
+      <item id="cover-image" href="content/<%= config.logo %>" media-type="<% BUPE.MediaType.from_path(config.logo) %>" />
     <% end %>
   </manifest>
   <spine toc="ncx">

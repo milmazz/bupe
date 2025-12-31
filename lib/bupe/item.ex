@@ -76,7 +76,7 @@ defmodule BUPE.Item do
       if media_type do
         media_type
       else
-        Util.media_type_from_path(href)
+        BUPE.MediaType.from_path(href)
       end
 
     %{item | id: id, media_type: media_type, description: description}
