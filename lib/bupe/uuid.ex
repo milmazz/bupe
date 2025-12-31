@@ -1,4 +1,4 @@
-defmodule BUPE.Util do
+defmodule BUPE.UUID do
   @moduledoc false
 
   # Helper to generate an UUID, in particular version 4 as specified in

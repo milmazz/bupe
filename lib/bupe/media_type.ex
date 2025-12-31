@@ -10,24 +10,24 @@ defmodule BUPE.MediaType do
   end
 
   @media_types %{
-    "gif" => "image/gif",
-    "jpg" => "image/jpeg",
-    "jpeg" => "image/jpeg",
-    "png" => "image/png",
-    "svg" => "image/svg+xml",
-    "xhtml" => "application/xhtml+xml",
-    "html" => "application/xhtml+xml",
-    "ncx" => "application/x-dtbncx+xml",
-    "otf" => "application/vnd.ms-opentype",
-    "ttf" => "application/vnd.ms-opentype",
-    "ttc" => "application/vnd.ms-opentype",
+    "css" => "text/css",
     "eot" => "application/vnd.ms-opentype",
-    "woff" => "application/font-woff",
-    "opf" => "application/oebps-package+xml",
+    "gif" => "image/gif",
+    "html" => "application/xhtml+xml",
+    "jpeg" => "image/jpeg",
+    "jpg" => "image/jpeg",
+    "js" => "text/javascript",
     "mp3" => "audio/mpeg",
     "mp4" => "video/mp4",
-    "css" => "text/css",
-    "js" => "text/javascript"
+    "ncx" => "application/x-dtbncx+xml",
+    "opf" => "application/oebps-package+xml",
+    "otf" => "application/vnd.ms-opentype",
+    "png" => "image/png",
+    "svg" => "image/svg+xml",
+    "ttc" => "application/vnd.ms-opentype",
+    "ttf" => "application/vnd.ms-opentype",
+    "woff" => "application/font-woff",
+    "xhtml" => "application/xhtml+xml"
   }
 
   for {extension, media} <- @media_types do

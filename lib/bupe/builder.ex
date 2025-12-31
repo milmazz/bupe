@@ -1,6 +1,8 @@
 defmodule BUPE.Builder do
   @moduledoc false
-  alias BUPE.{Builder.Templates, Config, Item, Util}
+  alias BUPE.Builder.Templates
+  alias BUPE.Config
+  alias BUPE.Item
 
   @spec run(Config.t(), Path.t(), Keyword.t()) ::
           {:ok, String.t()} | {:ok, {String.t(), binary()}} | {:error, String.t()}
@@ -160,7 +162,7 @@ defmodule BUPE.Builder do
   defp modified_date(_config), do: raise(BUPE.InvalidDate)
 
   defp check_identifier(%{identifier: nil} = config) do
-    identifier = "urn:uuid:#{Util.uuid4()}"
+    identifier = "urn:uuid:#{BUPE.UUID.uuid4()}"
     Map.put(config, :identifier, identifier)
   end
 

@@ -11,8 +11,6 @@ defmodule BUPE.Item do
   we use that key internally to hold the content of the file that's associated
   with the Item for parsing purposes.
   """
-  alias BUPE.Util
-
   @type t :: %__MODULE__{
           duration: nil | String.t(),
           fallback: nil | String.t(),
@@ -69,7 +67,7 @@ defmodule BUPE.Item do
   def normalize(%__MODULE__{} = item) do
     %{id: id, media_type: media_type, href: href, description: description} = item
 
-    id = if id, do: id, else: "i-#{Util.uuid4()}"
+    id = if id, do: id, else: "i-#{BUPE.UUID.uuid4()}"
     description = if description, do: description, else: Path.basename(href, Path.extname(href))
 
     media_type =
