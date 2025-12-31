@@ -48,7 +48,7 @@ defmodule BUPE.Mixfile do
     [
       {:saxy, "~> 1.6"},
       {:benchee, "~> 1.0", only: :dev},
-      {:ex_doc, "~> 0.19", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.19", only: :dev, runtime: false, warn_if_outdated: true},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
     ]

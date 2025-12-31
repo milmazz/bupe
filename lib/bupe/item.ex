@@ -7,9 +7,11 @@ defmodule BUPE.Item do
   [item]: http://www.idpf.org/epub/31/spec/epub-packages.html#sec-manifest-elem
   [pub-resource]: (http://www.idpf.org/epub/31/spec/epub-spec.html#gloss-publication-resource-cmt-or-foreign).
 
-  NOTE: The key `content` in the following struct is not part of the EPUB spec, but,
-  we use that key internally to hold the content of the file that's associated
-  with the Item for parsing purposes.
+  > #### Note {: .info}
+  >
+  > The key `content` in the following struct is not part of the EPUB spec, but,
+  > we use that key internally to hold the content of the file that's associated
+  > with the Item for parsing purposes.
   """
   @type t :: %__MODULE__{
           duration: nil | String.t(),
@@ -40,7 +42,7 @@ defmodule BUPE.Item do
   def from_string(path) when is_binary(path), do: normalize(%__MODULE__{href: path})
 
   @doc """
-  Normalize the given `BUPE.Item` struct.
+  Normalizes the given binary path or `BUPE.Item` struct.
 
   ## Examples
 

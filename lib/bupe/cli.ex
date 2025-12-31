@@ -20,6 +20,7 @@ defmodule BUPE.CLI do
     version: :boolean
   ]
 
+  @doc "Entry point for the Command Line Interface"
   def main(args, builder \\ &BUPE.Builder.run/3) do
     {opts, args, _invalid} = OptionParser.parse(args, aliases: @aliases, switches: @switches)
 
@@ -55,7 +56,7 @@ defmodule BUPE.CLI do
     end
   end
 
-  def parse_pages(opts) do
+  defp parse_pages(opts) do
     case Keyword.get_values(opts, :page) do
       [] ->
         IO.puts("At least one page is required\n")
@@ -69,7 +70,7 @@ defmodule BUPE.CLI do
     end
   end
 
-  def parse_output(opts, title) do
+  defp parse_output(opts, title) do
     Keyword.get_lazy(opts, :output, fn ->
       title
       |> String.downcase()
