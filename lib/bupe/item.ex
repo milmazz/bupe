@@ -38,32 +38,8 @@ defmodule BUPE.Item do
     :content
   ]
 
-  @doc """
-  Convert a given path into a `BUPE.Item` struct.
-
-  ## Examples
-
-      iex> BUPE.Item.from_string("book/bacon.xhtml") |> Map.take(~w(description href media_type)a)
-      %{
-        description: "bacon",
-        href: "book/bacon.xhtml",
-        media_type: "application/xhtml+xml"
-      }
-
-  """
-  @spec from_string(binary()) :: t()
-  def from_string(path) when is_binary(path) do
-    id = "i-#{Util.uuid4()}"
-    description = Path.basename(path, Path.extname(path))
-    media_type = Util.media_type_from_path(path)
-
-    %__MODULE__{
-      id: id,
-      description: description,
-      href: path,
-      media_type: media_type
-    }
-  end
+  @deprecated "Use normalize/1 instead"
+  def from_string(path) when is_binary(path), do: normalize(%__MODULE__{href: path})
 
   @doc """
   Normalize the given `BUPE.Item` struct.
@@ -87,7 +63,9 @@ defmodule BUPE.Item do
       }
 
   """
-  @spec normalize(t()) :: t()
+  @spec normalize(t() | binary()) :: t()
+  def normalize(path) when is_binary(path), do: normalize(%__MODULE__{href: path})
+
   def normalize(%__MODULE__{} = item) do
     %{id: id, media_type: media_type, href: href, description: description} = item
 
