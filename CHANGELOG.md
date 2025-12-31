@@ -9,13 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Extract media type handling into `BUPE.MediaType`.
+* Extract media type handling into **BUPE.MediaType**.
 
 ### Changed
 
 * Refactor builder implementation.
 * Refactor publication item normalization.
-* Replace `BUPE.Util` with a focused `BUPE.UUID` module.
+* Replace **BUPE.Util** with a focused **BUPE.UUID** module.
 * Enable `ex_doc` outdated warning checks in dev dependencies.
 * Improve documentation and examples.
 
