@@ -5,19 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.6.5 (2025-12-31)
+
+### Added
+
+* Extract media type handling into `BUPE.MediaType`.
+
+### Changed
+
+* Refactor builder implementation.
+* Refactor publication item normalization.
+* Replace `BUPE.Util` with a focused `BUPE.UUID` module.
+* Enable `ex_doc` outdated warning checks in dev dependencies.
+* Improve documentation and examples.
+
+## v0.6.4 (2025-12-31)
+
+### Fixed
+
+* Avoid adding extra info to ZIP entries. (#98)
+
 ## v0.6.3 (2025-09-21)
 
 ### Added
 
-* Extract the table of contents (TOC) while parsing an EPUB
+* Extract the table of contents (TOC) while parsing EPUB files.
 
 ### Fixed
 
-* Fix content extraction from files directly under the root directory
+* Fix content extraction from files directly under the root directory.
 
 ### Changed
 
-* Update Elixir/OTP version, minor refactoring
+* Update Elixir/OTP version; minor refactoring.
 * Use [saxy](https://hex.pm/packages/saxy) to parse EPUB documents.
 
 ## v0.6.2 (2025-05-16)
