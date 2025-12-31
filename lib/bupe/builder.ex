@@ -2,16 +2,6 @@ defmodule BUPE.Builder do
   @moduledoc false
   alias BUPE.{Builder.Templates, Config, Item, Util}
 
-  @mimetype "application/epub+zip"
-  @container_template File.read!(Path.expand("builder/templates/assets/container.xml", __DIR__))
-  @display_options File.read!(
-                     Path.expand(
-                       "builder/templates/assets/com.apple.ibooks.display-options.xml",
-                       __DIR__
-                     )
-                   )
-  @stylesheet File.read!(Path.expand("builder/templates/css/stylesheet.css", __DIR__))
-
   @spec run(Config.t(), Path.t(), Keyword.t()) ::
           {:ok, String.t()} | {:ok, {String.t(), binary()}} | {:error, String.t()}
   def run(config, name, options \\ []) do
@@ -19,7 +9,7 @@ defmodule BUPE.Builder do
 
     config
     |> normalize_config()
-    |> generate_assets(assets())
+    |> generate_assets()
     |> generate_package()
     |> generate_ncx()
     |> generate_nav()
@@ -113,15 +103,23 @@ defmodule BUPE.Builder do
     end
   end
 
-  defp generate_content(config) do
+  defp generate_content(%{details: details} = config) do
     sources =
-      config.details.pages ++
-        config.details.styles ++ config.details.scripts ++ config.details.images
+      Enum.concat([
+        details.pages,
+        details.styles,
+        details.scripts,
+        details.images
+      ])
 
     sources
     |> Enum.map(fn source ->
       content = File.read!(source.href)
-      path = "OEBPS/content" |> Path.join(Path.basename(source.href)) |> String.to_charlist()
+
+      path =
+        "OEBPS/content"
+        |> Path.join(Path.basename(source.href))
+        |> String.to_charlist()
 
       {path, content}
     end)
@@ -146,7 +144,7 @@ defmodule BUPE.Builder do
 
     opts = if Enum.find(options, &(&1 == :memory)), do: [:memory | opts], else: opts
 
-    :zip.create(String.to_charlist(name), [{~c"mimetype", @mimetype} | files], opts)
+    :zip.create(String.to_charlist(name), [{~c"mimetype", "application/epub+zip"} | files], opts)
   end
 
   ## Helpers
@@ -200,23 +198,21 @@ defmodule BUPE.Builder do
     Enum.filter(files, &((&1.href |> Path.extname() |> String.downcase()) in extensions)) != files
   end
 
-  defp assets do
-    [
-      [content: @stylesheet, dir: "OEBPS/css", filename: "stylesheet.css"],
-      [content: @container_template, dir: "META-INF", filename: "container.xml"],
-      [
-        content: @display_options,
-        dir: "META-INF",
-        filename: "com.apple.ibooks.display-options.xml"
-      ]
-    ]
-  end
-
-  defp generate_assets(config, assets) do
+  defp generate_assets(config) do
     files =
-      Enum.into(assets, config.files, fn asset ->
-        {asset[:dir] |> Path.join(asset[:filename]) |> String.to_charlist(), asset[:content]}
-      end)
+      Enum.into(
+        [
+          {~c"OEBPS/css/stylesheet.css", "builder/templates/css/stylesheet.css"},
+          {~c"META-INF/container.xml", "builder/templates/assets/container.xml"},
+          {~c"META-INF/com.apple.ibooks.display-options.xml",
+           "builder/templates/assets/com.apple.ibooks.display-options.xml"}
+        ],
+        config.files,
+        fn {dest, content_path} ->
+          content = content_path |> Path.expand(__DIR__) |> File.read!()
+          {dest, content}
+        end
+      )
 
     %{config | files: files}
   end
