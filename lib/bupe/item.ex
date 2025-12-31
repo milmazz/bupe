@@ -1,17 +1,15 @@
 defmodule BUPE.Item do
   @moduledoc """
-  The [Item][item] element definition.
+  The [item][item] element definition from the EPUB manifest.
 
-  Each **Item** element represents a [Publication Resource][pub-resource].
+  Each **Item** represents a [publication resource][pub-resource] bundled in an
+  EPUB (for example, XHTML content documents, images, or stylesheets).
+
+  The `content` field in the struct is not part of the EPUB spec; BUPE uses it
+  internally to hold the resource contents when parsing.
 
   [item]: http://www.idpf.org/epub/31/spec/epub-packages.html#sec-manifest-elem
-  [pub-resource]: (http://www.idpf.org/epub/31/spec/epub-spec.html#gloss-publication-resource-cmt-or-foreign).
-
-  > #### Note {: .info}
-  >
-  > The key `content` in the following struct is not part of the EPUB spec, but,
-  > we use that key internally to hold the content of the file that's associated
-  > with the Item for parsing purposes.
+  [pub-resource]: http://www.idpf.org/epub/31/spec/epub-spec.html#gloss-publication-resource-cmt-or-foreign
   """
   @type t :: %__MODULE__{
           duration: nil | String.t(),
@@ -42,7 +40,13 @@ defmodule BUPE.Item do
   def from_string(path) when is_binary(path), do: normalize(%__MODULE__{href: path})
 
   @doc """
-  Normalizes the given binary path or `BUPE.Item` struct.
+  Normalizes a binary path or `BUPE.Item` struct.
+
+  When fields are missing, this function fills in defaults:
+
+  - `id` becomes a generated UUID-based identifier.
+  - `description` defaults to the file name without extension.
+  - `media_type` is inferred from the `href` path.
 
   ## Examples
 
@@ -61,7 +65,6 @@ defmodule BUPE.Item do
         media_type: "application/xhtml+xml",
         properties: nil
       }
-
   """
   @spec normalize(t() | binary()) :: t()
   def normalize(path) when is_binary(path), do: normalize(%__MODULE__{href: path})

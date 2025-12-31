@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/hexpm/l/bupe.svg)](https://github.com/milmazz/bupe/blob/master/LICENSE)
 [![Last Updated](https://img.shields.io/github/last-commit/milmazz/bupe.svg)](https://github.com/milmazz/bupe/commits/master)
 <!-- MDOC -->
-`BUPE` is an Elixir ePub generator and parser, it supports [EPUB] v2 and v3.
+`BUPE` is an Elixir EPUB generator and parser with support for [EPUB] 2 and 3.
 
 ## Installation
 
@@ -20,10 +20,10 @@ def deps do
 end
 ```
 
-To find out the latest release available on Hex, you can run `mix hex.info bupe`
-in your shell, or by going to the [`bupe` page on Hex.pm](https://hex.pm/packages/bupe)
+To check the latest release on Hex, run `mix hex.info bupe` or visit the
+[`bupe` page on Hex.pm](https://hex.pm/packages/bupe).
 
-Then, update your dependencies:
+Then update your dependencies:
 
 ```console
 mix deps.get
@@ -33,7 +33,7 @@ mix deps.get
 
 ### Builder
 
-If you want to create an [EPUB] file you can do the following:
+To create an [EPUB] file:
 
 ```elixir
 pages = "~/book/*.xhtml" |> Path.expand() |> Path.wildcard()
@@ -48,39 +48,48 @@ BUPE.build(config, "sample.epub")
 # {:ok, '/Users/dev/sample.epub'}
 ```
 
-If you prefer, you can build the [EPUB] document in memory doing the following:
+If you prefer, you can build the [EPUB] document in memory:
 
 ```elixir
 BUPE.build(config, "sample.epub", [:memory])
 ```
 
-If you want more control over the `pages` configuration, instead of
-passing a list of strings, you can provide a list of `BUPE.Item` struct like this:
+For more control over `pages`, you can provide a list of `BUPE.Item` structs
+instead of a list of strings:
 
 ```elixir
-pages = [%BUPE.Item{href: "/Users/dev/book/bacon.xhtml", description: "Ode to Bacon"}]
+pages = [
+  %BUPE.Item{
+    href: "/Users/dev/book/bacon.xhtml",
+    description: "Ode to Bacon"
+  }
+]
 ```
 
-The given `description` will be used in the _Table of Contents_ of [EPUB]
-document, otherwise `BUPE` will provide a default description based on the file
-name.
+The `description` is used in the EPUB Table of Contents; if you omit it,
+`BUPE` derives a default description from the file name.
 
-If your page include JavaScript, is recommended that you use the `properties`
-field from `BUPE.Item` like this:
+If a page includes JavaScript, use the `properties` field in `BUPE.Item`:
 
 ```elixir
-pages = [%BUPE.Item{href: "/Users/dev/book/bacon.xhtml", description: "Ode to Bacon", properties: "scripted"}]
+pages = [
+  %BUPE.Item{
+    href: "/Users/dev/book/bacon.xhtml",
+    description: "Ode to Bacon",
+    properties: "scripted"
+  }
+]
 ```
 
-Keep in mind that if you put the `scripted` property on a page that does not
-have any JavaScript, you will get warnings from validation tools such as
+Keep in mind that if you add the `scripted` property to a page without
+JavaScript, you will see warnings from validation tools such as
 [EPUBCheck][epubcheck].
 
-See `BUPE.build/3`, `BUPE.Config`, and `BUPE.Item` for more details.
+See `BUPE.build/3`, `BUPE.Config`, and `BUPE.Item` for details.
 
 ### Using the builder via command line
 
-You can build EPUB documents using the command line as follows:
+You can build EPUB documents from the command line as follows:
 
 1. Install `BUPE` as an escript:
 
@@ -88,13 +97,13 @@ You can build EPUB documents using the command line as follows:
 mix escript.install hex bupe
 ```
 
-2. Then you are ready to use it in your projects:
+2. Then use it in your projects:
 
 ```console
 bupe "EPUB_TITLE" -p egg.xhtml -p bacon.xhtml -l path/to/logo.png
 ```
 
-For more details about using the command line tool, review the usage guide:
+For more details on the command-line tool, review the usage guide:
 
 ```console
 bupe --help
@@ -102,13 +111,13 @@ bupe --help
 
 ### Parser
 
-If you want to parse an EPUB file you can do the following:
+To parse an EPUB file:
 
 ```elixir
 BUPE.parse("Elixir.epub")
 ```
 
-See `BUPE.parse/1` for more details.
+See `BUPE.parse/1` for details.
 
 [epub]: https://www.w3.org/publishing/epub3/
 [epubcheck]: https://github.com/w3c/epubcheck

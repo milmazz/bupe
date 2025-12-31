@@ -8,19 +8,18 @@ defmodule BUPE do
   @bupe_version Mix.Project.config()[:version]
 
   @doc """
-  Returns the BUPE version (used in templates)
+  Returns the BUPE version used in templates and CLI output.
   """
   @spec version :: String.t()
   def version, do: @bupe_version
 
   @doc ~S"""
-  EPUB builder
+  Builds an EPUB file from a `BUPE.Config` struct.
 
   ## Options
 
-  * `:memory` - Instead of a file, it will produce a tuple `{file_name, binary()}`. The
-    binary is a full zip archive with header and can be extracted with,
-    for example, `:zip.unzip/2`.
+  * `:memory` - Instead of writing a file, returns `{file_name, binary()}` where
+    the binary is a full ZIP archive (suitable for `:zip.unzip/2`).
 
   ## Example
 
@@ -47,14 +46,15 @@ defmodule BUPE do
   defdelegate build(config, output, options \\ []), to: BUPE.Builder, as: :run
 
   @doc ~S"""
-  An [EPUB 3][EPUB] conforming parser. This implementation should support also
-  EPUB 2 too.
+  Parses an EPUB file into BUPE data structures.
+
+  The parser conforms to [EPUB 3][epub] and aims to be compatible with EPUB 2.
 
   ## Example
 
       BUPE.parse("sample.epub")
 
-  [EPUB]: https://idpf.org/epub/301/spec/epub-overview.html
+  [epub]: https://idpf.org/epub/301/spec/epub-overview.html
   """
   defdelegate parse(epub_file), to: BUPE.Parser, as: :run
 end

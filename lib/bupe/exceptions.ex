@@ -2,12 +2,12 @@ defmodule BUPE.InvalidDate do
   defexception message: "date is invalid"
 
   @moduledoc ~S"""
-  Error raised when date is invalid:
+  Raised when an EPUB date value is invalid.
 
   * The modification date must be expressed in Coordinated Universal Time
-    (UTC) and must be terminated by the Z time zone indicator.
-  * For compliance with EPUB 2 Reading Systems, the date string should
-    conform to [Date and Time Formats][datetime]
+    (UTC) and must be terminated by the `Z` time zone indicator.
+  * For EPUB 2 reading system compatibility, the date string should follow
+    [Date and Time Formats][datetime].
 
   [datetime]: http://www.w3.org/TR/NOTE-datetime
   """
@@ -17,11 +17,12 @@ defmodule BUPE.InvalidLanguage do
   defexception message: "Language is invalid"
 
   @moduledoc ~S"""
-  Error raised when the language is invalid, must be one of the tags for
-  identifying languages, please see [RFC5646][] for more details.
+  Raised when the language tag is invalid.
 
-  [RFC5646]: http://www.w3.org/TR/NOTE-datetime
+  The language must be a valid IETF language tag (BCP 47); see [RFC 5646][rfc5646]
+  for syntax and examples.
 
+  [rfc5646]: https://www.rfc-editor.org/rfc/rfc5646
   """
 end
 
@@ -29,8 +30,9 @@ defmodule BUPE.InvalidVersion do
   defexception message: "invalid EPUB version, expected '2.0' or '3.0'"
 
   @moduledoc ~S"""
-  Error raised when the given EPUB version is invalid, must be "2.0" or "3.0"
+  Raised when an unsupported EPUB version is provided.
 
+  Accepted values are `"2.0"` and `"3.0"`.
   """
 end
 
@@ -38,12 +40,9 @@ defmodule BUPE.InvalidExtensionName do
   defexception message: "invalid file extension name"
 
   @moduledoc ~S"""
-  Error raised when a file extension name is invalid:
+  Raised when a content document file extension is invalid.
 
-  * For EPUB 3 XHTML content document file names should have the extension
-    `.xhtml`.
-  * For EPUB 2, HTML file name should have the extension `.html`, `.htm` or
-    `.xhtml`
-
+  * For EPUB 3, XHTML content documents must use the `.xhtml` extension.
+  * For EPUB 2, HTML content documents may use `.html`, `.htm`, or `.xhtml`.
   """
 end

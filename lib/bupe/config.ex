@@ -1,50 +1,39 @@
 defmodule BUPE.Config do
   @moduledoc ~S"""
-  Configuration structure that holds all the available options for EPUB.
+  Configuration struct for building an EPUB.
 
-  Most of these fields are used in the Package Definition document, this
-  document includes bibliographic and structural metadata about an EPUB
-  Publication, and is thus the primary source of information about how to
-  process and display it.
+  Most fields map to the Package Definition metadata, which is the primary source
+  of bibliographic and structural information about the publication.
 
-  ## EPUB specification fields
+  ## Core EPUB metadata fields
 
-  * `title` - Represents an instance of a name given to the EPUB Publication.
-  * `creator` -  Represents the name of a person, organization, etc.
-  responsible for the creation of the content
-  * `contributor` - Represents the name of a person, organization, etc. that
-  played a secondary role in the creation of the content.
-  * `date` - Define the publication date. The publication date is not the
-  same as the last modification date. See: [Date and Time Formats][datetime]
-  * `modified` - The modification date must be expressed in Coordinated
-  Universal Time (UTC) and must be terminated by the Z time zone indicator.
-  * `identifier` - Contains a single identifier associated with the EPUB
-  Publication, such as a UUID, DOI, ISBN or ISSN. Default: UUID
-  * `language` - Specifies the language used in the contents. Default: `"en"`
-  * `version` - Specifies the EPUB specification version to which the
-  Publication conforms. Default: "3.0"
-  * `unique_identifier` - Specifies a primary identifier that is unique to
-  one and only one particular EPUB Publication
-  * `source` - Identifies the source publication from which this EPUB
-  Publication is derived.
-  * `type` - Indicates that the given Publication is of a specialized type
-  (e.g., annotations packaged in EPUB format or a dictionary). See the
-  [EPUB Publication Types Registry][types] document for more information.
+  * `title` - Title of the EPUB publication.
+  * `creator` - Person or organization responsible for the content.
+  * `contributor` - Person or organization with a secondary role.
+  * `date` - Publication date (not the last modification date). See
+    [Date and Time Formats][datetime].
+  * `modified` - Modification date in UTC, terminated by the `Z` indicator.
+  * `identifier` - Identifier such as a UUID, DOI, ISBN, or ISSN. Default: UUID.
+  * `language` - Primary language of the publication. Default: `"en"`.
+  * `version` - EPUB specification version. Default: `"3.0"`.
+  * `unique_identifier` - Identifier unique to this publication.
+  * `source` - Source publication this EPUB derives from.
+  * `type` - Specialized publication type; see the [EPUB Publication Types
+    Registry][types].
 
-  For more information about other fields as `description`, `format`,
-  `coverage`, `publisher`, `relation`, `rights`, `subject`, etc. please see
-  the [Package Metadata][meta] section of the EPUB specification.
+  For additional fields such as `description`, `format`, `coverage`,
+  `publisher`, `relation`, `rights`, and `subject`, see the
+  [Package Metadata][meta] section of the EPUB specification.
 
-  ## Support configuration
+  ## Content and assets
 
-  * `pages` - List of XHTML files which will be included in the EPUB document,
-    please keep in mind that the sequence here will set the navigation order in
-    the EPUB document.
-  * `styles` - List of CSS files which will be included in the EPUB document
-  * `scripts` - List of JS files which will be included in the EPUB document
-  * `images` - List of images which will be included in the EPUB document.
-  * `cover` - Specifies if you want a default cover page, default: `true`
-  * `logo` - Image for the cover page
+  * `pages` - List of XHTML files or `%BUPE.Item{}` entries. Order controls
+    navigation order in the EPUB.
+  * `styles` - List of CSS files or `%BUPE.Item{}` entries.
+  * `scripts` - List of JavaScript files or `%BUPE.Item{}` entries.
+  * `images` - List of image files or `%BUPE.Item{}` entries.
+  * `cover` - Whether to include a default cover page. Default: `true`.
+  * `logo` - Image path for the cover page.
 
   [meta]: http://www.idpf.org/epub/30/spec/epub30-publications.html#sec-package-metadata
   [datetime]: http://www.w3.org/TR/NOTE-datetime
@@ -120,6 +109,6 @@ defmodule BUPE.Config do
     toc: []
   ]
 
-  @doc "Creates a new `BUPE.Config` struct using the given data"
+  @doc "Creates a new `BUPE.Config` struct from the provided keyword list or map."
   def new(data), do: struct!(__MODULE__, data)
 end

@@ -1,6 +1,9 @@
 defmodule BUPE.CLI do
   @moduledoc """
-  CLI interface for BUPE.
+  Command-line interface for generating EPUB files.
+
+  This module parses CLI arguments, validates required inputs, and generates
+  the EPUB file.
   """
 
   @aliases [
@@ -20,7 +23,7 @@ defmodule BUPE.CLI do
     version: :boolean
   ]
 
-  @doc "Entry point for the Command Line Interface"
+  @doc "Entry point for the CLI; parses arguments and runs the builder."
   def main(args, builder \\ &BUPE.Builder.run/3) do
     {opts, args, _invalid} = OptionParser.parse(args, aliases: @aliases, switches: @switches)
 
