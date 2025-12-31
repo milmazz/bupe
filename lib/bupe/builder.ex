@@ -140,7 +140,8 @@ defmodule BUPE.Builder do
         ~c".jpg",
         ~c".png",
         ~c".xml"
-      ]
+      ],
+      extra: []
     ]
 
     opts = if Enum.find(options, &(&1 == :memory)), do: [:memory | opts], else: opts
