@@ -67,23 +67,30 @@ defmodule BUPE.Parser do
   end
 
   defp check_mimetype(epub) do
-    if epub |> extract_files(["mimetype"]) |> mimetype_valid?() do
-      :ok
-    else
-      raise "invalid mimetype, must be 'application/epub+zip'"
+    case extract_files(epub, ["mimetype"]) do
+      [] ->
+        raise "mimetype file is missing"
+
+      [{~c"mimetype", "application/epub+zip"}] ->
+        :ok
+
+      _ ->
+        raise "invalid mimetype, must be 'application/epub+zip'"
     end
   end
 
-  defp mimetype_valid?([{~c"mimetype", "application/epub+zip"}]), do: true
-  defp mimetype_valid?(_), do: false
-
   def find_rootfile(epub) do
     container = ~c"META-INF/container.xml"
-    [{^container, content}] = extract_files(epub, [container])
 
-    case Saxy.parse_string(content, BUPE.Parser.ContainerHandler, nil) do
-      {:ok, path} when is_binary(path) -> {:ok, path}
-      _ -> raise "could not find rootfile in #{container}"
+    case extract_files(epub, [container]) do
+      [] ->
+        raise "container file is missing"
+
+      [{^container, content}] ->
+        case Saxy.parse_string(content, BUPE.Parser.ContainerHandler, nil) do
+          {:ok, path} when is_binary(path) -> {:ok, path}
+          _ -> raise "could not find rootfile in #{container}"
+        end
     end
   end
 

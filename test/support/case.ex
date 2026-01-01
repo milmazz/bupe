@@ -38,4 +38,18 @@ defmodule BUPETest.Case do
       pages: pages
     }
   end
+
+  def build_epub(path, entries \\ []) when is_list(entries) do
+    files =
+      [{"mimetype", "application/epub+zip"}]
+      |> Enum.concat(entries)
+      |> Enum.map(fn {name, content} ->
+        {to_charlist(name), content}
+      end)
+
+    case :zip.create(to_charlist(path), files) do
+      {:ok, _} -> path
+      {:error, reason} -> raise reason
+    end
+  end
 end
