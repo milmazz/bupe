@@ -143,10 +143,14 @@ defmodule BUPE.Builder do
 
     opts = if Enum.find(options, &(&1 == :memory)), do: [:memory | opts], else: opts
 
-    name
-    |> String.to_charlist()
-    |> :zip.create([{~c"mimetype", "application/epub+zip"} | files], opts)
-    |> case do
+    result =
+      :zip.create(
+        String.to_charlist(name),
+        [{~c"mimetype", "application/epub+zip"} | files],
+        opts
+      )
+
+    case result do
       {:ok, {name, binary}} -> {:ok, {to_string(name), binary}}
       {:ok, name} -> {:ok, to_string(name)}
       {:error, _reason} = error -> error
