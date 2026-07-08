@@ -70,6 +70,8 @@ jobs:
       run: mix format --check-formatted
     - name: Check unused dependencies
       run: mix deps.unlock --check-unused
+    - name: Check for retired dependencies
+      run: mix hex.audit
     - name: Run Credo
       run: mix credo --strict
     - name: Restore PLT cache
