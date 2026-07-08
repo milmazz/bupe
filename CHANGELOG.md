@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Fixed
+
+* Render the cover image `media-type` attribute in the package document;
+  it was previously always empty.
+* Run the CI workflow on the `main` branch (it previously targeted the
+  removed `master` branch, so CI never ran) and update stale `master`
+  links in the documentation.
+
+### Changed
+
+* **BUPE.build/3** now returns the output path as a `String.t()` instead of a
+  charlist.
+* Declare an honest minimum Elixir version (`~> 1.17`) and test against a
+  matrix of Elixir/OTP versions (1.17/OTP 27 through 1.19/OTP 28) in CI.
+  Erlang/OTP 27+ is required because the builder relies on the `:extra`
+  option of `:zip.create/3` to produce clean ZIP entries.
+* Run Credo, Dialyzer (with a cached PLT), `mix format --check-formatted`,
+  and `mix deps.unlock --check-unused` in CI.
+* Remove the deprecated `build_embedded` project option.
+
 ## v0.6.5 (2025-12-31)
 
 ### Added

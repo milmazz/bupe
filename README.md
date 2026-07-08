@@ -1,14 +1,17 @@
 # BUPE
 
+[![CI](https://github.com/milmazz/bupe/actions/workflows/elixir.yml/badge.svg)](https://github.com/milmazz/bupe/actions/workflows/elixir.yml)
 [![Module Version](https://img.shields.io/hexpm/v/bupe.svg)](https://hex.pm/packages/bupe)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/bupe/)
 [![Total Download](https://img.shields.io/hexpm/dt/bupe.svg)](https://hex.pm/packages/bupe)
-[![License](https://img.shields.io/hexpm/l/bupe.svg)](https://github.com/milmazz/bupe/blob/master/LICENSE)
-[![Last Updated](https://img.shields.io/github/last-commit/milmazz/bupe.svg)](https://github.com/milmazz/bupe/commits/master)
+[![License](https://img.shields.io/hexpm/l/bupe.svg)](https://github.com/milmazz/bupe/blob/main/LICENSE)
+[![Last Updated](https://img.shields.io/github/last-commit/milmazz/bupe.svg)](https://github.com/milmazz/bupe/commits/main)
 <!-- MDOC -->
 `BUPE` is an Elixir EPUB generator and parser with support for [EPUB] 2 and 3.
 
 ## Installation
+
+BUPE requires Elixir ~> 1.17 and Erlang/OTP 27 or later.
 
 First, add `:bupe` to your list of dependencies in `mix.exs`:
 
@@ -45,7 +48,7 @@ config = BUPE.Config.new(%{
   pages: pages
 })
 BUPE.build(config, "sample.epub")
-# {:ok, '/Users/dev/sample.epub'}
+# {:ok, "/Users/dev/sample.epub"}
 ```
 
 If you prefer, you can build the [EPUB] document in memory:
