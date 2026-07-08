@@ -23,6 +23,8 @@ jobs:
             otp: '28'
           - elixir: '1.19'
             otp: '28'
+          - elixir: '1.20'
+            otp: '29'
     env:
       MIX_ENV: test
     steps:
@@ -56,8 +58,8 @@ jobs:
       id: beam
       uses: erlef/setup-beam@v1
       with:
-        elixir-version: '1.19'
-        otp-version: '28'
+        elixir-version: '1.20'
+        otp-version: '29'
     - name: Restore dependencies cache
       uses: actions/cache@v4
       with:
