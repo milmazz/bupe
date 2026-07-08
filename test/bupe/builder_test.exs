@@ -104,9 +104,41 @@ defmodule BUPE.BuilderTest do
 
     {:ok, {filename, binary}} = BUPE.Builder.run(config, output, [:memory])
 
+    assert is_binary(filename)
     File.write!(filename, binary)
 
     epub_info = BUPE.parse(binary)
     assert epub_info.version == "3.0"
+  end
+
+  @tag :tmp_dir
+  test "returns the output path as a string", %{tmp_dir: tmp_dir} do
+    config = config()
+    output = Path.join(tmp_dir, "v30.epub")
+
+    assert {:ok, path} = BUPE.build(config, output)
+    assert path == output
+    assert File.exists?(path)
+  end
+
+  @tag :tmp_dir
+  test "includes the cover image media type in the package document", %{tmp_dir: tmp_dir} do
+    config = config()
+    output = Path.join(tmp_dir, "v30.epub")
+
+    {:ok, {_name, epub}} =
+      config
+      |> Map.put(:logo, "logo.png")
+      |> BUPE.build(output, [:memory])
+
+    {_, opf} =
+      epub
+      |> unzip()
+      |> Enum.find(fn {name, _binary} ->
+        name == ~c"OEBPS/content.opf"
+      end)
+
+    assert opf =~
+             ~s(<item id="cover-image" href="content/logo.png" media-type="image/png" />)
   end
 end

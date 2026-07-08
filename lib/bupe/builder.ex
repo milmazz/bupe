@@ -5,7 +5,7 @@ defmodule BUPE.Builder do
   alias BUPE.Item
 
   @spec run(Config.t(), Path.t(), Keyword.t()) ::
-          {:ok, String.t()} | {:ok, {String.t(), binary()}} | {:error, String.t()}
+          {:ok, String.t()} | {:ok, {String.t(), binary()}} | {:error, term()}
   def run(config, name, options \\ []) do
     name = Path.expand(name)
 
@@ -143,7 +143,14 @@ defmodule BUPE.Builder do
 
     opts = if Enum.find(options, &(&1 == :memory)), do: [:memory | opts], else: opts
 
-    :zip.create(String.to_charlist(name), [{~c"mimetype", "application/epub+zip"} | files], opts)
+    name
+    |> String.to_charlist()
+    |> :zip.create([{~c"mimetype", "application/epub+zip"} | files], opts)
+    |> case do
+      {:ok, {name, binary}} -> {:ok, {to_string(name), binary}}
+      {:ok, name} -> {:ok, to_string(name)}
+      {:error, _reason} = error -> error
+    end
   end
 
   ## Helpers

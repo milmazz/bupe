@@ -54,4 +54,4 @@ Below are the guidelines for working on Pull Requests:
 [elixir-style-guide]: https://github.com/lexmag/elixir-style-guide/
 [ExDoc]: https://github.com/elixir-lang/ex_doc/
 [writing-documentation]: https://hexdocs.pm/elixir/writing-documentation.html#content
-[code-of-conduct]: https://github.com/milmazz/bupe/blob/master/CODE_OF_CONDUCT.md
+[code-of-conduct]: https://github.com/milmazz/bupe/blob/main/CODE_OF_CONDUCT.md
