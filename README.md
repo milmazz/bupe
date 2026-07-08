@@ -18,7 +18,7 @@ First, add `:bupe` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:bupe, "~> 0.6"}
+    {:bupe, "~> 0.7"}
   ]
 end
 ```
