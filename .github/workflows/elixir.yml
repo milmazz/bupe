@@ -17,13 +17,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - elixir: '1.15'
-            otp: '25'
-          - elixir: '1.16'
-            otp: '26'
           - elixir: '1.17'
             otp: '27'
           - elixir: '1.18'
+            otp: '28'
+          - elixir: '1.19'
             otp: '28'
     env:
       MIX_ENV: test
@@ -52,11 +50,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    # Keep the lint Elixir version in sync with .tool-versions: the formatter
+    # output differs across Elixir versions.
     - name: Set up Elixir
       id: beam
       uses: erlef/setup-beam@v1
       with:
-        elixir-version: '1.18'
+        elixir-version: '1.19'
         otp-version: '28'
     - name: Restore dependencies cache
       uses: actions/cache@v4

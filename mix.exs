@@ -11,7 +11,7 @@ defmodule BUPE.Mixfile do
       name: "BUPE",
       source_url: @source_url,
       homepage_url: @source_url,
-      elixir: "~> 1.15",
+      elixir: "~> 1.17",
       description: description(),
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),

@@ -19,8 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * **BUPE.build/3** now returns the output path as a `String.t()` instead of a
   charlist.
-* Declare an honest minimum Elixir version (`~> 1.15`) and test against a
-  matrix of Elixir/OTP versions (1.15/OTP 25 through 1.18/OTP 28) in CI.
+* Declare an honest minimum Elixir version (`~> 1.17`) and test against a
+  matrix of Elixir/OTP versions (1.17/OTP 27 through 1.19/OTP 28) in CI.
+  Erlang/OTP 27+ is required because the builder relies on the `:extra`
+  option of `:zip.create/3` to produce clean ZIP entries.
 * Run Credo, Dialyzer (with a cached PLT), `mix format --check-formatted`,
   and `mix deps.unlock --check-unused` in CI.
 * Remove the deprecated `build_embedded` project option.

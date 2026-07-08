@@ -11,6 +11,8 @@
 
 ## Installation
 
+BUPE requires Elixir ~> 1.17 and Erlang/OTP 27 or later.
+
 First, add `:bupe` to your list of dependencies in `mix.exs`:
 
 ```elixir
