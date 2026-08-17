@@ -18,7 +18,7 @@ First, add `:bupe` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:bupe, "~> 0.7"}
+    {:bupe, "~> 0.8"}
   ]
 end
 ```
@@ -72,6 +72,10 @@ pages = [
 The `description` is used in the EPUB Table of Contents; if you omit it,
 `BUPE` derives a default description from the file name.
 
+The `language` must be a valid [BCP 47][bcp47] language tag (e.g. `"en"`,
+`"pt-BR"`); `BUPE.build/3` raises `BUPE.InvalidLanguage` when the tag is
+invalid.
+
 If a page includes JavaScript, use the `properties` field in `BUPE.Item`:
 
 ```elixir
@@ -122,6 +126,7 @@ BUPE.parse("Elixir.epub")
 
 See `BUPE.parse/1` for details.
 
+[bcp47]: https://www.rfc-editor.org/info/bcp47
 [epub]: https://www.w3.org/publishing/epub3/
 [epubcheck]: https://github.com/w3c/epubcheck
 <!-- MDOC -->

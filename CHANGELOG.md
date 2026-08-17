@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.8.0 (2026-08-17)
+
+### Added
+
+* Validate the `language` tag against the IANA language subtag registry using
+  [lang_tags](https://hex.pm/packages/lang_tags); **BUPE.build/3** now raises
+  **BUPE.InvalidLanguage** when the tag is invalid (e.g. `"en_US"`). Advisory
+  findings — a deprecated tag or a redundant default script, such as
+  `"art-lojban"` or `"gsw-Latn"` — are still accepted, since EPUB only
+  requires well-formed [BCP 47](https://www.rfc-editor.org/info/bcp47) tags
+  and reading systems handle them. (#101)
+
+### Fixed
+
+* Bundle the cover logo into the EPUB archive. `config.logo` was referenced
+  by the package document and the title page but never copied into
+  `OEBPS/content/`, so the EPUB pointed to a file missing from the archive.
+  The logo is now referenced by its base name — fixing logos given as paths,
+  e.g. via the CLI's `--logo` option — and a duplicate entry is dropped when
+  the same file is also listed in `images`. (#101)
+
+### Changed
+
+* Add Elixir 1.20/OTP 29 to the CI test matrix and update the development
+  toolchain.
+
 ## v0.7.0 (2026-07-08)
 
 ### Fixed
