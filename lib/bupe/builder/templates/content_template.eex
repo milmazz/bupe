@@ -49,6 +49,9 @@
     <%= if config.version == "3.0" do %>
     <meta property="dcterms:modified"><%= config.modified %></meta>
     <% end %>
+    <%= if config.version == "2.0" && config.logo do %>
+    <meta name="cover" content="cover-image" />
+    <% end %>
   </metadata>
   <manifest>
     <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />
@@ -73,11 +76,13 @@
     <% end %>
 
     <%= if config.logo do %>
-      <item id="cover-image" href="content/<%= Path.basename(config.logo) %>" media-type="<%= BUPE.MediaType.from_path(config.logo) %>" />
+      <item id="cover-image" href="content/<%= Path.basename(config.logo) %>" media-type="<%= BUPE.MediaType.from_path(config.logo) %>" <%= if config.version == "3.0" do %>properties="cover-image" <% end %>/>
     <% end %>
   </manifest>
   <spine toc="ncx">
+    <%= if config.cover do %>
     <itemref idref="cover" linear="no" />
+    <% end %>
     <%= if config.version == "3.0" do %>
     <itemref idref="nav" />
     <% end %>

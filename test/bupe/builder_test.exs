@@ -49,6 +49,9 @@ defmodule BUPE.BuilderTest do
     refute opf_template =~
              ~r{<item id="cover" href="title.xhtml" media-type="application/xhtml+xml" />}
 
+    # the spine must not reference a manifest item that does not exist
+    refute opf_template =~ ~s(<itemref idref="cover")
+
     refute Enum.find(content, fn {name, _binary} ->
              name == ~c"OEBPS/title.xhtml"
            end)
@@ -170,6 +173,32 @@ defmodule BUPE.BuilderTest do
       |> Enum.find(fn {name, _binary} ->
         name == ~c"OEBPS/content.opf"
       end)
+
+    assert opf =~
+             ~s(<item id="cover-image" href="content/logo.png" media-type="image/png" properties="cover-image" />)
+  end
+
+  @tag :tmp_dir
+  test "marks the cover image for EPUB 2 reading systems", %{tmp_dir: tmp_dir} do
+    config = config()
+    output = Path.join(tmp_dir, "v20.epub")
+
+    {:ok, {_name, epub}} =
+      config
+      |> Map.put(:version, "2.0")
+      |> Map.put(:logo, fixtures_dir("logo.png"))
+      |> BUPE.build(output, [:memory])
+
+    {_, opf} =
+      epub
+      |> unzip()
+      |> Enum.find(fn {name, _binary} ->
+        name == ~c"OEBPS/content.opf"
+      end)
+
+    # EPUB 2 identifies the cover through a meta element, and the
+    # `properties` attribute does not exist in OPF 2.0
+    assert opf =~ ~s(<meta name="cover" content="cover-image" />)
 
     assert opf =~
              ~s(<item id="cover-image" href="content/logo.png" media-type="image/png" />)
