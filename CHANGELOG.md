@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.8.1 (2026-08-17)
+
+### Fixed
+
+* Do not render the cover `itemref` in the spine when `cover: false`; the
+  spine referenced a manifest item that does not exist, which EPUBCheck
+  reports as an error (`RSC-005`).
+* Mark the cover image so reading systems actually use it: EPUB 3 manifests
+  now carry `properties="cover-image"` on the logo item, and EPUB 2 packages
+  now include `<meta name="cover" content="cover-image" />`. Without either,
+  the logo was never picked up for library thumbnails.
+
+### Added
+
+* Validate generated EPUBs with [EPUBCheck](https://github.com/w3c/epubcheck)
+  in CI: an opt-in integration test builds every EPUB 2/3, cover, and logo
+  combination and requires a clean report. All combinations pass EPUBCheck
+  5.3.0 with zero errors and zero warnings.
+
 ## v0.8.0 (2026-08-17)
 
 ### Added
