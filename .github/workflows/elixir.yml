@@ -47,6 +47,48 @@ jobs:
     - name: Run tests
       run: mix test
 
+  epubcheck:
+    name: Validate output with EPUBCheck
+    runs-on: ubuntu-latest
+    env:
+      MIX_ENV: test
+      EPUBCHECK_VERSION: '5.3.0'
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Elixir
+      uses: erlef/setup-beam@v1
+      with:
+        elixir-version: '1.20'
+        otp-version: '29'
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+    - name: Cache EPUBCheck
+      id: epubcheck-cache
+      uses: actions/cache@v4
+      with:
+        path: epubcheck-${{ env.EPUBCHECK_VERSION }}
+        key: epubcheck-${{ env.EPUBCHECK_VERSION }}
+    - name: Download EPUBCheck
+      if: steps.epubcheck-cache.outputs.cache-hit != 'true'
+      run: |
+        curl -sSL -o epubcheck.zip "https://github.com/w3c/epubcheck/releases/download/v${EPUBCHECK_VERSION}/epubcheck-${EPUBCHECK_VERSION}.zip"
+        unzip -q epubcheck.zip
+    - name: Restore dependencies cache
+      uses: actions/cache@v4
+      with:
+        path: deps
+        key: ${{ runner.os }}-epubcheck-mix-${{ hashFiles('**/mix.lock') }}
+        restore-keys: ${{ runner.os }}-epubcheck-mix-
+    - name: Install dependencies
+      run: mix deps.get --only test
+    - name: Validate generated EPUBs
+      run: mix test --only epubcheck
+      env:
+        EPUBCHECK_JAR: ${{ github.workspace }}/epubcheck-${{ env.EPUBCHECK_VERSION }}/epubcheck.jar
+
   lint:
     name: Lint and static analysis
     runs-on: ubuntu-latest
