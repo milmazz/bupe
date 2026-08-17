@@ -19,7 +19,7 @@
   <body>
     <h1><%= config.title %></h1>
     <%= if config.logo do %>
-      <div><img src="content/<%= config.logo %>" alt="Logo"/></div>
+      <div><img src="content/<%= Path.basename(config.logo) %>" alt="Logo"/></div>
     <% end %>
   </body>
 </html>

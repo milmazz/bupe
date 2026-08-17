@@ -40,11 +40,22 @@ defmodule BUPE.Builder do
         |> transform_assets()
       end
 
+    images = drop_logo_duplicate(images, config.logo)
+
     %{config | pages: pages, styles: styles, scripts: scripts, images: images}
   end
 
   defp transform_assets([]), do: []
   defp transform_assets(assets), do: Enum.map(assets, &Item.normalize/1)
+
+  # The logo is always listed in the manifest as the `cover-image` item, so an
+  # entry in `images` pointing to the same file would duplicate it.
+  defp drop_logo_duplicate(images, nil), do: images
+
+  defp drop_logo_duplicate(images, logo) do
+    logo_name = Path.basename(logo)
+    Enum.reject(images, &(Path.basename(&1.href) == logo_name))
+  end
 
   # Package definition builder.
   #
@@ -108,7 +119,8 @@ defmodule BUPE.Builder do
         details.pages,
         details.styles,
         details.scripts,
-        details.images
+        details.images,
+        logo_asset(details.logo)
       ])
 
     sources
@@ -124,6 +136,9 @@ defmodule BUPE.Builder do
     end)
     |> Enum.concat(config.files)
   end
+
+  defp logo_asset(nil), do: []
+  defp logo_asset(logo), do: [%Item{href: logo}]
 
   defp generate_epub(files, name, options) do
     opts = [

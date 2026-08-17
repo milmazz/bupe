@@ -128,7 +128,7 @@ defmodule BUPE.BuilderTest do
 
     {:ok, {_name, epub}} =
       config
-      |> Map.put(:logo, "logo.png")
+      |> Map.put(:logo, fixtures_dir("logo.png"))
       |> BUPE.build(output, [:memory])
 
     {_, opf} =
@@ -140,5 +140,62 @@ defmodule BUPE.BuilderTest do
 
     assert opf =~
              ~s(<item id="cover-image" href="content/logo.png" media-type="image/png" />)
+  end
+
+  @tag :tmp_dir
+  test "bundles the logo into the archive", %{tmp_dir: tmp_dir} do
+    config = config()
+    output = Path.join(tmp_dir, "v30.epub")
+    logo = fixtures_dir("logo.png")
+
+    {:ok, {_name, epub}} =
+      config
+      |> Map.put(:logo, logo)
+      |> BUPE.build(output, [:memory])
+
+    content = unzip(epub)
+
+    assert {_, binary} =
+             Enum.find(content, fn {name, _binary} ->
+               name == ~c"OEBPS/content/logo.png"
+             end)
+
+    assert binary == File.read!(logo)
+
+    {_, title_page} =
+      Enum.find(content, fn {name, _binary} ->
+        name == ~c"OEBPS/title.xhtml"
+      end)
+
+    assert title_page =~ ~s(src="content/logo.png")
+  end
+
+  @tag :tmp_dir
+  test "does not duplicate the logo when it is also listed in images", %{tmp_dir: tmp_dir} do
+    config = config()
+    output = Path.join(tmp_dir, "v30.epub")
+    logo = fixtures_dir("logo.png")
+
+    {:ok, {_name, epub}} =
+      config
+      |> Map.put(:logo, logo)
+      |> Map.put(:images, [logo])
+      |> BUPE.build(output, [:memory])
+
+    content = unzip(epub)
+
+    assert Enum.count(content, fn {name, _binary} ->
+             name == ~c"OEBPS/content/logo.png"
+           end) == 1
+
+    {_, opf} =
+      Enum.find(content, fn {name, _binary} ->
+        name == ~c"OEBPS/content.opf"
+      end)
+
+    assert opf =~ ~s(id="cover-image" href="content/logo.png")
+
+    manifest_entries = opf |> String.split(~s(href="content/logo.png")) |> length()
+    assert manifest_entries == 2
   end
 end
