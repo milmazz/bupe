@@ -20,7 +20,10 @@ defmodule BUPE.InvalidLanguage do
   Raised when the language tag is invalid.
 
   The language must be a valid IETF language tag (BCP 47); see [RFC 5646][rfc5646]
-  for syntax and examples.
+  for syntax and examples. Tags are checked against the IANA language subtag
+  registry, but advisory findings — a deprecated tag or a redundant default
+  script (e.g. `"art-lojban"` or `"gsw-Latn"`) — are accepted, since such tags
+  are still well-formed and reading systems handle them.
 
   [rfc5646]: https://www.rfc-editor.org/rfc/rfc5646
   """

@@ -14,7 +14,9 @@ defmodule BUPE.Config do
     [Date and Time Formats][datetime].
   * `modified` - Modification date in UTC, terminated by the `Z` indicator.
   * `identifier` - Identifier such as a UUID, DOI, ISBN, or ISSN. Default: UUID.
-  * `language` - Primary language of the publication. Default: `"en"`.
+  * `language` - Primary language of the publication, as a [BCP 47][bcp47]
+    language tag (e.g. `"en"`, `"pt-BR"`); `BUPE.build/3` raises
+    `BUPE.InvalidLanguage` when the tag is invalid. Default: `"en"`.
   * `version` - EPUB specification version. Default: `"3.0"`.
   * `unique_identifier` - Identifier unique to this publication.
   * `source` - Source publication this EPUB derives from.
@@ -37,6 +39,7 @@ defmodule BUPE.Config do
 
   [meta]: http://www.idpf.org/epub/30/spec/epub30-publications.html#sec-package-metadata
   [datetime]: http://www.w3.org/TR/NOTE-datetime
+  [bcp47]: https://www.rfc-editor.org/info/bcp47
   [types]: http://idpf.github.io/epub-registries/types/
   """
 

@@ -46,6 +46,7 @@ defmodule BUPE.Mixfile do
   defp deps do
     [
       {:saxy, "~> 1.6"},
+      {:lang_tags, "~> 0.3"},
       {:benchee, "~> 1.0", only: :dev},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false, warn_if_outdated: true},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},

@@ -28,6 +28,7 @@ defmodule BUPE.Builder do
       |> check_identifier()
       |> check_files_extension()
       |> check_unique_identifier()
+      |> check_language()
 
     %{files: [], details: config}
   end
@@ -218,6 +219,32 @@ defmodule BUPE.Builder do
     do: Map.put(config, :unique_identifier, "BUPE")
 
   defp check_unique_identifier(config), do: config
+
+  # EPUB requires `dc:language` to be a well-formed BCP 47 tag, so advisory
+  # registry findings (deprecated tags or a redundant default script) do not
+  # reject the tag; reading systems accept those.
+  @advisory_codes [:deprecated, :subtag_deprecated, :suppress_script]
+
+  defp check_language(%{language: language} = config)
+       when is_binary(language) and language != "" do
+    errors =
+      language
+      |> LangTags.Tag.errors()
+      |> Enum.reject(&(&1.code in @advisory_codes))
+
+    case errors do
+      [] ->
+        config
+
+      errors ->
+        details = Enum.map_join(errors, "; ", & &1.message)
+
+        raise BUPE.InvalidLanguage,
+              "invalid language tag #{inspect(language)}: #{details}"
+    end
+  end
+
+  defp check_language(_config), do: raise(BUPE.InvalidLanguage)
 
   defp invalid_files?(files, extensions) do
     Enum.filter(files, &((&1.href |> Path.extname() |> String.downcase()) in extensions)) != files

@@ -97,6 +97,39 @@ defmodule BUPE.BuilderTest do
              |> BUPE.build("sample.epub", [:memory])
   end
 
+  test "raises exception for invalid language tags" do
+    config = config()
+
+    for invalid_language <- ["en_US", "wubble", "en-en", "", nil] do
+      config = Map.put(config, :language, invalid_language)
+
+      assert_raise BUPE.InvalidLanguage, fn ->
+        BUPE.build(config, "sample.epub", [:memory])
+      end
+    end
+
+    assert_raise BUPE.InvalidLanguage, ~r/'en_us' is not registered/, fn ->
+      config
+      |> Map.put(:language, "en_US")
+      |> BUPE.build("sample.epub", [:memory])
+    end
+  end
+
+  @tag :tmp_dir
+  test "accepts deprecated language tags and advisory issues", %{tmp_dir: tmp_dir} do
+    config = config()
+    output = Path.join(tmp_dir, "sample.epub")
+
+    # "art-lojban" is deprecated and "gsw-Latn" carries a redundant default
+    # script; both are well-formed, so reading systems accept them.
+    for language <- ["art-lojban", "gsw-Latn", "en-GB"] do
+      assert {:ok, _} =
+               config
+               |> Map.put(:language, language)
+               |> BUPE.build(output, [:memory])
+    end
+  end
+
   @tag :tmp_dir
   test "should allow to build the EPUB in memory", %{tmp_dir: tmp_dir} do
     config = config()
